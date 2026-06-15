@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sticker App — UX Prototype</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Graphik', 'SF Pro Text', sans-serif;
+  background: #1a1a1a;
+  display: flex; align-items: center; justify-content: center;
+}
+.phone {
+  width: 390px; height: 844px;
+  background: #fff; border-radius: 48px; overflow: hidden;
+  position: relative;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6), inset 0 0 0 1.5px rgba(255,255,255,0.1);
+}
+@media (max-width: 430px) {
+  body { background: #fff; }
+  .phone { width: 100vw; height: 100svh; border-radius: 0; box-shadow: none; }
+}
+.screen { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; background: #fff; }
+.screen.active { display: flex; }
+
+:root {
+  --green: #00c389; --green-dk: #006647; --green-lt: #e6f9f3;
+  --gray-50: #f5f5f5; --gray-100: #ebebeb; --gray-200: #dddddd;
+  --gray-300: #cccccc; --gray-400: #adadad; --gray-500: #8e8e8e;
+  --gray-600: #6e6e6e; --gray-700: #595959; --gray-900: #1e1e1e;
+  --font-display: 'Euclid Circular B', -apple-system, sans-serif;
+}
+
+/* ── STATUS BAR ── */
+.status-bar {
+  height: 50px; padding: 16px 28px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 15px; font-weight: 600; flex-shrink: 0;
+}
+
+/* ── HOME ── */
+.home-topbar { padding: 6px 16px 10px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--gray-700); flex-shrink: 0; }
+.machine-label { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; }
+.canvas-link { margin-left: auto; color: var(--green); font-size: 17px; font-weight: 600; cursor: pointer; }
+.home-search { margin: 0 16px 12px; background: var(--gray-50); border-radius: 14px; padding: 11px 14px; display: flex; align-items: center; gap: 8px; color: var(--gray-400); font-size: 16px; }
+.home-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.home-scroll::-webkit-scrollbar { display: none; }
+.home-hero { position: relative; background: var(--green-lt); padding: 24px 20px 40px; overflow: hidden; }
+.home-hero-wave { position: absolute; top: 0; left: 0; right: 0; height: 48px; background: var(--green-dk); clip-path: ellipse(60% 100% at 50% 0%); }
+.home-hero h1 { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.35; color: var(--gray-900); position: relative; }
+.categories-row { display: flex; padding: 12px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.categories-row::-webkit-scrollbar { display: none; }
+.cat-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 4px 12px; min-width: 72px; cursor: pointer; }
+.cat-icon { width: 58px; height: 58px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; }
+.cat-label { font-size: 11px; text-align: center; color: var(--gray-700); line-height: 1.2; }
+.section-title { padding: 8px 16px 12px; font-size: 20px; font-weight: 700; font-family: var(--font-display); }
+.project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px 16px; }
+.project-card { border-radius: 14px; overflow: hidden; background: var(--gray-50); cursor: pointer; }
+.project-thumb { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 48px; background: linear-gradient(135deg, #e8e8e8, #d5d5d5); position: relative; }
+.project-thumb-badge { position: absolute; top: 8px; left: 8px; right: 36px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bookmark-btn { position: absolute; bottom: 8px; right: 8px; width: 30px; height: 30px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+/* ── HOME BOTTOM NAV ── */
+.home-bottom-nav { display: flex; align-items: center; border-top: 1px solid var(--gray-100); padding: 8px 0 22px; flex-shrink: 0; background: #fff; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--gray-400); cursor: pointer; }
+.nav-item.active { color: var(--green); }
+.nav-fab-wrap { flex: 1; display: flex; justify-content: center; }
+.nav-fab { width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: white; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,195,137,0.4); cursor: pointer; margin-top: -20px; }
+
+/* ── OVERLAYS / SHEETS ── */
+.overlay { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.45); display: flex; flex-direction: column; justify-content: flex-end; }
+.overlay.hidden { display: none; }
+.sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 0 0 34px; display: flex; flex-direction: column; animation: slideUp 0.28s cubic-bezier(.32,.72,0,1); overflow: hidden; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.sheet-bar { padding: 12px 20px 0; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+.sheet-pill { width: 36px; height: 4px; background: var(--gray-300); border-radius: 2px; }
+.sheet-x-btn { position: absolute; right: 16px; top: 12px; width: 32px; height: 32px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--gray-700); }
+.sheet-heading { font-size: 17px; font-weight: 700; text-align: center; padding: 12px 20px 0; flex-shrink: 0; }
+.sheet-close-btn { position: absolute; right: 20px; top: 14px; color: var(--green); font-size: 15px; font-weight: 600; cursor: pointer; }
+
+/* ── NEW PROJECT — STEP 1 (type choice) ── */
+.np-type-row { display: flex; gap: 12px; padding: 16px 16px 20px; }
+.np-type-card {
+  flex: 1; border: 2px solid var(--gray-200); border-radius: 18px;
+  overflow: hidden; cursor: pointer; transition: border-color 0.18s, box-shadow 0.18s;
+  background: #fff;
+}
+.np-type-card:active { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,195,137,0.15); }
+.np-type-thumb {
+  aspect-ratio: 1; background: var(--gray-50);
+  display: flex; align-items: center; justify-content: center;
+}
+.np-type-label { padding: 12px 8px; text-align: center; font-size: 15px; font-weight: 700; }
+
+/* ── NEW PROJECT — STEP 2 (sheet selection) ── */
+.np-step { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+.np-step.active { display: flex; }
+
+.np-header {
+  display: flex; align-items: center; padding: 10px 16px 6px; flex-shrink: 0; position: relative;
+}
+.np-back { color: var(--green); font-size: 22px; cursor: pointer; margin-right: 8px; line-height: 1; padding: 4px; }
+.np-title { flex: 1; text-align: center; font-size: 17px; font-weight: 700; padding-right: 30px; }
+
+.np-info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; margin: 0 16px 8px;
+  background: #f0f4ff; border-radius: 14px; flex-shrink: 0;
+}
+.np-info-left { display: flex; align-items: center; gap: 8px; }
+.np-info-text { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.np-shop-btn {
+  padding: 6px 14px; border: 1.5px solid var(--green); border-radius: 100px;
+  font-size: 13px; font-weight: 600; color: var(--green); cursor: pointer;
+  background: white;
+}
+
+.np-section-title { padding: 4px 16px 10px; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+
+/* Horizontal scroll of sheet cards */
+.np-sheets-row {
+  display: flex; gap: 12px; padding: 0 16px 4px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;
+}
+.np-sheets-row::-webkit-scrollbar { display: none; }
+.np-sheet-card {
+  flex-shrink: 0; width: 148px; border-radius: 16px;
+  border: 2px solid var(--gray-200); overflow: hidden;
+  cursor: pointer; transition: border-color 0.18s;
+  background: white;
+}
+.np-sheet-card:active { border-color: var(--green); }
+.np-sheet-card.selected { border-color: var(--green); }
+.np-sheet-thumb {
+  width: 148px; height: 148px;
+  background: var(--gray-50);
+  display: flex; align-items: center; justify-content: center;
+}
+.np-sheet-name { padding: 8px 10px 2px; font-size: 13px; font-weight: 700; }
+.np-sheet-desc { padding: 0 10px 12px; font-size: 11px; color: var(--gray-500); }
+
+.btn-full {
+  display: block; width: calc(100% - 32px); margin: 12px 16px 0;
+  padding: 16px; background: var(--green); color: #fff;
+  font-size: 17px; font-weight: 600; border: none;
+  border-radius: 100px; cursor: pointer; text-align: center; flex-shrink: 0;
+}
+
+/* ── CANVAS SCREEN ── */
+#screen-canvas { background: #e8e8e8; }
+.canvas-topbar {
+  background: #fff; height: 52px; padding: 0 10px;
+  display: flex; align-items: center; gap: 2px;
+  border-bottom: 1px solid var(--gray-100); flex-shrink: 0; z-index: 10;
+}
+.tbar-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--gray-700); border-radius: 8px; font-size: 18px; flex-shrink: 0; }
+.tbar-btn:active { background: var(--gray-50); }
+.tbar-make { margin-left: auto; padding: 7px 18px; border: 2px solid var(--gray-300); border-radius: 100px; font-size: 15px; font-weight: 600; color: var(--gray-500); background: #fff; cursor: pointer; flex-shrink: 0; transition: border-color 0.2s, color 0.2s; }
+.tbar-make.active { border-color: var(--green); color: var(--green); }
+
+.ruler-row { display: flex; flex-shrink: 0; background: var(--gray-50); }
+.ruler-corner { width: 22px; height: 22px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
+.ruler-h { flex: 1; height: 22px; border-bottom: 1px solid var(--gray-200); overflow: hidden; }
+.canvas-body { display: flex; flex: 1; overflow: hidden; }
+.ruler-v { width: 22px; background: var(--gray-50); border-right: 1px solid var(--gray-200); flex-shrink: 0; overflow: hidden; }
+.canvas-scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; position: relative; background: #e0e0e0; }
+.canvas-scroll::-webkit-scrollbar { display: none; }
+.canvas-world { position: relative; width: 680px; height: 960px; }
+.sticker-sheet { position: absolute; background: #fff; border: 1px solid var(--gray-300); }
+.canvas-grid-overlay { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px); background-size: 48px 48px; }
+
+/* ── CANVAS FAB ── */
+.canvas-fab-wrap { position: absolute; bottom: 20px; right: 16px; z-index: 80; }
+.c-fab { width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,195,137,0.45); cursor: pointer; transition: background 0.18s, transform 0.18s; }
+.c-fab.open { background: var(--gray-900); }
+.fab-popup { position: absolute; bottom: 68px; right: 0; background: #fff; border-radius: 16px; padding: 6px 0; min-width: 164px; box-shadow: 0 4px 28px rgba(0,0,0,0.18); opacity: 0; pointer-events: none; transform: scale(0.92) translateY(10px); transform-origin: bottom right; transition: opacity 0.18s, transform 0.18s; }
+.fab-popup.open { opacity: 1; pointer-events: all; transform: scale(1) translateY(0); }
+.fab-popup-item { display: flex; align-items: center; gap: 14px; padding: 13px 20px; cursor: pointer; font-size: 16px; font-weight: 500; }
+.fab-popup-item:active { background: var(--gray-50); }
+.fab-popup-icon { width: 24px; text-align: center; flex-shrink: 0; }
+
+/* ── TRANSFORM UI ── */
+.el-wrapper { position: absolute; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; }
+.el-wrapper:active { cursor: grabbing; }
+.el-content { pointer-events: none; user-select: none; }
+.transform-ui { position: absolute; pointer-events: none; z-index: 55; }
+.t-border { position: absolute; border: 2px solid var(--green); pointer-events: none; }
+.t-size-label { position: absolute; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 100px; white-space: nowrap; pointer-events: none; }
+.t-rotate-btn { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1.5px solid var(--gray-300); box-shadow: 0 2px 10px rgba(0,0,0,0.14); display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: all; touch-action: none; }
+.t-corner { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid var(--green); pointer-events: all; touch-action: none; cursor: pointer; }
+.t-side-h { position: absolute; width: 40px; height: 16px; border-radius: 100px; background: #fff; border: 2px solid var(--green); pointer-events: all; touch-action: none; cursor: ns-resize; }
+.t-side-v { position: absolute; width: 16px; height: 40px; border-radius: 100px; background: #fff; border: 2px solid var(--green); pointer-events: all; touch-action: none; cursor: ew-resize; }
+.el-actions { position: absolute; z-index: 70; background: #fff; border-radius: 16px; padding: 12px 14px; display: flex; gap: 6px; box-shadow: 0 4px 24px rgba(0,0,0,0.16); pointer-events: all; }
+.el-action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 12px; cursor: pointer; border-radius: 10px; min-width: 56px; }
+.el-action-btn:active { background: var(--gray-50); }
+.el-action-btn .lbl { font-size: 11px; color: var(--gray-700); font-weight: 500; }
+
+/* ── BOTTOM EDIT BAR ── */
+.bottom-edit-bar { background: #fff; border-top: 1px solid var(--gray-100); padding: 6px 0 22px; flex-shrink: 0; display: none; }
+.bottom-edit-bar.visible { display: block; }
+.edit-tools-row { display: flex; overflow-x: auto; padding: 0 6px; gap: 2px; -webkit-overflow-scrolling: touch; }
+.edit-tools-row::-webkit-scrollbar { display: none; }
+.edit-tool { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 14px; cursor: pointer; border-radius: 10px; min-width: 58px; flex-shrink: 0; }
+.edit-tool:active { background: var(--gray-50); }
+.edit-tool-icon { font-size: 20px; line-height: 1; }
+.edit-tool-label { font-size: 10px; color: var(--gray-600); white-space: nowrap; font-weight: 500; }
+.color-dot { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--gray-300); }
+
+/* ── CONTENT SHEETS (templates / images / shapes) ── */
+.content-sheet-search { margin: 10px 16px 0; background: var(--gray-50); border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 8px; color: var(--gray-400); font-size: 15px; flex-shrink: 0; }
+.chip-row { display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; flex-shrink: 0; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip { padding: 6px 16px; border-radius: 100px; border: 1.5px solid var(--gray-300); font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; }
+.chip.on { border-color: var(--green); color: var(--green); background: var(--green-lt); }
+.content-count { padding: 0 16px 10px; font-size: 15px; font-weight: 600; flex-shrink: 0; }
+.content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; overflow-y: auto; flex: 1; }
+.content-card { border-radius: 12px; overflow: hidden; cursor: pointer; background: var(--gray-50); }
+.content-card-thumb { aspect-ratio: 3/4; background: linear-gradient(160deg, #ece8e0, #d8d0c0); display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; }
+.content-card-badge { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.85); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.content-card-label { padding: 8px; font-size: 11px; text-align: center; color: var(--gray-700); font-weight: 500; }
+
+/* ── MEATBALL SHEET (with sliding panel) ── */
+.meatball-title { font-size: 15px; font-weight: 700; text-align: center; padding: 4px 20px 8px; border-bottom: 1px solid var(--gray-100); flex-shrink: 0; }
+.meatball-row { display: flex; align-items: center; gap: 14px; padding: 15px 20px; border-bottom: 1px solid var(--gray-100); cursor: pointer; font-size: 16px; }
+.meatball-row:active { background: var(--gray-50); }
+.meatball-row .m-icon { font-size: 20px; width: 26px; text-align: center; color: var(--gray-600); }
+.meatball-row .m-arrow { margin-left: auto; color: var(--gray-400); }
+.meatball-row.disabled { color: var(--gray-400); cursor: default; }
+.meatball-row.disabled:active { background: transparent; }
+
+/* Sheet selector within meatball — slide panel */
+.meatball-inner { display: flex; transition: transform 0.3s cubic-bezier(.32,.72,0,1); }
+.meatball-panel { flex-shrink: 0; width: 100%; }
+.meatball-inner.show-sheets { transform: translateX(-100%); }
+
+/* Sheet row in meatball panel */
+.sheet-select-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px; border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+}
+.sheet-select-row:active { background: var(--gray-50); }
+.sheet-select-row.current { background: var(--green-lt); }
+.sheet-select-thumb { width: 42px; height: 52px; border-radius: 8px; background: var(--gray-50); border: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.sheet-select-info { flex: 1; }
+.sheet-select-name { font-size: 15px; font-weight: 600; }
+.sheet-select-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.sheet-select-check { color: var(--green); font-size: 18px; }
+
+/* ── CANVAS SETTINGS ── */
+.settings-header { padding: 12px 20px 12px; display: flex; align-items: center; border-bottom: 1px solid var(--gray-100); flex-shrink: 0; }
+.settings-back { color: var(--green); font-size: 20px; cursor: pointer; margin-right: 8px; }
+.settings-heading { flex: 1; text-align: center; font-size: 17px; font-weight: 700; padding-right: 28px; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--gray-100); font-size: 16px; }
+.toggle { width: 52px; height: 32px; border-radius: 100px; background: var(--green); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+.toggle::after { content: ''; position: absolute; width: 28px; height: 28px; border-radius: 50%; background: #fff; top: 2px; right: 2px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: right 0.2s; }
+.toggle.off { background: var(--gray-300); }
+.toggle.off::after { right: auto; left: 2px; }
+.settings-value { color: var(--green); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ════════════════ HOME SCREEN ════════════════ -->
+<div class="screen active" id="screen-home">
+  <div class="status-bar"><span>10:04</span><span>▲▲▲ 5G 93%</span></div>
+  <div class="home-topbar">
+    <div class="icon-btn">
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><rect y="0" width="20" height="2" rx="1" fill="#595959"/><rect y="6" width="20" height="2" rx="1" fill="#595959"/><rect y="12" width="20" height="2" rx="1" fill="#595959"/></svg>
+    </div>
+    <div class="icon-btn">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#595959" stroke-width="1.8"/><text x="11" y="15.5" font-size="11" text-anchor="middle" fill="#595959" font-weight="600">?</text></svg>
+    </div>
+    <div class="machine-label">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect x="1" y="3" width="16" height="10" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="4" y="0" width="10" height="4" rx="1" fill="#595959"/></svg>
+      <span>Scout</span>
+    </div>
+    <span class="canvas-link" onclick="showCanvas()">Canvas</span>
+  </div>
+  <div class="home-search">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#adadad" stroke-width="1.6"/><line x1="11" y1="11" x2="15" y2="15" stroke="#adadad" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>What are you looking for?</span>
+  </div>
+  <div class="home-scroll">
+    <div class="home-hero">
+      <div class="home-hero-wave"></div>
+      <h1>Hi Jiyoun,<br>what do you want<br>to make?</h1>
+    </div>
+    <div class="categories-row">
+      <div class="cat-item"><div class="cat-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="4" y="4" width="18" height="18" rx="2" stroke="white" stroke-width="2"/></svg></div><span class="cat-label">Iron On</span></div>
+      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M6 10l6-6 6 6" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="cat-label">Engrave</span></div>
+      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="white" stroke-width="2"/></svg></div><span class="cat-label">Vinyl Decal</span></div>
+      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3C9 3 6 6 6 9c0 4 6 12 6 12s6-8 6-12c0-3-3-6-6-6z" stroke="white" stroke-width="2"/></svg></div><span class="cat-label">Iron-On T-Shirt</span></div>
+      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="white" stroke-width="2"/><path d="M4 8h16" stroke="white" stroke-width="1.5"/></svg></div><span class="cat-label">Card</span></div>
+      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="white" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="cat-label">Sticker</span></div>
+    </div>
+    <div class="section-title">Start With a Free and Quick<br>Vinyl Decal!</div>
+    <div class="project-grid">
+      <div class="project-card"><div class="project-thumb">🐾<div class="project-thumb-badge">Paws-itively Ready...</div><div class="bookmark-btn">🔖</div></div></div>
+      <div class="project-card"><div class="project-thumb">📱<div class="project-thumb-badge">Please Hesitate to...</div><div class="bookmark-btn">🔖</div></div></div>
+      <div class="project-card"><div class="project-thumb">💭<div class="project-thumb-badge">Currently Overthin...</div><div class="bookmark-btn">🔖</div></div></div>
+      <div class="project-card"><div class="project-thumb">👾<div class="project-thumb-badge">Doodle Monsters...</div><div class="bookmark-btn">🔖</div></div></div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="home-bottom-nav">
+    <div class="nav-item active">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#00c389" stroke-width="1.8"/><rect x="8" y="13" width="6" height="7" rx="1" fill="#00c389"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#adadad" stroke-width="1.8"/><path d="M8 11l2 2 4-4" stroke="#adadad" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Subscription</span>
+    </div>
+    <div class="nav-fab-wrap">
+      <div class="nav-fab" onclick="openStep1()">+</div>
+    </div>
+    <div class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="3" stroke="#adadad" stroke-width="1.8"/><path d="M7 8h8M7 12h6" stroke="#adadad" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>My Stuff</span>
+    </div>
+    <div class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="5" cy="11" r="2" fill="#adadad"/><circle cx="11" cy="11" r="2" fill="#adadad"/><circle cx="17" cy="11" r="2" fill="#adadad"/></svg>
+      <span>More</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ NEW PROJECT — STEP 1 (Type choice) ════════════════ -->
+<div class="overlay hidden" id="np-step1-overlay" onclick="closeStep1(event)">
+  <div class="sheet" onclick="event.stopPropagation()" style="padding-bottom:28px;">
+    <div class="sheet-bar">
+      <div class="sheet-pill"></div>
+      <div class="sheet-x-btn" onclick="closeStep1()">✕</div>
+    </div>
+    <div style="padding:16px 16px 0;font-size:20px;font-weight:700;font-family:var(--font-display);">New Project</div>
+    <div class="np-type-row">
+      <!-- Sticker -->
+      <div class="np-type-card" onclick="openStep2()">
+        <div class="np-type-thumb">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="8" y="4" width="64" height="92" rx="6" fill="#f5f5f5" stroke="#ddd" stroke-width="1.5"/>
+            <circle cx="26" cy="28" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
+            <circle cx="54" cy="28" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
+            <circle cx="26" cy="54" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
+            <circle cx="54" cy="54" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
+            <circle cx="26" cy="80" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
+            <circle cx="54" cy="80" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
+          </svg>
+        </div>
+        <div class="np-type-label">Sticker</div>
+      </div>
+      <!-- Photo -->
+      <div class="np-type-card">
+        <div class="np-type-thumb">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="8" y="4" width="64" height="92" rx="6" fill="#f5f5f5" stroke="#ddd" stroke-width="1.5"/>
+            <rect x="14" y="12" width="52" height="38" rx="4" fill="#e0e8f0" stroke="#b0c4d8" stroke-width="1"/>
+            <circle cx="26" cy="26" r="6" fill="#b0c4d8"/>
+            <path d="M14 38l14-12 12 10 8-6 18 8" stroke="#8aabbf" stroke-width="1.5" fill="none"/>
+            <rect x="14" y="58" width="52" height="30" rx="4" fill="#e0e8f0" stroke="#b0c4d8" stroke-width="1"/>
+            <circle cx="26" cy="70" r="5" fill="#b0c4d8"/>
+            <path d="M14 76l10-8 10 8 10-6 22 6" stroke="#8aabbf" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="np-type-label">Photo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ NEW PROJECT — STEP 2 (Sheet selection) ════════════════ -->
+<div class="overlay hidden" id="np-step2-overlay" onclick="closeStep2(event)">
+  <div class="sheet" onclick="event.stopPropagation()" style="max-height:88%;">
+    <div class="sheet-bar">
+      <div class="sheet-pill"></div>
+      <div class="sheet-x-btn" onclick="closeStep2()">✕</div>
+    </div>
+
+    <!-- Header with back -->
+    <div class="np-header">
+      <span class="np-back" onclick="backToStep1()">‹</span>
+      <span class="np-title">Sticker</span>
+    </div>
+
+    <!-- Paper size info row -->
+    <div class="np-info-row">
+      <div class="np-info-left">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#3366cc" stroke-width="1.5"/><line x1="8" y1="7" x2="8" y2="12" stroke="#3366cc" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.8" fill="#3366cc"/></svg>
+        <span class="np-info-text">4 × 7 inches sheet</span>
+      </div>
+      <div class="np-shop-btn">Shop ›</div>
+    </div>
+
+    <!-- Section title -->
+    <div class="np-section-title">Scout Sticker Sheets</div>
+
+    <!-- Sheet cards — horizontal scroll -->
+    <div class="np-sheets-row" id="np-sheets-row">
+
+      <!-- Blank -->
+      <div class="np-sheet-card" onclick="selectSheet('blank')" data-sheet="blank">
+        <div class="np-sheet-thumb">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="8" y="4" width="64" height="92" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="np-sheet-name">Blank sticker sheet</div>
+        <div class="np-sheet-desc">&nbsp;</div>
+      </div>
+
+      <!-- 6 Circles -->
+      <div class="np-sheet-card" onclick="selectSheet('circles')" data-sheet="circles">
+        <div class="np-sheet-thumb">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="4" y="2" width="72" height="96" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
+            <circle cx="24" cy="22" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <circle cx="56" cy="22" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <circle cx="24" cy="50" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <circle cx="56" cy="50" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <circle cx="24" cy="78" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <circle cx="56" cy="78" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+          </svg>
+        </div>
+        <div class="np-sheet-name">6 Circles</div>
+        <div class="np-sheet-desc">2×3 grid, 38mm circles</div>
+      </div>
+
+      <!-- 5 Rectangles -->
+      <div class="np-sheet-card" onclick="selectSheet('rectangles')" data-sheet="rectangles">
+        <div class="np-sheet-thumb">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="4" y="2" width="72" height="96" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
+            <rect x="12" y="10" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="12" y="28" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="12" y="46" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="12" y="64" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="12" y="82" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+          </svg>
+        </div>
+        <div class="np-sheet-name">5 Rectangles</div>
+        <div class="np-sheet-desc">Stacked, 67mm wide</div>
+      </div>
+
+      <!-- 6 Squares -->
+      <div class="np-sheet-card" onclick="selectSheet('squares')" data-sheet="squares">
+        <div class="np-sheet-thumb">
+          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
+            <rect x="4" y="2" width="72" height="96" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
+            <rect x="10" y="8" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="44" y="8" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="10" y="38" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="44" y="38" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="10" y="68" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+            <rect x="44" y="68" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
+          </svg>
+        </div>
+        <div class="np-sheet-name">6 Squares</div>
+        <div class="np-sheet-desc">2×3 grid, 38mm squares</div>
+      </div>
+
+    </div><!-- end sheets row -->
+
+    <button class="btn-full" id="np-start-btn" onclick="startDesigning()" disabled
+      style="opacity:0.4;cursor:not-allowed;margin-top:16px;">
+      Start Designing
+    </button>
+  </div>
+</div>
+
+
+<!-- ════════════════ CANVAS SCREEN ════════════════ -->
+<div class="screen" id="screen-canvas">
+  <div class="status-bar" style="background:#fff;"><span>10:06</span><span>▲▲▲ 5G 93%</span></div>
+  <div class="canvas-topbar">
+    <div class="tbar-btn" onclick="showScreen('screen-home')">
+      <svg width="12" height="20" viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#595959" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="tbar-btn" onclick="openMeatball()">
+      <svg width="18" height="4" viewBox="0 0 18 4" fill="none"><circle cx="2" cy="2" r="2" fill="#595959"/><circle cx="9" cy="2" r="2" fill="#595959"/><circle cx="16" cy="2" r="2" fill="#595959"/></svg>
+    </div>
+    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="14" height="16" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="5" y="1" width="14" height="16" rx="2" stroke="#595959" stroke-width="1.6" fill="white"/></svg></div>
+    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="6" y="2" width="8" height="6" rx="1" fill="#595959"/><rect x="5" y="11" width="10" height="7" rx="1" fill="#595959"/></svg></div>
+    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 8H14a4 4 0 010 8H8" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8L7 5M4 8l3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16 8H6a4 4 0 000 8h6" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M16 8l-3-3M16 8l-3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 14l8 4 8-4M2 10l8 4 8-4M10 2L2 6l8 4 8-4-8-4z" stroke="#595959" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+    <button class="tbar-make" id="make-btn">Make</button>
+  </div>
+  <div class="ruler-row">
+    <div class="ruler-corner"></div>
+    <div class="ruler-h"><canvas id="ruler-h-canvas" height="22"></canvas></div>
+  </div>
+  <div class="canvas-body">
+    <div class="ruler-v"><canvas id="ruler-v-canvas" width="22"></canvas></div>
+    <div class="canvas-scroll" id="canvas-scroll">
+      <div class="canvas-world" id="canvas-world">
+        <div class="canvas-grid-overlay"></div>
+        <div class="sticker-sheet" id="sticker-sheet"></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-edit-bar" id="bottom-edit-bar">
+    <div class="edit-tools-row" id="edit-tools-row"></div>
+  </div>
+  <div class="canvas-fab-wrap">
+    <div class="fab-popup" id="fab-popup">
+      <div class="fab-popup-item" onclick="openContentSheet('templates')"><span class="fab-popup-icon">🖼️</span>Templates</div>
+      <div class="fab-popup-item" onclick="openContentSheet('images')"><span class="fab-popup-icon">🌅</span>Image</div>
+      <div class="fab-popup-item" onclick="openContentSheet('shapes')"><span class="fab-popup-icon">△</span>Shape</div>
+      <div class="fab-popup-item" onclick="addText()"><span class="fab-popup-icon" style="font-weight:700;font-size:18px;">T</span>Text</div>
+      <div class="fab-popup-item"><span class="fab-popup-icon">✦</span>Create AI</div>
+      <div class="fab-popup-item"><span class="fab-popup-icon">⬆</span>Upload</div>
+    </div>
+    <div class="c-fab" id="c-fab" onclick="toggleFab()">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><line x1="14" y1="4" x2="14" y2="24" stroke="white" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="14" x2="24" y2="14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ CONTENT SHEET (Templates / Images / Shapes) ════════════════ -->
+<div class="overlay hidden" id="content-overlay" onclick="closeContentSheet(event)">
+  <div class="sheet" style="max-height:85%;" onclick="event.stopPropagation()">
+    <div class="sheet-bar"><div class="sheet-pill"></div><span class="sheet-close-btn" onclick="closeContentSheet()">Close</span></div>
+    <div class="sheet-heading" id="content-sheet-title">Templates</div>
+    <div class="content-sheet-search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#adadad" stroke-width="1.6"/><line x1="11" y1="11" x2="15" y2="15" stroke="#adadad" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span id="content-search-ph">Search templates</span>
+    </div>
+    <div class="chip-row">
+      <div class="chip on" onclick="toggleChip(this)">Free</div>
+      <div class="chip" onclick="toggleChip(this)">Paid</div>
+      <div class="chip" onclick="toggleChip(this)">Premium</div>
+    </div>
+    <div class="content-count" id="content-count">Templates (403)</div>
+    <div class="content-grid" id="content-grid"></div>
+    <div style="height:8px;flex-shrink:0;"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════ MEATBALL SHEET (with sliding sheet panel) ════════════════ -->
+<div class="overlay hidden" id="meatball-overlay" onclick="closeMeatball(event)">
+  <div class="sheet" onclick="event.stopPropagation()" style="max-height:90%;overflow:hidden;">
+    <div class="sheet-bar" style="flex-shrink:0;"><div class="sheet-pill"></div></div>
+
+    <!-- Sliding inner panels -->
+    <div class="meatball-inner" id="meatball-inner" style="overflow:hidden;flex:1;min-height:0;">
+
+      <!-- Panel 1: Main menu -->
+      <div class="meatball-panel" style="overflow-y:auto;">
+        <div class="meatball-title">Untitled – <span id="meatball-sheet-label">Sticker</span></div>
+        <div class="meatball-row disabled"><span class="m-icon">💾</span>Save</div>
+        <div class="meatball-row disabled"><span class="m-icon">💾</span>Save As...</div>
+        <div class="meatball-row"><span class="m-icon">📷</span>Camera</div>
+        <div style="height:8px;background:var(--gray-50);flex-shrink:0;"></div>
+
+        <!-- Selected sheet row (tappable → slide to sheet selector) -->
+        <div class="meatball-row" id="meatball-sheet-row" onclick="openSheetSelector()">
+          <span class="m-icon" style="font-size:18px;">
+            <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><rect x="1" y="1" width="18" height="22" rx="3" stroke="#6e6e6e" stroke-width="1.6"/><line x1="5" y1="7" x2="15" y2="7" stroke="#6e6e6e" stroke-width="1.2" stroke-linecap="round"/><line x1="5" y1="11" x2="15" y2="11" stroke="#6e6e6e" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </span>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;" id="meatball-sheet-name">—</div>
+            <div style="font-size:12px;color:var(--gray-500);" id="meatball-sheet-desc">Tap to change</div>
+          </div>
+          <span class="m-arrow">›</span>
+        </div>
+
+        <div class="meatball-row"><span class="m-icon">📋</span>Assembly Instructions</div>
+        <div class="meatball-row"><span class="m-icon">❓</span>Cricut Help</div>
+        <div class="meatball-row"><span class="m-icon">🖨️</span>My Machine: <b style="margin-left:4px;">Scout-00FB</b></div>
+        <div class="meatball-row" onclick="openCanvasSettings()"><span class="m-icon">⚙️</span>Canvas Settings<span class="m-arrow">›</span></div>
+        <div style="height:8px;"></div>
+      </div>
+
+      <!-- Panel 2: Sheet selector -->
+      <div class="meatball-panel" style="overflow-y:auto;">
+        <div class="settings-header" style="border-bottom:1px solid var(--gray-100);">
+          <span class="settings-back" onclick="closeSheetSelector()">‹</span>
+          <span class="settings-heading">Sheet Type</span>
+        </div>
+        <div id="meatball-sheet-list"><!-- populated by JS --></div>
+        <div style="height:16px;"></div>
+      </div>
+
+    </div><!-- end meatball-inner -->
+  </div>
+</div>
+
+
+<!-- ════════════════ CANVAS SETTINGS SHEET ════════════════ -->
+<div class="overlay hidden" id="settings-overlay" onclick="closeSettings(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="settings-header">
+      <span class="settings-back" onclick="closeSettings()">‹</span>
+      <span class="settings-heading">Canvas Settings</span>
+    </div>
+    <div class="settings-row"><span>Grid</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+    <div class="settings-row"><span>Light Mode</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+    <div class="settings-row"><span>Operation Types</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+    <div class="settings-row"><span>Snap to Align</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+    <div class="settings-row"><span>Units</span><span class="settings-value">Imperial</span></div>
+    <div style="height:16px;"></div>
+  </div>
+</div>
+
+
+<script>
+// ─────────────────── SHEET DEFINITIONS ───────────────────
+const SHEETS = {
+  blank:      { name: 'Blank sticker sheet', desc: '', shortDesc: '' },
+  circles:    { name: '6 Circles',           desc: '2×3 grid, 38mm circles', shortDesc: '2×3 grid, 38mm' },
+  rectangles: { name: '5 Rectangles',        desc: 'Stacked, 67mm wide',     shortDesc: 'Stacked, 67mm' },
+  squares:    { name: '6 Squares',           desc: '2×3 grid, 38mm squares', shortDesc: '2×3 grid, 38mm' },
+};
+
+// Mini SVGs for meatball sheet list thumbnails
+const SHEET_THUMBS = {
+  blank: `<svg width="30" height="38" viewBox="0 0 30 38" fill="none"><rect x="1" y="1" width="28" height="36" rx="3" fill="white" stroke="#ddd" stroke-width="1.2"/></svg>`,
+  circles: `<svg width="30" height="38" viewBox="0 0 30 38" fill="none"><rect x="1" y="1" width="28" height="36" rx="3" fill="white" stroke="#ddd" stroke-width="1.2"/><circle cx="9" cy="10" r="5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><circle cx="21" cy="10" r="5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><circle cx="9" cy="19" r="5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><circle cx="21" cy="19" r="5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><circle cx="9" cy="28" r="5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><circle cx="21" cy="28" r="5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/></svg>`,
+  rectangles: `<svg width="30" height="38" viewBox="0 0 30 38" fill="none"><rect x="1" y="1" width="28" height="36" rx="3" fill="white" stroke="#ddd" stroke-width="1.2"/><rect x="4" y="5" width="22" height="5" rx="1.5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="4" y="12" width="22" height="5" rx="1.5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="4" y="19" width="22" height="5" rx="1.5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="4" y="26" width="22" height="5" rx="1.5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="4" y="33" width="22" height="5" rx="1.5" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/></svg>`,
+  squares: `<svg width="30" height="38" viewBox="0 0 30 38" fill="none"><rect x="1" y="1" width="28" height="36" rx="3" fill="white" stroke="#ddd" stroke-width="1.2"/><rect x="3" y="3" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="16" y="3" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="3" y="15" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="16" y="15" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="3" y="27" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="16" y="27" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/></svg>`,
+};
+
+// ─────────────────── STATE ───────────────────
+let selectedSheetType = null; // 'blank' | 'circles' | 'rectangles' | 'squares'
+let elements = [], elId = 0, selectedId = null, fabOpen = false;
+let canvasReady = false;
+
+// ─────────────────── NAVIGATION ───────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'screen-canvas' && !canvasReady) { canvasReady = true; drawRulers(); }
+}
+function showCanvas() { showScreen('screen-canvas'); }
+
+// ─────────────────── STEP 1 ───────────────────
+function openStep1() {
+  document.getElementById('np-step1-overlay').classList.remove('hidden');
+}
+function closeStep1(e) {
+  if (!e || e.target === document.getElementById('np-step1-overlay'))
+    document.getElementById('np-step1-overlay').classList.add('hidden');
+}
+
+// ─────────────────── STEP 2 ───────────────────
+function openStep2() {
+  document.getElementById('np-step1-overlay').classList.add('hidden');
+  // Reset selection
+  selectedSheetType = null;
+  document.querySelectorAll('.np-sheet-card').forEach(c => c.classList.remove('selected'));
+  const btn = document.getElementById('np-start-btn');
+  btn.disabled = true; btn.style.opacity = '0.4'; btn.style.cursor = 'not-allowed';
+  document.getElementById('np-step2-overlay').classList.remove('hidden');
+}
+function closeStep2(e) {
+  if (!e || e.target === document.getElementById('np-step2-overlay'))
+    document.getElementById('np-step2-overlay').classList.add('hidden');
+}
+function backToStep1() {
+  document.getElementById('np-step2-overlay').classList.add('hidden');
+  document.getElementById('np-step1-overlay').classList.remove('hidden');
+}
+
+function selectSheet(type) {
+  selectedSheetType = type;
+  document.querySelectorAll('.np-sheet-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.sheet === type);
+  });
+  const btn = document.getElementById('np-start-btn');
+  btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+}
+
+function startDesigning() {
+  if (!selectedSheetType) return;
+  document.getElementById('np-step2-overlay').classList.add('hidden');
+  buildSheet(selectedSheetType);
+  updateMeatballSheetLabel();
+  showScreen('screen-canvas');
+}
+
+// ─────────────────── CANVAS SHEET RENDERING ───────────────────
+function buildSheet(type) {
+  const sheet = document.getElementById('sticker-sheet');
+  // 4in × 7in at 72px/in = 288 × 504px
+  const W = 288, H = 504;
+  sheet.style.cssText = `left:50px;top:40px;width:${W}px;height:${H}px;`;
+
+  let html = '';
+  if (type === 'blank') {
+    html = ''; // just white sheet
+  }
+  else if (type === 'circles') {
+    // 2 cols × 3 rows, 38mm circles → 38/25.4*72 ≈ 107.7px, cap at 96px to fit
+    const d = 96, cols = 2, rows = 3;
+    const gx = (W - cols * d) / (cols + 1);
+    const gy = (H - rows * d) / (rows + 1);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const x = gx + c * (d + gx), y = gy + r * (d + gy);
+      html += `<div style="position:absolute;left:${x}px;top:${y}px;width:${d}px;height:${d}px;border-radius:50%;border:1px solid rgba(0,0,0,0.25);background:rgba(0,0,0,0.02);"></div>`;
+    }
+  }
+  else if (type === 'rectangles') {
+    // 5 stacked, 67mm wide → 67/25.4*72 ≈ 190px
+    const rW = 190, rH = 60, gap = 16;
+    const totalH = 5 * rH + 4 * gap;
+    const startY = (H - totalH) / 2;
+    const startX = (W - rW) / 2;
+    for (let i = 0; i < 5; i++) {
+      const y = startY + i * (rH + gap);
+      html += `<div style="position:absolute;left:${startX}px;top:${y}px;width:${rW}px;height:${rH}px;border-radius:8px;border:1px solid rgba(0,0,0,0.25);background:rgba(0,0,0,0.02);"></div>`;
+    }
+  }
+  else if (type === 'squares') {
+    // 2 cols × 3 rows of 38mm squares (same size as circles)
+    const d = 96, cols = 2, rows = 3;
+    const gx = (W - cols * d) / (cols + 1);
+    const gy = (H - rows * d) / (rows + 1);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const x = gx + c * (d + gx), y = gy + r * (d + gy);
+      html += `<div style="position:absolute;left:${x}px;top:${y}px;width:${d}px;height:${d}px;border-radius:10px;border:1px solid rgba(0,0,0,0.25);background:rgba(0,0,0,0.02);"></div>`;
+    }
+  }
+  sheet.innerHTML = html;
+}
+
+// ─────────────────── RULERS ───────────────────
+function drawRulers() {
+  const hc = document.getElementById('ruler-h-canvas');
+  hc.width = 390 - 22;
+  const hCtx = hc.getContext('2d');
+  hCtx.fillStyle = '#f5f5f5'; hCtx.fillRect(0, 0, hc.width, 22);
+  hCtx.strokeStyle = '#ccc'; hCtx.lineWidth = 0.5; hCtx.fillStyle = '#999'; hCtx.font = '8px -apple-system';
+  for (let i = 0; i <= 9; i++) {
+    const x = i * 72 + 28;
+    if (x > hc.width) continue;
+    hCtx.beginPath(); hCtx.moveTo(x, 12); hCtx.lineTo(x, 22); hCtx.stroke();
+    if (i > 0) hCtx.fillText(i, x + 2, 10);
+    for (let j = 1; j < 4; j++) { const sx = x + j * 18; hCtx.beginPath(); hCtx.moveTo(sx, 17); hCtx.lineTo(sx, 22); hCtx.stroke(); }
+  }
+  const vc = document.getElementById('ruler-v-canvas');
+  vc.height = 700;
+  const vCtx = vc.getContext('2d');
+  vCtx.fillStyle = '#f5f5f5'; vCtx.fillRect(0, 0, 22, vc.height);
+  vCtx.strokeStyle = '#ccc'; vCtx.lineWidth = 0.5; vCtx.fillStyle = '#999'; vCtx.font = '8px -apple-system';
+  for (let i = 0; i <= 10; i++) {
+    const y = i * 72 + 18;
+    if (y > vc.height) continue;
+    vCtx.beginPath(); vCtx.moveTo(12, y); vCtx.lineTo(22, y); vCtx.stroke();
+    if (i > 0) { vCtx.save(); vCtx.translate(10, y + 2); vCtx.rotate(-Math.PI/2); vCtx.fillText(i, 0, 0); vCtx.restore(); }
+  }
+}
+
+// ─────────────────── FAB ───────────────────
+function toggleFab() {
+  fabOpen = !fabOpen;
+  document.getElementById('c-fab').classList.toggle('open', fabOpen);
+  document.getElementById('fab-popup').classList.toggle('open', fabOpen);
+}
+function closeFab() {
+  fabOpen = false;
+  document.getElementById('c-fab').classList.remove('open');
+  document.getElementById('fab-popup').classList.remove('open');
+}
+
+// ─────────────────── CONTENT SHEET ───────────────────
+const sheetData = {
+  templates: { title:'Templates', ph:'Search templates', count:'Templates (403)', items:[{icon:'☕',label:'Kitchen Labels'},{icon:'📅',label:'Monthly 2027'},{icon:'🧴',label:'Toiletry Stickers'},{icon:'💝',label:"Mum's Stuff"},{icon:'📋',label:'To-Do List'},{icon:'💻',label:'Retro Computer'},{icon:'🌿',label:'Vintage Botanical'},{icon:'✝️',label:'Faith Journal'}] },
+  images:    { title:'Images',    ph:'Search images',    count:'Images (1,240)',   items:[{icon:'🌸',label:'Cherry Blossom'},{icon:'🦋',label:'Butterfly'},{icon:'⭐',label:'Stars Set'},{icon:'🌊',label:'Ocean Wave'},{icon:'🍄',label:'Mushroom'},{icon:'🌈',label:'Rainbow'},{icon:'🌙',label:'Crescent Moon'},{icon:'🌺',label:'Hibiscus'}] },
+  shapes:    { title:'Shapes',    ph:'Search shapes',    count:'Shapes (48)',      items:[{icon:'⬛',label:'Rectangle',shape:'rect'},{icon:'⬤',label:'Circle',shape:'circle'},{icon:'🔺',label:'Triangle',shape:'triangle'},{icon:'❤️',label:'Heart',shape:'heart'},{icon:'⭐',label:'Star',shape:'star'},{icon:'💎',label:'Diamond'},{icon:'🔷',label:'Hexagon'},{icon:'🌟',label:'Burst'}] },
+};
+function openContentSheet(type) {
+  closeFab();
+  const d = sheetData[type];
+  document.getElementById('content-sheet-title').textContent = d.title;
+  document.getElementById('content-search-ph').textContent = d.ph;
+  document.getElementById('content-count').textContent = d.count;
+  document.getElementById('content-grid').innerHTML = d.items.map(item =>
+    `<div class="content-card" onclick="addShapeFromSheet('${item.icon}','${item.label}')">
+      <div class="content-card-thumb">${item.icon}<div class="content-card-badge">a</div></div>
+      <div class="content-card-label">${item.label}</div>
+    </div>`
+  ).join('');
+  document.getElementById('content-overlay').classList.remove('hidden');
+}
+function closeContentSheet(e) {
+  if (!e || e.target === document.getElementById('content-overlay'))
+    document.getElementById('content-overlay').classList.add('hidden');
+}
+function toggleChip(el) {
+  document.querySelectorAll('#content-overlay .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ─────────────────── MEATBALL ───────────────────
+function updateMeatballSheetLabel() {
+  if (!selectedSheetType) return;
+  const s = SHEETS[selectedSheetType];
+  document.getElementById('meatball-sheet-label').textContent = s.name;
+  document.getElementById('meatball-sheet-name').textContent = s.name;
+  document.getElementById('meatball-sheet-desc').textContent = s.desc || 'Tap to change';
+}
+
+function openMeatball() {
+  // Reset to main panel
+  document.getElementById('meatball-inner').classList.remove('show-sheets');
+  document.getElementById('meatball-overlay').classList.remove('hidden');
+  // Build sheet list in panel 2
+  buildSheetSelectorList();
+}
+function closeMeatball(e) {
+  if (!e || e.target === document.getElementById('meatball-overlay'))
+    document.getElementById('meatball-overlay').classList.add('hidden');
+}
+
+function openSheetSelector() {
+  buildSheetSelectorList();
+  document.getElementById('meatball-inner').classList.add('show-sheets');
+}
+function closeSheetSelector() {
+  document.getElementById('meatball-inner').classList.remove('show-sheets');
+}
+
+function buildSheetSelectorList() {
+  const list = document.getElementById('meatball-sheet-list');
+  list.innerHTML = Object.entries(SHEETS).map(([key, s]) => `
+    <div class="sheet-select-row ${selectedSheetType === key ? 'current' : ''}" onclick="changeSheetType('${key}')">
+      <div class="sheet-select-thumb">${SHEET_THUMBS[key]}</div>
+      <div class="sheet-select-info">
+        <div class="sheet-select-name">${s.name}</div>
+        ${s.desc ? `<div class="sheet-select-desc">${s.desc}</div>` : ''}
+      </div>
+      ${selectedSheetType === key ? `<span class="sheet-select-check">✓</span>` : ''}
+    </div>
+  `).join('');
+}
+
+function changeSheetType(type) {
+  selectedSheetType = type;
+  buildSheet(type);
+  updateMeatballSheetLabel();
+  // Go back to main panel, then close
+  document.getElementById('meatball-inner').classList.remove('show-sheets');
+  setTimeout(() => {
+    document.getElementById('meatball-overlay').classList.add('hidden');
+  }, 320);
+}
+
+function openCanvasSettings() {
+  document.getElementById('settings-overlay').classList.remove('hidden');
+}
+function closeSettings(e) {
+  if (!e || e.target === document.getElementById('settings-overlay'))
+    document.getElementById('settings-overlay').classList.add('hidden');
+}
+
+// ─────────────────── ELEMENTS ───────────────────
+function addShapeFromSheet(icon, label) {
+  closeContentSheet();
+  const id = `el${elId++}`;
+  const el = { id, icon, label, x:80, y:80, w:120, h:120, rot:0, color:'#000', isText:false };
+  elements.push(el);
+  document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  selectEl(id);
+}
+function addText() {
+  closeFab();
+  const id = `el${elId++}`;
+  const el = { id, icon:'T', label:'Text', x:70, y:100, w:150, h:65, rot:0, color:'#000', isText:true };
+  elements.push(el);
+  document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  selectEl(id);
+}
+function makeElDiv(el) {
+  const div = document.createElement('div');
+  div.id = el.id; div.className = 'el-wrapper';
+  div.style.cssText = `left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;transform:rotate(${el.rot}deg);`;
+  div.innerHTML = el.isText
+    ? `<span class="el-content" style="font-size:42px;font-weight:900;font-family:serif;color:${el.color}">Text</span>`
+    : `<span class="el-content" style="font-size:64px;">${el.icon}</span>`;
+  div.addEventListener('pointerdown', e => { e.stopPropagation(); selectEl(el.id); startDrag(e, el.id); });
+  return div;
+}
+
+// ─────────────────── SELECT / DESELECT ───────────────────
+function selectEl(id) {
+  deselectAll();
+  selectedId = id;
+  const el = elements.find(e => e.id === id);
+  if (!el) return;
+  renderTransformUI(el);
+  renderEditBar(el);
+}
+function deselectAll() {
+  selectedId = null;
+  document.getElementById('__transform_ui')?.remove();
+  document.getElementById('__el_actions')?.remove();
+  document.getElementById('bottom-edit-bar').classList.remove('visible');
+}
+
+// ─────────────────── TRANSFORM UI ───────────────────
+function renderTransformUI(el) {
+  document.getElementById('__transform_ui')?.remove();
+  document.getElementById('__el_actions')?.remove();
+  const world = document.getElementById('canvas-world');
+  const pad = 2;
+  const sW = (el.w/72).toFixed(2), sH = (el.h/72).toFixed(2);
+
+  const ui = document.createElement('div');
+  ui.id = '__transform_ui'; ui.className = 'transform-ui';
+  ui.style.cssText = `left:${el.x-pad}px;top:${el.y-pad}px;width:${el.w+pad*2}px;height:${el.h+pad*2}px;`;
+  ui.innerHTML = `
+    <div class="t-border" style="inset:0;"></div>
+    <div class="t-size-label" style="top:-78px;left:50%;transform:translateX(-50%);">${sW} in × ${sH} in</div>
+    <div class="t-rotate-btn" id="rotate-handle" style="top:-48px;left:50%;transform:translateX(-50%);">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 102 8" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><path d="M13 4v4h-4" stroke="#595959" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="t-corner" style="top:0;left:0;transform:translate(-50%,-50%);cursor:nw-resize;" data-h="tl"></div>
+    <div class="t-corner" style="top:0;right:0;left:auto;transform:translate(50%,-50%);cursor:ne-resize;" data-h="tr"></div>
+    <div class="t-corner" style="bottom:0;top:auto;left:0;transform:translate(-50%,50%);cursor:sw-resize;" data-h="bl"></div>
+    <div class="t-corner" style="bottom:0;top:auto;right:0;left:auto;transform:translate(50%,50%);cursor:se-resize;" data-h="br"></div>
+    <div class="t-side-h" style="top:0;left:50%;transform:translate(-50%,-50%);"></div>
+    <div class="t-side-h" style="bottom:0;top:auto;left:50%;transform:translate(-50%,50%);"></div>
+    <div class="t-side-v" style="left:0;top:50%;transform:translate(-50%,-50%);"></div>
+    <div class="t-side-v" style="right:0;left:auto;top:50%;transform:translate(50%,-50%);"></div>
+  `;
+  world.appendChild(ui);
+  document.getElementById('rotate-handle')?.addEventListener('pointerdown', e => { e.stopPropagation(); startRotate(e, el.id); });
+  ui.querySelectorAll('.t-corner').forEach(h => h.addEventListener('pointerdown', e => { e.stopPropagation(); startResize(e, el.id, h.dataset.h); }));
+
+  const actions = document.createElement('div');
+  actions.id = '__el_actions'; actions.className = 'el-actions';
+  actions.style.cssText = `top:${el.y+el.h+16}px;left:${el.x+el.w/2}px;transform:translateX(-50%);`;
+  actions.innerHTML = `
+    <div class="el-action-btn" onclick="deleteEl('${el.id}')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polyline points="3,6 19,6" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/><path d="M8 6V4h6v2" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/><rect x="5" y="6" width="12" height="13" rx="2" stroke="#1e1e1e" stroke-width="1.8"/></svg>
+      <span class="lbl">Delete</span>
+    </div>
+    <div class="el-action-btn" onclick="duplicateEl('${el.id}')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="#1e1e1e" stroke-width="1.8"/><path d="M6 14H4a2 2 0 01-2-2V4a2 2 0 012-2h8a2 2 0 012 2v2" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="lbl">Duplicate</span>
+    </div>
+    ${!el.isText ? `<div class="el-action-btn">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#1e1e1e" stroke-width="1.8"/><path d="M7 11c1-3 7-3 8 0s-7 3-8 0z" stroke="#1e1e1e" stroke-width="1.6"/></svg>
+      <span class="lbl">Sticker</span>
+    </div>` : ''}
+  `;
+  world.appendChild(actions);
+}
+
+function updateTransformUI(el) {
+  const ui = document.getElementById('__transform_ui');
+  const actions = document.getElementById('__el_actions');
+  const pad = 2;
+  if (ui) { ui.style.cssText = `left:${el.x-pad}px;top:${el.y-pad}px;width:${el.w+pad*2}px;height:${el.h+pad*2}px;`; const lbl = ui.querySelector('.t-size-label'); if (lbl) lbl.textContent = `${(el.w/72).toFixed(2)} in × ${(el.h/72).toFixed(2)} in`; }
+  if (actions) actions.style.cssText = `top:${el.y+el.h+16}px;left:${el.x+el.w/2}px;transform:translateX(-50%);`;
+  const div = document.getElementById(el.id);
+  if (div) { div.style.left=el.x+'px'; div.style.top=el.y+'px'; div.style.width=el.w+'px'; div.style.height=el.h+'px'; div.style.transform=`rotate(${el.rot}deg)`; }
+  document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
+}
+
+// ─────────────────── DRAG / RESIZE / ROTATE ───────────────────
+function startDrag(e, id) {
+  e.preventDefault();
+  const el = elements.find(e => e.id === id); if (!el) return;
+  const sx = e.clientX, sy = e.clientY, ox = el.x, oy = el.y;
+  const onMove = e => { el.x = ox+(e.clientX-sx); el.y = oy+(e.clientY-sy); updateTransformUI(el); };
+  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
+}
+function startResize(e, id, corner) {
+  e.preventDefault();
+  const el = elements.find(e => e.id === id); if (!el) return;
+  const sx = e.clientX, sy = e.clientY, ox=el.x, oy=el.y, ow=el.w, oh=el.h, min=40;
+  const onMove = e => {
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if (corner==='br') { el.w=Math.max(min,ow+dx); el.h=Math.max(min,oh+dy); }
+    else if (corner==='bl') { const nw=Math.max(min,ow-dx); el.x=ox+(ow-nw); el.w=nw; el.h=Math.max(min,oh+dy); }
+    else if (corner==='tr') { el.w=Math.max(min,ow+dx); const nh=Math.max(min,oh-dy); el.y=oy+(oh-nh); el.h=nh; }
+    else if (corner==='tl') { const nw=Math.max(min,ow-dx),nh=Math.max(min,oh-dy); el.x=ox+(ow-nw); el.y=oy+(oh-nh); el.w=nw; el.h=nh; }
+    updateTransformUI(el);
+  };
+  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
+}
+function startRotate(e, id) {
+  e.preventDefault();
+  const el = elements.find(e => e.id === id); if (!el) return;
+  const cx=el.x+el.w/2, cy=el.y+el.h/2;
+  const angle = (ex,ey) => Math.atan2(ey-cy, ex-cx)*180/Math.PI;
+  const sa=angle(e.clientX,e.clientY), sr=el.rot;
+  const onMove = e => { el.rot=sr+(angle(e.clientX,e.clientY)-sa); document.getElementById(el.id).style.transform=`rotate(${el.rot}deg)`; };
+  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
+}
+
+// ─────────────────── EDIT BAR ───────────────────
+function renderEditBar(el) {
+  const tools = el.isText
+    ? [{icon:`<div class="color-dot" style="background:${el.color};"></div>`,label:'Color'},{icon:'↔↕',label:'Size'},{icon:'<b style="font-family:serif;font-size:16px;">T</b>',label:'Font'},{icon:'<span style="font-size:13px;font-weight:600;">72</span>',label:'Font Size'},{icon:'Aa',label:'Font Style'}]
+    : [{icon:`<div class="color-dot" style="background:${el.color};"></div>`,label:'Color'},{icon:'↔↕',label:'Size'},{icon:'⧉',label:'Arrange'},{icon:'⬔',label:'Flip'},{icon:'<i>fx</i>',label:'Effects'}];
+  document.getElementById('edit-tools-row').innerHTML = tools.map(t => `<div class="edit-tool"><div class="edit-tool-icon">${t.icon}</div><div class="edit-tool-label">${t.label}</div></div>`).join('');
+  document.getElementById('bottom-edit-bar').classList.add('visible');
+}
+
+// ─────────────────── DELETE / DUPLICATE ───────────────────
+function deleteEl(id) { document.getElementById(id)?.remove(); elements=elements.filter(e=>e.id!==id); deselectAll(); document.getElementById('make-btn')?.classList.toggle('active',elements.length>0); }
+function duplicateEl(id) { const el=elements.find(e=>e.id===id); if(!el) return; const nid=`el${elId++}`; const nel={...el,id:nid,x:el.x+20,y:el.y+20}; elements.push(nel); document.getElementById('canvas-world').appendChild(makeElDiv(nel)); selectEl(nid); }
+
+// ─────────────────── DESELECT ON CANVAS TAP ───────────────────
+document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
+  if ([document.getElementById('canvas-scroll'), document.getElementById('canvas-world'), document.getElementById('sticker-sheet')].includes(e.target) || e.target.classList.contains('canvas-grid-overlay')) { deselectAll(); closeFab(); }
+});
+document.addEventListener('touchmove', e => {
+  if (e.target.closest('.t-corner,.t-side-h,.t-side-v,.t-rotate-btn,.el-wrapper')) e.preventDefault();
+}, { passive: false });
+</script>
+</body>
+</html>
