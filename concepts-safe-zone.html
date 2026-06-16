@@ -790,121 +790,172 @@ body {
 
 
 <!-- ── MARKET REFERENCE ── -->
+<style>
+.ref-card { background:white; border-radius:14px; border:1.5px solid #ebebeb; overflow:hidden; }
+.ref-img-wrap { height:160px; background:#e8e8e8; overflow:hidden; position:relative; }
+.ref-img-wrap img { width:100%; height:100%; object-fit:cover; object-position:top left; display:block; }
+.ref-img-source { position:absolute; bottom:6px; right:8px; background:rgba(0,0,0,0.6); color:white; font-size:10px; font-weight:600; padding:3px 9px; border-radius:10px; text-decoration:none; }
+.ref-img-source:hover { background:rgba(0,0,0,0.85); }
+.ref-img-placeholder { height:100%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#8e8e8e; flex-direction:column; gap:6px; }
+.ref-body { padding:20px; }
+.ref-app-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.ref-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ref-app-name { font-size:13px; font-weight:700; }
+.ref-app-tag { font-size:11px; color:#8e8e8e; }
+.ref-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.ref-list li { font-size:13px; color:#595959; display:flex; align-items:flex-start; gap:6px; line-height:1.5; }
+</style>
 <div class="section-label" style="padding-top:0;">How Other Apps Handle It</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 48px 32px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding:0 48px 32px;">
 
   <!-- Cricut Design Space -->
-  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:#006647;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3,8 Q8,2 13,8 Q8,14 3,8Z" fill="white"/></svg>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;">Cricut Design Space</div>
-        <div style="font-size:11px;color:#8e8e8e;">Mat-as-canvas metaphor</div>
-      </div>
+  <div class="ref-card">
+    <div class="ref-img-wrap">
+      <img src="https://www.daydreamintoreality.com/wp-content/uploads/2025/02/Cricut-Design-Space-Interface.png"
+           alt="Cricut Design Space canvas interface screenshot"
+           referrerpolicy="no-referrer" loading="lazy"
+           onerror="this.outerHTML='<div class=\'ref-img-placeholder\'>📷 Screenshot: Cricut Design Space canvas</div>'">
+      <a class="ref-img-source" href="https://daydreamintoreality.com/cricut-design-space-canvas-tutorial/" target="_blank" rel="noopener">daydreamintoreality.com ↗</a>
     </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>The physical cutting mat IS the canvas — grid pattern, exact mat dimensions</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>Mat edge = hard boundary. Nothing visible beyond mat boundary in the editor</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>No safe zone overlay — relies on users understanding physical machine limits</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> make the sheet feel physically real, not abstract</li>
-    </ul>
+    <div class="ref-body">
+      <div class="ref-app-row">
+        <div class="ref-icon" style="background:#006647;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3,8 Q8,2 13,8 Q8,14 3,8Z" fill="white"/></svg>
+        </div>
+        <div><div class="ref-app-name">Cricut Design Space</div><div class="ref-app-tag">Mat-as-canvas metaphor</div></div>
+      </div>
+      <ul class="ref-list">
+        <li><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>Physical cutting mat IS the canvas — grid pattern matches real mat dimensions</li>
+        <li><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>Mat edge = hard boundary. Nothing visible beyond it in the editor</li>
+        <li><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>No safe zone overlay — trusts users to know physical machine limits</li>
+        <li><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span><strong>Steal:</strong> make the sheet feel physically real, not a floating rectangle</li>
+      </ul>
+    </div>
   </div>
 
-  <!-- Sticker Mule -->
-  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:#f5a623;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="white"/></svg>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;">Sticker Mule</div>
-        <div style="font-size:11px;color:#8e8e8e;">Three-zone print template</div>
-      </div>
+  <!-- Sticker Mule / Print industry standard -->
+  <div class="ref-card">
+    <div class="ref-img-wrap">
+      <img src="https://s1-ecp.signs.com/6720/2429x1488/What%20are%20Safe%20Zones%20and%20Bleed%20Areas.jpg"
+           alt="Safe zone and bleed area diagram"
+           referrerpolicy="no-referrer" loading="lazy"
+           onerror="this.outerHTML='<div class=\'ref-img-placeholder\'>📷 Safe zone / bleed diagram (signs.com)</div>'">
+      <a class="ref-img-source" href="https://www.stickermule.com/support/what-are-your-artwork-requirements-for-stickers-and-labels" target="_blank" rel="noopener">stickermule.com ↗</a>
     </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Upload-first flow — you bring the art, they apply the template overlay at review</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Three concentric dashed lines: Bleed (outer) / Cut line (mid) / Safe zone (inner)</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Industry-standard terminology — assumes print-savvy users</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> Concept 08's dual-line approach directly adapts this</li>
-    </ul>
+    <div class="ref-body">
+      <div class="ref-app-row">
+        <div class="ref-icon" style="background:#f5a623;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="white"/></svg>
+        </div>
+        <div><div class="ref-app-name">Sticker Mule</div><div class="ref-app-tag">Three-zone print template</div></div>
+      </div>
+      <ul class="ref-list">
+        <li><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Upload-first — you bring the art, they apply a template overlay at review</li>
+        <li><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Three concentric lines: Bleed (outer) / Cut line (mid) / Safe zone (inner)</li>
+        <li><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Industry-standard terminology — designed for print-savvy users</li>
+        <li><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span><strong>Steal:</strong> Concept 08 adapts this dual-line cut/safe convention directly</li>
+      </ul>
+    </div>
   </div>
 
   <!-- Figma -->
-  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:#1e1e1e;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="2" width="4" height="4" rx="1" fill="#ff7262"/><rect x="8" y="2" width="4" height="4" rx="1" fill="#1abcfe"/><rect x="4" y="6" width="4" height="4" rx="1" fill="#a259ff"/><rect x="4" y="10" width="4" height="4" rx="1" fill="#0acf83"/><circle cx="10" cy="10" r="2" fill="#ff7262"/></svg>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;">Figma</div>
-        <div style="font-size:11px;color:#8e8e8e;">Infinite canvas + clip-to-frame</div>
-      </div>
+  <div class="ref-card">
+    <div class="ref-img-wrap">
+      <img src="https://www.delasign.com/CDN/images/How-to-clip-content-to-a-frame-or-allow-it-to-overflow-in-Figma.webp"
+           alt="Figma clip content to frame screenshot"
+           referrerpolicy="no-referrer" loading="lazy"
+           onerror="this.outerHTML='<div class=\'ref-img-placeholder\'>📷 Screenshot: Figma clip content + frame</div>'">
+      <a class="ref-img-source" href="https://www.delasign.com/blog/figma-frame-clip-content/" target="_blank" rel="noopener">delasign.com ↗</a>
     </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>Infinite gray canvas — frames (components) are the print boundaries</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>Content outside frame: visible in design view, excluded from export by default</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>"Clip content" toggle: frame can optionally hide everything outside its bounds</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> frame title + dimensions label above the working area</li>
-    </ul>
+    <div class="ref-body">
+      <div class="ref-app-row">
+        <div class="ref-icon" style="background:#1e1e1e;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="2" width="4" height="4" rx="1" fill="#ff7262"/><rect x="8" y="2" width="4" height="4" rx="1" fill="#1abcfe"/><rect x="4" y="6" width="4" height="4" rx="1" fill="#a259ff"/><rect x="4" y="10" width="4" height="4" rx="1" fill="#0acf83"/><circle cx="10" cy="10" r="2" fill="#ff7262"/></svg>
+        </div>
+        <div><div class="ref-app-name">Figma</div><div class="ref-app-tag">Infinite canvas + clip-to-frame</div></div>
+      </div>
+      <ul class="ref-list">
+        <li><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>Infinite gray canvas — frames are the print/export boundaries</li>
+        <li><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>Content outside frame: visible in design, excluded from export</li>
+        <li><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>"Clip content" toggle hides overflow from the frame edge</li>
+        <li><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span><strong>Steal:</strong> frame name + dimension label above the working area</li>
+      </ul>
+    </div>
   </div>
 
   <!-- Adobe Illustrator -->
-  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:#ff6b00;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><text x="2" y="13" font-size="12" font-weight="900" fill="white">Ai</text></svg>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;">Adobe Illustrator</div>
-        <div style="font-size:11px;color:#8e8e8e;">Artboard + gray pasteboard</div>
-      </div>
+  <div class="ref-card">
+    <div class="ref-img-wrap">
+      <img src="https://s1-ecp.signs.com/6722/2429x1488/How%20to%20Add%20Bleed%20Areas%20in%20Adobe%20Illustrator%20Step%202.jpg"
+           alt="Adobe Illustrator artboard with bleed areas screenshot"
+           referrerpolicy="no-referrer" loading="lazy"
+           onerror="this.outerHTML='<div class=\'ref-img-placeholder\'>📷 Screenshot: Illustrator artboard + bleed</div>'">
+      <a class="ref-img-source" href="https://www.signs.com/how-to-add-safe-zones-and-bleed-areas-in-adobe-photoshop-and-adobe-illustrator.html" target="_blank" rel="noopener">signs.com ↗</a>
     </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>White artboard = print area. Gray pasteboard = staging zone, never prints</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>Crisp hairline border around artboard. Name + size label above it</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>Separate bleed indicators (View → Show Bleed) shown as red dashed lines</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> Concept 07 adapts this directly — the basis for that concept</li>
-    </ul>
+    <div class="ref-body">
+      <div class="ref-app-row">
+        <div class="ref-icon" style="background:#ff6b00;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><text x="2" y="13" font-size="12" font-weight="900" fill="white">Ai</text></svg>
+        </div>
+        <div><div class="ref-app-name">Adobe Illustrator</div><div class="ref-app-tag">Artboard + gray pasteboard</div></div>
+      </div>
+      <ul class="ref-list">
+        <li><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>White artboard = print area. Gray pasteboard = staging zone, never prints</li>
+        <li><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>Crisp hairline border around artboard with name + size label above</li>
+        <li><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>Bleed shown as red dashed lines outside artboard edge (View → Show Bleed)</li>
+        <li><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span><strong>Steal:</strong> Concept 07 is a direct mobile translation of this model</li>
+      </ul>
+    </div>
   </div>
 
   <!-- Procreate -->
-  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4,12 Q8,4 12,12" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;">Procreate</div>
-        <div style="font-size:11px;color:#8e8e8e;">Drawing Guide toggle</div>
-      </div>
+  <div class="ref-card">
+    <div class="ref-img-wrap">
+      <img src="https://cdn.sanity.io/images/skm640rd/production/d5ab48a9759a5a580a47d8b1522bbe63d87e6a89-2444x1832.jpg"
+           alt="Procreate Drawing Guide 2D grid overlay screenshot"
+           referrerpolicy="no-referrer" loading="lazy"
+           onerror="this.outerHTML='<div class=\'ref-img-placeholder\'>📷 Screenshot: Procreate Drawing Guide</div>'">
+      <a class="ref-img-source" href="https://procreate.com/insight/2018/drawing-guides" target="_blank" rel="noopener">procreate.com ↗</a>
     </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Canvas = full work area. "Drawing Guide" overlays a grid/symmetry/perspective grid</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Toggle in Canvas settings — user fully controls guide color, opacity, cell size</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Guide renders beneath artwork — never obscures content</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> Concept 08's toggle approach + "render under artwork"</li>
-    </ul>
+    <div class="ref-body">
+      <div class="ref-app-row">
+        <div class="ref-icon" style="background:linear-gradient(135deg,#667eea,#764ba2);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4,12 Q8,4 12,12" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div><div class="ref-app-name">Procreate</div><div class="ref-app-tag">Drawing Guide toggle</div></div>
+      </div>
+      <ul class="ref-list">
+        <li><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Canvas = full work area. Drawing Guide overlays grid, symmetry, or perspective</li>
+        <li><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Toggle in Canvas settings — user controls color, opacity, cell size</li>
+        <li><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Guide renders beneath artwork — never obscures what the user is painting</li>
+        <li><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span><strong>Steal:</strong> Concept 08's toggle approach + render-under-content</li>
+      </ul>
+    </div>
   </div>
 
   <!-- StickerYou / Avery -->
-  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:#e00000;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="5" height="5" rx="1" fill="white"/><rect x="9" y="3" width="5" height="5" rx="1" fill="white"/><rect x="2" y="10" width="5" height="5" rx="1" fill="white"/><rect x="9" y="10" width="5" height="5" rx="1" fill="white"/></svg>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;">StickerYou / Avery</div>
-        <div style="font-size:11px;color:#8e8e8e;">Hard-clip template model</div>
-      </div>
+  <div class="ref-card">
+    <div class="ref-img-wrap">
+      <img src="https://d3ccuprjuqkp1j.cloudfront.net/Attachments/NewItems/Bleed%20lines%20(1)_20240913111428.PNG"
+           alt="StickerYou bleed safe zone cut line diagram"
+           referrerpolicy="no-referrer" loading="lazy"
+           onerror="this.outerHTML='<div class=\'ref-img-placeholder\'>📷 Safe zone diagram (stickeryou.com)</div>'">
+      <a class="ref-img-source" href="https://www.stickeryou.com/support/post/bleed-safe-zone-sticker-maker" target="_blank" rel="noopener">stickeryou.com ↗</a>
     </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>Template IS the container — content is hard-clipped at the label/sticker boundary</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>You cannot place content outside the sticker shape — editor prevents it</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>No boundary confusion possible — but very restrictive for creative work</li>
-      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> sheet templates that visually clip stickers inside boundaries</li>
-    </ul>
+    <div class="ref-body">
+      <div class="ref-app-row">
+        <div class="ref-icon" style="background:#e00000;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="5" height="5" rx="1" fill="white"/><rect x="9" y="3" width="5" height="5" rx="1" fill="white"/><rect x="2" y="10" width="5" height="5" rx="1" fill="white"/><rect x="9" y="10" width="5" height="5" rx="1" fill="white"/></svg>
+        </div>
+        <div><div class="ref-app-name">StickerYou / Avery</div><div class="ref-app-tag">Hard-clip template model</div></div>
+      </div>
+      <ul class="ref-list">
+        <li><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>Template IS the container — content is hard-clipped at the sticker boundary</li>
+        <li><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>You cannot place content outside — editor physically prevents it</li>
+        <li><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>No boundary confusion possible — but very restrictive for creative work</li>
+        <li><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span><strong>Steal:</strong> sheet templates that visually clip stickers inside their shape boundary</li>
+      </ul>
+    </div>
   </div>
 
 </div>
