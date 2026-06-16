@@ -232,6 +232,7 @@ body {
 .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; overflow-y: auto; flex: 1; }
 .content-card { border-radius: 12px; overflow: hidden; cursor: pointer; background: var(--gray-50); }
 .content-card-thumb { aspect-ratio: 3/4; background: linear-gradient(160deg, #ece8e0, #d8d0c0); display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; }
+.content-card-thumb.shape-thumb { background: var(--gray-50); padding: 20px; }
 .content-card-badge { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.85); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
 .content-card-label { padding: 8px; font-size: 11px; text-align: center; color: var(--gray-700); font-weight: 500; }
 
@@ -786,14 +787,46 @@ function closeFab() {
   document.getElementById('fab-popup').classList.remove('open');
 }
 
+// ─────────────────── SHAPE DEFINITIONS (inline SVG, viewBox 0 0 100 100) ───────────────────
+const SHAPE_DEFS = {
+  rect:     { label:'Rectangle', svg:'<rect x="5" y="18" width="90" height="64" rx="6" fill="currentColor"/>' },
+  circle:   { label:'Circle',    svg:'<circle cx="50" cy="50" r="46" fill="currentColor"/>' },
+  triangle: { label:'Triangle',  svg:'<polygon points="50,6 96,90 4,90" fill="currentColor"/>' },
+  heart:    { label:'Heart',     svg:'<path d="M50,82 C22,62 4,46 4,30 C4,14 17,4 30,4 C39,4 46,10 50,18 C54,10 61,4 70,4 C83,4 96,14 96,30 C96,46 78,62 50,82Z" fill="currentColor"/>' },
+  star:     { label:'Star',      svg:'<polygon points="50,4 61,36 95,36 68,56 79,90 50,70 21,90 32,56 5,36 39,36" fill="currentColor"/>' },
+  diamond:  { label:'Diamond',   svg:'<polygon points="50,4 96,50 50,96 4,50" fill="currentColor"/>' },
+  hexagon:  { label:'Hexagon',   svg:'<polygon points="50,4 92,27 92,73 50,96 8,73 8,27" fill="currentColor"/>' },
+  burst:    { label:'Burst',     svg:'<polygon points="50,2 57,34 88,18 71,46 98,58 66,60 72,92 50,74 28,92 34,60 2,58 29,46 12,18 43,34" fill="currentColor"/>' },
+};
+
+function shapeSVG(key, size, color) {
+  const d = SHAPE_DEFS[key];
+  if (!d) return '';
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" style="color:${color};display:block;"><title>${d.label}</title>${d.svg}</svg>`;
+}
+
 // ─────────────────── CONTENT SHEET ───────────────────
 const sheetData = {
   templates: { title:'Templates', ph:'Search templates', count:'Templates (403)', items:[{icon:'☕',label:'Kitchen Labels'},{icon:'📅',label:'Monthly 2027'},{icon:'🧴',label:'Toiletry Stickers'},{icon:'💝',label:"Mum's Stuff"},{icon:'📋',label:'To-Do List'},{icon:'💻',label:'Retro Computer'},{icon:'🌿',label:'Vintage Botanical'},{icon:'✝️',label:'Faith Journal'}] },
   images:    { title:'Images',    ph:'Search images',    count:'Images (1,240)',   items:[{icon:'🌸',label:'Cherry Blossom'},{icon:'🦋',label:'Butterfly'},{icon:'⭐',label:'Stars Set'},{icon:'🌊',label:'Ocean Wave'},{icon:'🍄',label:'Mushroom'},{icon:'🌈',label:'Rainbow'},{icon:'🌙',label:'Crescent Moon'},{icon:'🌺',label:'Hibiscus'}] },
-  shapes:    { title:'Shapes',    ph:'Search shapes',    count:'Shapes (48)',      items:[{icon:'⬛',label:'Rectangle',shape:'rect'},{icon:'⬤',label:'Circle',shape:'circle'},{icon:'🔺',label:'Triangle',shape:'triangle'},{icon:'❤️',label:'Heart',shape:'heart'},{icon:'⭐',label:'Star',shape:'star'},{icon:'💎',label:'Diamond'},{icon:'🔷',label:'Hexagon'},{icon:'🌟',label:'Burst'}] },
 };
 function openContentSheet(type) {
   closeFab();
+  document.getElementById('content-overlay').classList.remove('hidden');
+  if (type === 'shapes') {
+    document.getElementById('content-sheet-title').textContent = 'Shapes';
+    document.getElementById('content-search-ph').textContent = 'Search shapes';
+    document.getElementById('content-count').textContent = 'Shapes (48)';
+    document.getElementById('content-grid').innerHTML = Object.entries(SHAPE_DEFS).map(([key, def]) =>
+      `<div class="content-card" onclick="addShapeToCanvas('${key}')">
+        <div class="content-card-thumb shape-thumb">
+          ${shapeSVG(key, '100%', '#1e1e1e')}
+        </div>
+        <div class="content-card-label">${def.label}</div>
+      </div>`
+    ).join('');
+    return;
+  }
   const d = sheetData[type];
   document.getElementById('content-sheet-title').textContent = d.title;
   document.getElementById('content-search-ph').textContent = d.ph;
@@ -804,7 +837,6 @@ function openContentSheet(type) {
       <div class="content-card-label">${item.label}</div>
     </div>`
   ).join('');
-  document.getElementById('content-overlay').classList.remove('hidden');
 }
 function closeContentSheet(e) {
   if (!e || e.target === document.getElementById('content-overlay'))
@@ -878,6 +910,14 @@ function closeSettings(e) {
 }
 
 // ─────────────────── ELEMENTS ───────────────────
+function addShapeToCanvas(shapeKey) {
+  closeContentSheet();
+  const id = `el${elId++}`;
+  const el = { id, shapeKey, label: SHAPE_DEFS[shapeKey].label, x:80, y:80, w:120, h:120, rot:0, color:'#1e1e1e', isText:false };
+  elements.push(el);
+  document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  selectEl(id);
+}
 function addShapeFromSheet(icon, label) {
   closeContentSheet();
   const id = `el${elId++}`;
@@ -889,7 +929,7 @@ function addShapeFromSheet(icon, label) {
 function addText() {
   closeFab();
   const id = `el${elId++}`;
-  const el = { id, icon:'T', label:'Text', x:70, y:100, w:150, h:65, rot:0, color:'#000', isText:true };
+  const el = { id, label:'Text', x:70, y:100, w:150, h:65, rot:0, color:'#000', isText:true };
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
   selectEl(id);
@@ -898,9 +938,14 @@ function makeElDiv(el) {
   const div = document.createElement('div');
   div.id = el.id; div.className = 'el-wrapper';
   div.style.cssText = `left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;transform:rotate(${el.rot}deg);`;
-  div.innerHTML = el.isText
-    ? `<span class="el-content" style="font-size:42px;font-weight:900;font-family:serif;color:${el.color}">Text</span>`
-    : `<span class="el-content" style="font-size:64px;">${el.icon}</span>`;
+  if (el.isText) {
+    div.innerHTML = `<span class="el-content" style="font-size:42px;font-weight:900;font-family:serif;color:${el.color}">Text</span>`;
+  } else if (el.shapeKey) {
+    // SVG fills the full container — scales perfectly on resize
+    div.innerHTML = `<svg class="el-content" viewBox="0 0 100 100" width="100%" height="100%" style="color:${el.color};display:block;" preserveAspectRatio="none">${SHAPE_DEFS[el.shapeKey].svg}</svg>`;
+  } else {
+    div.innerHTML = `<span class="el-content" style="font-size:64px;">${el.icon}</span>`;
+  }
   div.addEventListener('pointerdown', e => { e.stopPropagation(); selectEl(el.id); startDrag(e, el.id); });
   return div;
 }
