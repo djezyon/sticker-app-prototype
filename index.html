@@ -49,7 +49,7 @@ body {
 .home-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .home-scroll::-webkit-scrollbar { display: none; }
 .home-hero { position: relative; background: var(--green-lt); padding: 24px 20px 40px; overflow: hidden; }
-.home-hero-wave { position: absolute; top: 0; left: 0; right: 0; height: 48px; background: var(--green-dk); clip-path: ellipse(60% 100% at 50% 0%); }
+.home-hero-wave { position: absolute; top: 0; left: 0; right: 0; height: 64px; pointer-events: none; }
 .home-hero h1 { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.35; color: var(--gray-900); position: relative; }
 .categories-row { display: flex; padding: 12px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .categories-row::-webkit-scrollbar { display: none; }
@@ -64,11 +64,24 @@ body {
 .bookmark-btn { position: absolute; bottom: 8px; right: 8px; width: 30px; height: 30px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
 /* ── HOME BOTTOM NAV ── */
-.home-bottom-nav { display: flex; align-items: center; border-top: 1px solid var(--gray-100); padding: 8px 0 22px; flex-shrink: 0; background: #fff; }
+.home-bottom-nav { display: flex; align-items: center; border-top: 1px solid var(--gray-100); padding: 8px 0 22px; flex-shrink: 0; background: #fff; position: relative; overflow: visible; }
 .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--gray-400); cursor: pointer; }
 .nav-item.active { color: var(--green); }
-.nav-fab-wrap { flex: 1; display: flex; justify-content: center; }
-.nav-fab { width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: white; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,195,137,0.4); cursor: pointer; margin-top: -20px; }
+.nav-fab-wrap { flex: 1; display: flex; justify-content: center; position: relative; }
+/* White arch behind FAB */
+.nav-fab-wrap::before {
+  content: '';
+  position: absolute;
+  top: -24px; left: 50%; transform: translateX(-50%);
+  width: 76px; height: 38px;
+  background: #fff;
+  border-radius: 38px 38px 0 0;
+  border-top: 1px solid var(--gray-100);
+  border-left: 1px solid var(--gray-100);
+  border-right: 1px solid var(--gray-100);
+  box-shadow: -4px -4px 8px rgba(0,0,0,0.03), 4px -4px 8px rgba(0,0,0,0.03);
+}
+.nav-fab { width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: white; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,195,137,0.5), 0 2px 8px rgba(0,0,0,0.12); cursor: pointer; margin-top: -30px; position: relative; z-index: 1; }
 
 /* ── OVERLAYS / SHEETS ── */
 .overlay { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.45); display: flex; flex-direction: column; justify-content: flex-end; }
@@ -287,7 +300,9 @@ body {
   </div>
   <div class="home-scroll">
     <div class="home-hero">
-      <div class="home-hero-wave"></div>
+      <svg class="home-hero-wave" viewBox="0 0 390 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,0 H390 V28 C340,58 280,14 220,36 C160,58 90,18 40,42 C22,50 10,46 0,48 Z" fill="#006647"/>
+      </svg>
       <h1>Hi Jiyoun,<br>what do you want<br>to make?</h1>
     </div>
     <div class="categories-row">
