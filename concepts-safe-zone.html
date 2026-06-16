@@ -187,6 +187,70 @@ body {
   border-radius: 3px;
 }
 
+/* ── CONCEPT 7: Pasteboard canvas ── */
+.c7-pasteboard-bg {
+  position: absolute; inset: 0;
+  background: #b8b8b8;
+  display: flex; align-items: center; justify-content: center;
+}
+.c7-artboard {
+  position: relative;
+  background: white;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.15);
+  width: 128px; height: 179px;
+}
+.c7-artboard-label {
+  position: absolute;
+  top: -18px; left: 0;
+  font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.8);
+  white-space: nowrap; letter-spacing: 0.04em;
+}
+.c7-parked {
+  position: absolute;
+  background: rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+
+/* ── CONCEPT 8: Toggleable Drawing Guide ── */
+.c8-guide-frame {
+  position: absolute;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.c8-guide-label {
+  position: absolute;
+  font-size: 7px; font-weight: 700;
+  padding: 1px 5px; border-radius: 3px;
+  white-space: nowrap;
+}
+.c8-toggle-btn {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: var(--gray-900);
+  color: white;
+  font-size: 7px; font-weight: 700;
+  padding: 4px 7px; border-radius: 6px;
+  display: flex; align-items: center; gap: 3px;
+  z-index: 3;
+}
+.c8-ruler-h {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 10px;
+  background: rgba(30,30,30,0.07);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  display: flex; align-items: center;
+  gap: 10px; padding: 0 4px;
+  z-index: 2;
+}
+.c8-ruler-tick { width: 1px; height: 4px; background: rgba(0,0,0,0.25); }
+.c8-ruler-v {
+  position: absolute;
+  top: 10px; bottom: 0; left: 0; width: 10px;
+  background: rgba(30,30,30,0.07);
+  border-right: 1px solid rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
 /* ── CONCEPT 5: Show-on-Selection Guides ── */
 .c5-guide-line {
   position: absolute;
@@ -285,7 +349,8 @@ body {
 .next-card p { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
 
 @media (max-width: 768px) {
-  .page-header, .problem-bar, .section-label, .concept-grid, .rec-banner, .next-steps { padding-left: 20px; padding-right: 20px; }
+  .page-header, .problem-bar, .section-label, .concept-grid, .rec-banner, .next-steps,
+  .market-grid { padding-left: 20px; padding-right: 20px; }
   .concept-grid { grid-template-columns: 1fr; }
 }
 </style>
@@ -321,7 +386,7 @@ body {
   </div>
 </div>
 
-<div class="section-label">6 Concepts to Explore</div>
+<div class="section-label">8 Concepts to Explore</div>
 
 <!-- ── CONCEPT GRID ── -->
 <div class="concept-grid">
@@ -607,8 +672,242 @@ body {
     </div>
   </div>
 
+
+  <!-- ════ CONCEPT 7: PASTEBOARD CANVAS (ILLUSTRATOR-INSPIRED) ════ -->
+  <div class="concept-card">
+    <div class="concept-preview" style="padding:0;background:#b8b8b8;">
+      <div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+
+        <!-- Pasteboard staging element (outside the artboard) -->
+        <div style="position:absolute;left:28px;top:50px;width:38px;height:38px;background:rgba(255,255,255,0.25);border-radius:4px;border:1px dashed rgba(255,255,255,0.5);"></div>
+        <div style="position:absolute;left:30px;top:52px;font-size:7px;color:rgba(255,255,255,0.7);font-weight:600;text-align:center;width:34px;line-height:1.3;">staging<br>area</div>
+
+        <!-- Artboard (the white sheet) -->
+        <div class="c7-artboard">
+          <div class="c7-artboard-label">4 × 7 in · Scout</div>
+          <div class="sketch-grid" style="position:absolute;inset:0;border-radius:0;"></div>
+
+          <!-- sticker circles template -->
+          <div style="position:absolute;left:12px;top:20px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);"></div>
+          <div style="position:absolute;left:72px;top:20px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);"></div>
+          <div style="position:absolute;left:12px;top:72px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);"></div>
+          <div style="position:absolute;left:72px;top:72px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);"></div>
+          <div style="position:absolute;left:12px;top:124px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);"></div>
+          <div style="position:absolute;left:72px;top:124px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.18);"></div>
+
+          <!-- shape on artboard -->
+          <div style="position:absolute;left:40px;top:76px;width:32px;height:32px;background:#1e1e1e;opacity:0.8;border-radius:50%;"></div>
+        </div>
+
+        <!-- Artboard label chip -->
+        <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.8);font-size:8px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;">White = prints · Gray = staging only</div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num" style="display:flex;align-items:center;gap:8px;">Concept 07 <span style="font-size:10px;background:#f5f5f5;color:#595959;padding:2px 8px;border-radius:100px;">Illustrator-inspired</span></div>
+      <div class="concept-title">Artboard + Pasteboard Canvas</div>
+      <div class="concept-desc">The environment IS the boundary indicator. The sticker sheet sits as a white artboard in a gray pasteboard workspace. No overlays or warnings needed — the visual language of the space communicates everything.</div>
+      <ul class="behavior-list">
+        <li>Gray pasteboard surrounds the white artboard on all sides</li>
+        <li>Users can pan beyond the sheet to "park" elements in the pasteboard</li>
+        <li>Artboard label shows sheet type + dimensions (e.g. "4 × 7 in · Scout")</li>
+        <li>At export/print: only artboard content is sent — pasteboard is ignored silently</li>
+        <li>No warnings, no overlays — the contrast does all the communication</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Most learnable over time. Matches how print designers think. Staging area is a bonus feature. Zero added UI chrome.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Requires panning gesture which is a new interaction on mobile. Users must learn what gray means — no labels.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CONCEPT 8: DUAL GUIDE TOGGLE (PROCREATE + FIGMA) ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas">
+        <div class="sketch-sheet" style="overflow:visible;">
+
+          <!-- Ruler strips -->
+          <div class="c8-ruler-h">
+            <div class="c8-ruler-tick"></div><div class="c8-ruler-tick"></div>
+            <div class="c8-ruler-tick"></div><div class="c8-ruler-tick"></div>
+            <div class="c8-ruler-tick"></div><div class="c8-ruler-tick"></div>
+            <div class="c8-ruler-tick"></div><div class="c8-ruler-tick"></div>
+            <div class="c8-ruler-tick"></div><div class="c8-ruler-tick"></div>
+            <div class="c8-ruler-tick"></div><div class="c8-ruler-tick"></div>
+          </div>
+          <div class="c8-ruler-v"></div>
+
+          <div class="sketch-grid" style="top:10px;left:10px;right:0;bottom:0;position:absolute;"></div>
+
+          <!-- Cut line (outer) — orange dashed -->
+          <div class="c8-guide-frame" style="inset:10px;border:1.5px dashed #d65300;"></div>
+          <div class="c8-guide-label" style="top:6px;left:50%;transform:translateX(-50%);background:#d65300;color:white;">CUT LINE</div>
+
+          <!-- Safe zone (inner) — teal dashed -->
+          <div class="c8-guide-frame" style="inset:22px;border:1.5px dashed #00c389;"></div>
+          <div class="c8-guide-label" style="top:18px;left:50%;transform:translateX(-50%);background:#00c389;color:white;">SAFE ZONE</div>
+
+          <!-- Toggle button in corner -->
+          <div class="c8-toggle-btn">
+            <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="8" rx="1" stroke="white" stroke-width="1.2"/><line x1="1" y1="4" x2="9" y2="4" stroke="white" stroke-width="1"/><line x1="4" y1="1" x2="4" y2="9" stroke="white" stroke-width="1"/></svg>
+            Guides ON
+          </div>
+
+          <!-- sticker circles -->
+          <div style="position:absolute;left:28px;top:36px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:86px;top:36px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:28px;top:88px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:86px;top:88px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:28px;top:140px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:86px;top:140px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+
+          <!-- shape -->
+          <div style="position:absolute;left:52px;top:92px;width:32px;height:32px;background:#1e1e1e;opacity:0.8;border-radius:50%;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num" style="display:flex;align-items:center;gap:8px;">Concept 08 <span style="font-size:10px;background:#f5f5f5;color:#595959;padding:2px 8px;border-radius:100px;">Procreate + Figma-inspired</span></div>
+      <div class="concept-title">Dual-Line Guide Toggle</div>
+      <div class="concept-desc">A single "Guides" toggle in the canvas toolbar reveals two distinct boundary lines — cut line and safe zone — using print industry color conventions. Off by default, instantly readable when on.</div>
+      <ul class="behavior-list">
+        <li>Ruler strips on top + left edges (like Figma/Illustrator) give spatial reference</li>
+        <li>"Guides" toggle button in toolbar: tap to show/hide all guides</li>
+        <li>Orange dashed line = cut line (where the die cut happens)</li>
+        <li>Teal dashed line = safe zone (recommended content boundary, inset from cut)</li>
+        <li>Inspired by Procreate Drawing Guide: low opacity, never blocks artwork</li>
+        <li>Print professionals recognize this two-line convention immediately</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Print industry standard. Scales well for power users. Rulers add professional feel. Both "cut" and "safe" zones distinguished.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Off by default means first-time users may never discover it. Rulers consume canvas real estate on small mobile screens.</div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- end concept grid -->
 
+
+<!-- ── MARKET REFERENCE ── -->
+<div class="section-label" style="padding-top:0;">How Other Apps Handle It</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 48px 32px;">
+
+  <!-- Cricut Design Space -->
+  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:32px;height:32px;border-radius:8px;background:#006647;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3,8 Q8,2 13,8 Q8,14 3,8Z" fill="white"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">Cricut Design Space</div>
+        <div style="font-size:11px;color:#8e8e8e;">Mat-as-canvas metaphor</div>
+      </div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>The physical cutting mat IS the canvas — grid pattern, exact mat dimensions</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>Mat edge = hard boundary. Nothing visible beyond mat boundary in the editor</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span>No safe zone overlay — relies on users understanding physical machine limits</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#006647;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> make the sheet feel physically real, not abstract</li>
+    </ul>
+  </div>
+
+  <!-- Sticker Mule -->
+  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:32px;height:32px;border-radius:8px;background:#f5a623;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="white"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">Sticker Mule</div>
+        <div style="font-size:11px;color:#8e8e8e;">Three-zone print template</div>
+      </div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Upload-first flow — you bring the art, they apply the template overlay at review</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Three concentric dashed lines: Bleed (outer) / Cut line (mid) / Safe zone (inner)</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span>Industry-standard terminology — assumes print-savvy users</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#f5a623;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> Concept 08's dual-line approach directly adapts this</li>
+    </ul>
+  </div>
+
+  <!-- Figma -->
+  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:32px;height:32px;border-radius:8px;background:#1e1e1e;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="2" width="4" height="4" rx="1" fill="#ff7262"/><rect x="8" y="2" width="4" height="4" rx="1" fill="#1abcfe"/><rect x="4" y="6" width="4" height="4" rx="1" fill="#a259ff"/><rect x="4" y="10" width="4" height="4" rx="1" fill="#0acf83"/><circle cx="10" cy="10" r="2" fill="#ff7262"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">Figma</div>
+        <div style="font-size:11px;color:#8e8e8e;">Infinite canvas + clip-to-frame</div>
+      </div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>Infinite gray canvas — frames (components) are the print boundaries</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>Content outside frame: visible in design view, excluded from export by default</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span>"Clip content" toggle: frame can optionally hide everything outside its bounds</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#0acf83;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> frame title + dimensions label above the working area</li>
+    </ul>
+  </div>
+
+  <!-- Adobe Illustrator -->
+  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:32px;height:32px;border-radius:8px;background:#ff6b00;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><text x="2" y="13" font-size="12" font-weight="900" fill="white">Ai</text></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">Adobe Illustrator</div>
+        <div style="font-size:11px;color:#8e8e8e;">Artboard + gray pasteboard</div>
+      </div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>White artboard = print area. Gray pasteboard = staging zone, never prints</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>Crisp hairline border around artboard. Name + size label above it</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span>Separate bleed indicators (View → Show Bleed) shown as red dashed lines</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#ff6b00;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> Concept 07 adapts this directly — the basis for that concept</li>
+    </ul>
+  </div>
+
+  <!-- Procreate -->
+  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4,12 Q8,4 12,12" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">Procreate</div>
+        <div style="font-size:11px;color:#8e8e8e;">Drawing Guide toggle</div>
+      </div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Canvas = full work area. "Drawing Guide" overlays a grid/symmetry/perspective grid</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Toggle in Canvas settings — user fully controls guide color, opacity, cell size</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span>Guide renders beneath artwork — never obscures content</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#764ba2;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> Concept 08's toggle approach + "render under artwork"</li>
+    </ul>
+  </div>
+
+  <!-- StickerYou / Avery -->
+  <div style="background:white;border-radius:14px;border:1.5px solid #ebebeb;padding:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:32px;height:32px;border-radius:8px;background:#e00000;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="5" height="5" rx="1" fill="white"/><rect x="9" y="3" width="5" height="5" rx="1" fill="white"/><rect x="2" y="10" width="5" height="5" rx="1" fill="white"/><rect x="9" y="10" width="5" height="5" rx="1" fill="white"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">StickerYou / Avery</div>
+        <div style="font-size:11px;color:#8e8e8e;">Hard-clip template model</div>
+      </div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>Template IS the container — content is hard-clipped at the label/sticker boundary</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>You cannot place content outside the sticker shape — editor prevents it</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span>No boundary confusion possible — but very restrictive for creative work</li>
+      <li style="font-size:13px;color:#595959;display:flex;align-items:flex-start;gap:6px;line-height:1.5;"><span style="color:#e00000;font-weight:700;flex-shrink:0;">→</span><strong>Mental model steal:</strong> sheet templates that visually clip stickers inside boundaries</li>
+    </ul>
+  </div>
+
+</div>
 
 <!-- ── RECOMMENDATION ── -->
 <div class="rec-banner">
