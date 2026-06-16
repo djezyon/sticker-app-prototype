@@ -98,6 +98,42 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
 .next-card h4 { font-size:14px; font-weight:700; margin-bottom:6px; }
 .next-card p { font-size:13px; color:var(--g700); line-height:1.5; }
 
+/* ── PA SECTION HEADER ── */
+.pa-header { margin:32px 48px 0; border-radius:16px 16px 0 0; background:var(--g900); padding:28px 32px 24px; color:white; }
+.pa-label { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.pa-pill { background:var(--green); color:white; font-size:11px; font-weight:800; padding:4px 14px; border-radius:100px; letter-spacing:0.08em; }
+.pa-reason { font-size:12px; color:rgba(255,255,255,0.45); }
+.pa-header h2 { font-size:22px; font-weight:700; margin-bottom:3px; }
+.pa-header h3 { font-size:14px; font-weight:400; color:rgba(255,255,255,0.5); margin-bottom:0; }
+.pa-meta { display:flex; gap:32px; flex-wrap:wrap; margin-top:18px; padding-top:18px; border-top:1px solid rgba(255,255,255,0.1); }
+.pa-meta-col { flex:1; min-width:180px; }
+.pa-meta-col h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.35); margin-bottom:5px; }
+.pa-meta-col p { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.6; }
+.pa-concepts { margin:0 48px; }
+
+/* ── CONFLICT / CONSIDERATION ITEM ── */
+.vconflict { font-size:12px; line-height:1.5; margin-top:8px; padding:7px 9px; background:#fff9f0; border-radius:6px; border-left:2.5px solid var(--yellow); display:flex; gap:6px; align-items:flex-start; }
+.vconflict::before { content:'⚠'; color:var(--yellow); font-weight:700; flex-shrink:0; margin-top:0px; }
+
+/* ── PA2 MINI CANVAS ELEMENTS ── */
+.el { position:absolute; border-radius:3px; background:var(--g900); opacity:0.82; }
+.el.selected { outline:2px solid var(--green); outline-offset:1px; }
+.h { position:absolute; width:7px; height:7px; background:white; border:1.5px solid var(--green); border-radius:1px; }
+.tap-outer { position:absolute; border:1.5px solid rgba(0,0,0,0.25); border-radius:50%; }
+.tap-inner { position:absolute; border:1.5px solid rgba(0,0,0,0.45); border-radius:50%; }
+.bcrumb { position:absolute; top:0; left:0; right:0; height:16px; background:rgba(30,30,30,0.08); border-bottom:1px solid rgba(0,0,0,0.1); display:flex; align-items:center; padding:0 5px; gap:3px; font-size:6px; color:var(--g700); font-weight:600; z-index:3; }
+.bcrumb .sep { color:var(--g400); }
+.bcrumb .active { color:var(--green); }
+.edit-pill { position:absolute; background:var(--g900); color:white; font-size:7px; font-weight:700; padding:3px 8px; border-radius:100px; white-space:nowrap; z-index:3; }
+.ctx-menu { position:absolute; background:white; border-radius:6px; box-shadow:0 3px 12px rgba(0,0,0,0.2); display:flex; flex-direction:column; z-index:3; overflow:hidden; }
+.ctx-menu div { font-size:7px; font-weight:600; padding:4px 9px; border-bottom:1px solid var(--g100); color:var(--g900); }
+.ctx-menu div:last-child { border-bottom:none; }
+.bottom-bar { position:absolute; bottom:0; left:0; right:0; height:18px; background:rgba(30,30,30,0.07); border-top:1px solid rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; gap:6px; z-index:3; }
+.bb-chip { font-size:6px; font-weight:700; padding:2px 6px; border-radius:4px; background:var(--g900); color:white; }
+.bb-chip.red { background:var(--red); }
+.pinch-arrow { position:absolute; font-size:10px; color:rgba(0,0,0,0.35); z-index:3; }
+.zoom-badge { position:absolute; top:4px; right:4px; background:var(--g900); color:white; font-size:6px; font-weight:700; padding:2px 5px; border-radius:4px; z-index:3; }
+
 @media(max-width:900px) {
   .page-header,.problem-bar,.section-label,.rec-banner,.next-steps { padding-left:20px; padding-right:20px; }
   .concept-wide { margin-left:20px; margin-right:20px; }
@@ -134,8 +170,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
   </div>
 </div>
 
-<div class="section-label">8 Concepts · 3 Variations Each</div>
-
+<div class="pa-header">
+  <div class="pa-label">
+    <span class="pa-pill">PA 1</span>
+    <span class="pa-reason">Foundational — defines how users read and trust the physical canvas</span>
+  </div>
+  <h2>Physical Canvas Mental Model</h2>
+  <h3>Canvas Boundaries &amp; Safe Zones</h3>
+  <div class="pa-meta">
+    <div class="pa-meta-col">
+      <h4>Reason</h4>
+      <p>Users don't know what will physically print vs. what gets cut off. This system is the invisible foundation every other canvas interaction depends on.</p>
+    </div>
+    <div class="pa-meta-col">
+      <h4>Possible Solutions</h4>
+      <p>Persistent frame · Dimmed overflow · Color-coded zones · Smart warnings · Selection guides · Onboarding · Artboard/pasteboard · Dual guide toggle</p>
+    </div>
+    <div class="pa-meta-col">
+      <h4>Deliverables</h4>
+      <p>Canvas interaction framework · Boundary behavior specs · Safe-zone visual system · Warning behaviors · Onboarding recommendations</p>
+    </div>
+  </div>
+</div>
+<div style="margin:0 48px 32px;border:1.5px solid var(--g100);border-top:none;border-radius:0 0 16px 16px;overflow:hidden;">
 
 <!-- ══════════════════════════════════════════════════
      CONCEPT 01 — PERSISTENT SAFE-ZONE FRAME
@@ -855,6 +912,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
 </div>
 
 
+</div><!-- end PA1 wrapper -->
+
+
 <!-- ══════════════════════════════════════════════════
      MARKET REFERENCE
 ══════════════════════════════════════════════════ -->
@@ -975,21 +1035,416 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
 
 
 <!-- ══════════════════════════════════════════════════
+     PA 2 SECTION
+══════════════════════════════════════════════════ -->
+<div class="pa-header" style="margin-top:40px;">
+  <div class="pa-label">
+    <span class="pa-pill">PA 2</span>
+    <span class="pa-reason">Fundamental interaction pattern used throughout the product</span>
+  </div>
+  <h2>Focus Mode Interaction</h2>
+  <h3>How users enter, navigate, and exit focused editing states on canvas elements</h3>
+  <div class="pa-meta">
+    <div class="pa-meta-col">
+      <h4>Reason</h4>
+      <p>Every element interaction — moving, resizing, editing color, editing text — depends on how users enter and exit focus mode. Getting this wrong creates confusion product-wide.</p>
+    </div>
+    <div class="pa-meta-col">
+      <h4>Possible Solutions</h4>
+      <p>Double-tap enter/exit · Single-select + Edit button · Breadcrumb navigation · Contextual zoom/focus states</p>
+    </div>
+    <div class="pa-meta-col">
+      <h4>Deliverables</h4>
+      <p>Focus mode interaction model · Gesture standards · Interaction flow diagrams · Conflict matrix with other features</p>
+    </div>
+  </div>
+</div>
+<div style="margin:0 48px 32px;border:1.5px solid var(--g100);border-top:none;border-radius:0 0 16px 16px;overflow:hidden;">
+
+<!-- ══════════════════════════════════════════════════
+     PA2 · CONCEPT 01 — DOUBLE-TAP ENTER / EXIT
+══════════════════════════════════════════════════ -->
+<div class="concept-wide" style="border-radius:0;border:none;border-bottom:1.5px solid var(--g100);">
+  <div class="concept-wide-header">
+    <div class="concept-num">PA 2 · Concept 01</div>
+    <div class="concept-wide-title">Double-Tap Enter / Exit</div>
+    <div class="concept-wide-desc">Tap once to select an element (shows handles). Double-tap to enter focus/edit mode. Three variants differ in how the user exits — the most controversial design decision.</div>
+  </div>
+  <div class="variant-grid">
+
+    <!-- A ★ Double-tap in, tap outside to exit -->
+    <div class="variant-col rec">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- primary element: star shape, in focus state -->
+          <div class="el selected" style="left:22px;top:36px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
+          <!-- selection handles -->
+          <div class="h" style="left:19px;top:33px;"></div><div class="h" style="left:70px;top:33px;"></div>
+          <div class="h" style="left:19px;top:75px;"></div><div class="h" style="left:70px;top:75px;"></div>
+          <!-- double-tap rings -->
+          <div class="tap-outer" style="left:30px;top:44px;width:30px;height:30px;"></div>
+          <div class="tap-inner" style="left:37px;top:51px;width:16px;height:16px;"></div>
+          <div class="tap-outer" style="left:25px;top:39px;width:40px;height:40px;opacity:0.4;"></div>
+          <!-- second element (unfocused) -->
+          <div class="el" style="left:68px;top:95px;width:30px;height:22px;opacity:0.3;"></div>
+          <!-- tap-outside indicator -->
+          <div style="position:absolute;right:8px;top:20px;font-size:7px;color:var(--g500);text-align:right;line-height:1.4;">tap<br>outside<br>→ exit</div>
+          <!-- label -->
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--green);white-space:nowrap;">2× tap = enter focus</div>
+        </div>
+      </div>
+      <div class="rec-badge">★ Recommended</div>
+      <div class="variant-name">Double-tap in · Tap outside to exit</div>
+      <div class="vpros">Standard iOS pattern — matches Maps, Photos, Safari tap-to-focus behavior</div>
+      <div class="vpros">Exit is self-evident: "tap outside to dismiss" is learned across all iOS apps</div>
+      <div class="vcons">Double-tap risks conflict with pinch-to-zoom if both are enabled on canvas</div>
+      <div class="vcons">Accidental double-tap mid-drag could trigger focus unintentionally</div>
+      <div class="vconflict">Conflicts with canvas pinch-to-zoom (PA gesture standard) — double-tap zooms in most apps. Must clearly decide: double-tap = zoom OR double-tap = focus, not both.</div>
+    </div>
+
+    <!-- B Double-tap in, double-tap out -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- element in focus — larger, centered, filling canvas -->
+          <div class="el" style="left:14px;top:24px;width:82px;height:64px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;outline:2px solid var(--green);outline-offset:3px;"></div>
+          <!-- double-tap rings (exiting) -->
+          <div class="tap-outer" style="left:38px;top:48px;width:30px;height:30px;"></div>
+          <div class="tap-inner" style="left:45px;top:55px;width:16px;height:16px;"></div>
+          <div class="tap-outer" style="left:33px;top:43px;width:40px;height:40px;opacity:0.4;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">2× tap again = exit</div>
+        </div>
+      </div>
+      <div class="variant-name">Double-tap in · Double-tap to exit</div>
+      <div class="vpros">Symmetric — same gesture enters and exits; no separate mental model for exit</div>
+      <div class="vpros">No risk of accidental exit by touching near the element</div>
+      <div class="vcons">Non-standard iOS exit pattern — users may feel "trapped" in focus mode</div>
+      <div class="vcons">Double-tap on text elements selects a word — gesture is already overloaded</div>
+      <div class="vconflict">Conflicts with text editing: on a text element, double-tap to exit would fight with double-tap to select a word (iOS default). Needs a special case, increasing complexity.</div>
+    </div>
+
+    <!-- C Double-tap in, Back button to exit -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- back button top-left -->
+          <div style="position:absolute;top:5px;left:6px;background:var(--g900);color:white;font-size:7px;font-weight:700;padding:3px 8px;border-radius:100px;z-index:3;display:flex;align-items:center;gap:3px;">← Canvas</div>
+          <!-- element in focus -->
+          <div class="el selected" style="left:18px;top:38px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
+          <div class="h" style="left:15px;top:35px;"></div><div class="h" style="left:66px;top:35px;"></div>
+          <div class="h" style="left:15px;top:77px;"></div><div class="h" style="left:66px;top:77px;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">Back button = exit</div>
+        </div>
+      </div>
+      <div class="variant-name">Double-tap in · Back button to exit</div>
+      <div class="vpros">Always-visible exit — no guessing how to leave focus mode</div>
+      <div class="vpros">Consistent with iOS navigation (sheet view → canvas is a nav hierarchy)</div>
+      <div class="vcons">Adds nav hierarchy to a flat canvas — users may expect Back to navigate to Home screen</div>
+      <div class="vcons">Back button takes top-bar real estate shared with breadcrumb concept</div>
+      <div class="vconflict">Conflicts with PA2-03 Breadcrumb Navigation — both need the top bar. Also conflicts with sheet header label (currently shows machine name + sheet type at top of canvas).</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     PA2 · CONCEPT 02 — SINGLE-SELECT + EDIT BUTTON
+══════════════════════════════════════════════════ -->
+<div class="concept-wide" style="border-radius:0;border:none;border-bottom:1.5px solid var(--g100);">
+  <div class="concept-wide-header">
+    <div class="concept-num">PA 2 · Concept 02</div>
+    <div class="concept-wide-title">Single-Select + Edit Button</div>
+    <div class="concept-wide-desc">Tap once to select (handles appear). A dedicated "Edit" affordance must then be tapped to enter deeper editing. Two discrete states: selected vs. editing.</div>
+  </div>
+  <div class="variant-grid">
+
+    <!-- A ★ Floating Edit pill -->
+    <div class="variant-col rec">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- element selected -->
+          <div class="el selected" style="left:22px;top:50px;width:54px;height:40px;border-radius:4px;"></div>
+          <div class="h" style="left:19px;top:47px;"></div><div class="h" style="left:70px;top:47px;"></div>
+          <div class="h" style="left:19px;top:85px;"></div><div class="h" style="left:70px;top:85px;"></div>
+          <!-- floating Edit pill above element -->
+          <div class="edit-pill" style="left:50%;transform:translateX(-50%);top:32px;">Edit</div>
+          <!-- second small element -->
+          <div class="el" style="left:70px;top:105px;width:28px;height:22px;opacity:0.35;border-radius:3px;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--green);white-space:nowrap;">tap once → handles + Edit pill</div>
+        </div>
+      </div>
+      <div class="rec-badge">★ Recommended</div>
+      <div class="variant-name">Floating "Edit" pill above element</div>
+      <div class="vpros">Explicit label removes all ambiguity — Edit is discoverable on first tap</div>
+      <div class="vpros">Two discrete states (selected / editing) prevent accidental edits while repositioning</div>
+      <div class="vcons">Floating pill overlaps other elements on a dense canvas</div>
+      <div class="vcons">Pill position must flip below when element is near top edge — extra logic</div>
+      <div class="vconflict">Conflicts with PA1 smart warning (C04-A): both may try to float a label near the element simultaneously. Need a priority rule: which appears on top if element is also crossing a boundary?</div>
+    </div>
+
+    <!-- B Edit in contextual bottom toolbar -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <div class="el selected" style="left:22px;top:40px;width:54px;height:40px;border-radius:4px;"></div>
+          <div class="h" style="left:19px;top:37px;"></div><div class="h" style="left:70px;top:37px;"></div>
+          <div class="h" style="left:19px;top:75px;"></div><div class="h" style="left:70px;top:75px;"></div>
+          <div class="el" style="left:68px;top:98px;width:28px;height:22px;opacity:0.35;border-radius:3px;"></div>
+          <!-- contextual bottom toolbar -->
+          <div class="bottom-bar">
+            <div class="bb-chip">Edit</div>
+            <div class="bb-chip" style="background:var(--g400);">⊕</div>
+            <div class="bb-chip red">Delete</div>
+          </div>
+          <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">context bar replaces nav bar</div>
+        </div>
+      </div>
+      <div class="variant-name">Edit in contextual bottom toolbar</div>
+      <div class="vpros">Consistent location — user always looks to bottom bar for actions</div>
+      <div class="vpros">Room for Duplicate, Delete, Color alongside Edit in one bar</div>
+      <div class="vcons">Eye must move from element (center) to bottom of screen — context switch</div>
+      <div class="vcons">Bottom bar is already used by FAB + nav — selection state must replace it</div>
+      <div class="vconflict">Conflicts directly with the FAB (+) button and nav bar: when an element is selected, does the nav bar hide entirely? That's a major state change that affects wayfinding throughout the app.</div>
+    </div>
+
+    <!-- C Long-press context menu -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <div class="el" style="left:22px;top:50px;width:54px;height:40px;border-radius:4px;"></div>
+          <!-- long-press ripple rings -->
+          <div class="tap-outer" style="left:30px;top:58px;width:38px;height:24px;border-radius:50%;opacity:0.5;"></div>
+          <div class="tap-outer" style="left:26px;top:54px;width:46px;height:32px;border-radius:50%;opacity:0.25;"></div>
+          <!-- context menu -->
+          <div class="ctx-menu" style="right:6px;top:34px;">
+            <div style="color:var(--green);font-weight:700;">Edit</div>
+            <div>Duplicate</div>
+            <div style="color:var(--red);">Delete</div>
+          </div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">long-press → context menu</div>
+        </div>
+      </div>
+      <div class="variant-name">Long-press context menu</div>
+      <div class="vpros">Canvas stays visually clean — no persistent buttons until long-pressed</div>
+      <div class="vpros">Context menu pattern is familiar from iOS home screen and Photos</div>
+      <div class="vcons">Discovery problem — users won't know to long-press without coaching</div>
+      <div class="vcons">Long-press collides with the drag-to-move gesture on the same element</div>
+      <div class="vconflict">Conflicts with drag-to-reposition: both use long-press on an element. iOS resolves this by starting drag after the long-press completes, but timing is fussy and unreliable on a canvas editor where speed matters.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     PA2 · CONCEPT 03 — BREADCRUMB NAVIGATION
+══════════════════════════════════════════════════ -->
+<div class="concept-wide" style="border-radius:0;border:none;border-bottom:1.5px solid var(--g100);">
+  <div class="concept-wide-header">
+    <div class="concept-num">PA 2 · Concept 03</div>
+    <div class="concept-wide-title">Breadcrumb Navigation</div>
+    <div class="concept-wide-desc">A persistent location indicator shows the editing hierarchy: Canvas → Element → Property. Users always know where they are and can tap any crumb to go back up.</div>
+  </div>
+  <div class="variant-grid">
+
+    <!-- A ★ Fixed top breadcrumb -->
+    <div class="variant-col rec">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <!-- fixed breadcrumb -->
+          <div class="bcrumb">
+            <span>Canvas</span>
+            <span class="sep">›</span>
+            <span class="active">Star</span>
+          </div>
+          <div class="mini-grid" style="top:16px;"></div>
+          <div class="el selected" style="left:22px;top:50px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
+          <div class="h" style="left:19px;top:47px;"></div><div class="h" style="left:70px;top:47px;"></div>
+          <div class="h" style="left:19px;top:89px;"></div><div class="h" style="left:70px;top:89px;"></div>
+          <div class="el" style="left:68px;top:108px;width:28px;height:20px;opacity:0.3;border-radius:3px;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--green);white-space:nowrap;">tap "Canvas" to deselect</div>
+        </div>
+      </div>
+      <div class="rec-badge">★ Recommended</div>
+      <div class="variant-name">Fixed top breadcrumb bar</div>
+      <div class="vpros">Always tells users where they are — eliminates disorientation in deep edit states</div>
+      <div class="vpros">Tapping any crumb is a clear, always-available exit path back to canvas</div>
+      <div class="vcons">Consumes 32–40px of vertical canvas real estate permanently</div>
+      <div class="vcons">On iPhone with Dynamic Island, vertical space is already tight</div>
+      <div class="vconflict">Conflicts with the sheet header (machine name + sheet type label at top of canvas screen). Currently the canvas has header chrome at top — two top bars means the canvas area shrinks significantly on mobile. Need to consolidate or pick one.</div>
+    </div>
+
+    <!-- B Slide-in breadcrumb -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <!-- breadcrumb sliding in from top (mid-animation state) -->
+          <div style="position:absolute;top:0;left:0;right:0;height:13px;background:rgba(30,30,30,0.08);border-bottom:1px solid rgba(0,0,0,0.1);display:flex;align-items:center;padding:0 5px;gap:3px;font-size:6px;color:var(--g700);font-weight:600;z-index:3;transform:translateY(-30%);opacity:0.8;">
+            <span>Canvas</span><span style="color:var(--g400);">›</span><span style="color:var(--green);">Star</span>
+            <span style="margin-left:auto;font-size:5px;color:var(--g400);">↓ sliding in</span>
+          </div>
+          <div class="mini-grid"></div>
+          <div class="el selected" style="left:22px;top:44px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
+          <div class="h" style="left:19px;top:41px;"></div><div class="h" style="left:70px;top:41px;"></div>
+          <div class="h" style="left:19px;top:83px;"></div><div class="h" style="left:70px;top:83px;"></div>
+          <div class="el" style="left:68px;top:102px;width:28px;height:20px;opacity:0.3;border-radius:3px;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">slides in on select</div>
+        </div>
+      </div>
+      <div class="variant-name">Animated slide-in on select</div>
+      <div class="vpros">Canvas stays full-height when nothing is selected — maximizes working space</div>
+      <div class="vpros">Animation signals context change clearly and reinforces the editing level</div>
+      <div class="vcons">Canvas layout shifts when breadcrumb appears — elements visually jump down</div>
+      <div class="vcons">Users with motion sensitivity find layout shifts disorienting</div>
+      <div class="vconflict">Conflicts with PA1 C02-A (Dimmed Overflow): if canvas height changes on selection, the overflow zone shifts. Also conflicts with any fixed bottom bar (nav, FAB) — layout reflow cascades through multiple components.</div>
+    </div>
+
+    <!-- C Inline context chip -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <div class="el selected" style="left:22px;top:48px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
+          <div class="h" style="left:19px;top:45px;"></div><div class="h" style="left:70px;top:45px;"></div>
+          <div class="h" style="left:19px;top:87px;"></div><div class="h" style="left:70px;top:87px;"></div>
+          <!-- inline chip attached to element -->
+          <div style="position:absolute;top:36px;left:18px;background:var(--g900);color:white;font-size:6px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;z-index:3;">Star · 1 of 3</div>
+          <div class="el" style="left:68px;top:104px;width:28px;height:20px;opacity:0.3;border-radius:3px;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">chip travels with element</div>
+        </div>
+      </div>
+      <div class="variant-name">Inline context chip</div>
+      <div class="vpros">Zero canvas real estate impact — chip attaches to selected element only</div>
+      <div class="vpros">Shows element type + index ("Star · 1 of 3") which helps identify in multi-element designs</div>
+      <div class="vcons">Chip overlaps element content — especially bad for small elements or text</div>
+      <div class="vcons">No navigation affordance — chip shows context info but can't be tapped to go up</div>
+      <div class="vconflict">Conflicts with selection handles: element already has 4–8 handles + rotation handle on selection. Adding a chip label on top of an element with existing chrome creates an extremely crowded interaction target.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     PA2 · CONCEPT 04 — CONTEXTUAL ZOOM / FOCUS STATES
+══════════════════════════════════════════════════ -->
+<div class="concept-wide" style="border-radius:0;border:none;">
+  <div class="concept-wide-header">
+    <div class="concept-num">PA 2 · Concept 04</div>
+    <div class="concept-wide-title">Contextual Zoom / Focus States</div>
+    <div class="concept-wide-desc">Zoom level is tied to editing context. Zooming in past a threshold or gesture triggers focus mode. No explicit button or gesture layer — focus is a byproduct of navigation.</div>
+  </div>
+  <div class="variant-grid">
+
+    <!-- A ★ Pinch-select to focus -->
+    <div class="variant-col rec">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- element with pinch diverge arrows on it -->
+          <div class="el" style="left:24px;top:46px;width:50px;height:40px;border-radius:4px;outline:2px solid var(--green);outline-offset:3px;"></div>
+          <!-- pinch arrows -->
+          <div class="pinch-arrow" style="left:14px;top:38px;transform:rotate(-45deg);">↖</div>
+          <div class="pinch-arrow" style="right:14px;top:38px;transform:rotate(45deg);">↗</div>
+          <div class="pinch-arrow" style="left:14px;bottom:40px;transform:rotate(45deg);">↙</div>
+          <div class="pinch-arrow" style="right:14px;bottom:40px;transform:rotate(-45deg);">↘</div>
+          <!-- second small element -->
+          <div class="el" style="left:68px;top:106px;width:28px;height:20px;opacity:0.3;border-radius:3px;"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--green);white-space:nowrap;">pinch out on element = focus</div>
+        </div>
+      </div>
+      <div class="rec-badge">★ Recommended</div>
+      <div class="variant-name">Pinch-out on element to focus</div>
+      <div class="vpros">Reuses existing pinch gesture — no new interaction to learn</div>
+      <div class="vpros">Feels natural: "zoom into" an element = I want to work on that element</div>
+      <div class="vcons">Requires precise hit-testing with two fingers — hard on small elements</div>
+      <div class="vcons">Pinch-to-zoom canvas and pinch-to-focus are the same gesture with different intent</div>
+      <div class="vconflict">Conflicts with canvas zoom navigation: if pinch-to-zoom is already the pan/zoom gesture, users lose the ability to simply zoom the canvas without accidentally entering focus mode. Need a clear disambiguation rule (e.g. pinch centered on element = focus; pinch on empty area = zoom).</div>
+    </div>
+
+    <!-- B Auto-center zoom on tap -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- element centered and zoomed, filling most of canvas -->
+          <div class="el selected" style="left:12px;top:30px;width:86px;height:68px;border-radius:4px;"></div>
+          <div class="h" style="left:9px;top:27px;"></div><div class="h" style="left:92px;top:27px;"></div>
+          <div class="h" style="left:9px;top:93px;"></div><div class="h" style="left:92px;top:93px;"></div>
+          <!-- zoom animation rings -->
+          <div class="tap-outer" style="left:26px;top:44px;width:58px;height:36px;border-radius:50%;opacity:0.3;border-color:var(--green);"></div>
+          <div class="tap-outer" style="left:36px;top:50px;width:38px;height:24px;border-radius:50%;opacity:0.15;border-color:var(--green);"></div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">tap → auto-zooms to center</div>
+        </div>
+      </div>
+      <div class="variant-name">Auto-center zoom on tap</div>
+      <div class="vpros">One gesture (tap) handles both select and focus — fastest path to editing</div>
+      <div class="vpros">Works well on large sheets where element may be off-screen</div>
+      <div class="vcons">Automatic camera movement is jarring — users lose spatial orientation</div>
+      <div class="vcons">No way to select an element without zooming — power users will hate this</div>
+      <div class="vconflict">Conflicts with PA1 safe zone overlays: when auto-zoom fires, the safe zone boundary rendering must recompute at the new zoom level. If the zoom is smooth/animated, the safe zone must also animate — non-trivial rendering requirement.</div>
+    </div>
+
+    <!-- C Zoom threshold triggers focus -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- zoom badge -->
+          <div class="zoom-badge">200%</div>
+          <!-- element at "zoomed in" state with focus highlight -->
+          <div class="el" style="left:8px;top:22px;width:94px;height:76px;border-radius:4px;opacity:0.7;"></div>
+          <div style="position:absolute;inset:8px;top:22px;height:76px;border:1.5px solid var(--green);border-radius:4px;pointer-events:none;"></div>
+          <!-- focus mode indicator bar -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:14px;background:rgba(0,195,137,0.12);border-top:1px solid rgba(0,195,137,0.3);display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:6px;font-weight:700;color:var(--green-dk);">Focus mode · pinch out to exit</span>
+          </div>
+          <div style="position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">200% zoom → focus activates</div>
+        </div>
+      </div>
+      <div class="variant-name">Zoom threshold triggers focus</div>
+      <div class="vpros">No new gesture — focus is a seamless byproduct of zooming in</div>
+      <div class="vpros">Power users who zoom to work precisely get full editing context automatically</div>
+      <div class="vcons">Focus triggers unintentionally whenever user zooms for any reason (e.g. zooming to check detail)</div>
+      <div class="vcons">Threshold value is arbitrary — calibrating 150% vs 200% vs 250% requires extensive testing</div>
+      <div class="vconflict">Conflicts with multi-element editing: at 200% zoom, multiple elements may be visible and the user hasn't indicated which element they want to focus on. The system must guess — or not activate focus mode at all until a single element is centered.</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end PA2 wrapper -->
+
+
+<!-- ══════════════════════════════════════════════════
      RECOMMENDATION
 ══════════════════════════════════════════════════ -->
 <div class="rec-banner">
   <div class="rec-col">
-    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;margin-bottom:10px;">★ Recommended Stack</div>
-    <h2>Layer the patterns by context</h2>
-    <p>No single concept covers all user types. The strongest system combines ambient, contextual, reactive, and educational layers — each serving a different moment in the user journey.</p>
+    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;margin-bottom:10px;">★ Recommended Directions</div>
+    <h2>One decision unlocks the rest</h2>
+    <p>PA 2's focus mode gesture standard must be decided first — it determines which PA 1 warnings are safe to show (some conflict), which toolbar states are valid, and how the breadcrumb fits the top bar.</p>
   </div>
   <div class="rec-col">
-    <h2 style="color:white;font-size:15px;margin-bottom:10px;">Suggested combination</h2>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
-      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:11px;margin-top:1px;">ALWAYS</span><span><strong style="color:white;">C02-A Dimmed Overflow</strong> — ambient, no labels, zero interaction</span></li>
-      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:11px;margin-top:1px;">ON DRAG</span><span><strong style="color:white;">C05-B Proximity Guides</strong> — guide appears near boundary during drag</span></li>
-      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:11px;margin-top:1px;">ON VIOLATION</span><span><strong style="color:white;">C04-A Red Outline + Toast</strong> — fires only when element crosses boundary</span></li>
-      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:11px;margin-top:1px;">FIRST TIME</span><span><strong style="color:white;">C06-A Spotlight Callout</strong> — teach the model once, then never again</span></li>
+    <h2 style="color:white;font-size:15px;margin-bottom:6px;"><span style="color:rgba(0,195,137,0.7);font-size:11px;font-weight:700;">PA 1</span> Safe Zone Stack</h2>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">ALWAYS</span><span><strong style="color:white;">C02-A Dimmed Overflow</strong> — ambient, no labels</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">ON DRAG</span><span><strong style="color:white;">C05-B Proximity Guides</strong> — appear near boundary during drag</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">VIOLATION</span><span><strong style="color:white;">C04-A Red Outline + Toast</strong> — fires when element crosses line</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">FIRST TIME</span><span><strong style="color:white;">C06-A Spotlight Callout</strong> — teach once, never again</span></li>
+    </ul>
+    <h2 style="color:white;font-size:15px;margin-bottom:6px;"><span style="color:rgba(0,195,137,0.7);font-size:11px;font-weight:700;">PA 2</span> Focus Mode Direction</h2>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">SELECT</span><span><strong style="color:white;">PA2-C02-A Floating Edit pill</strong> — explicit, no gesture ambiguity</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--green);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">CONTEXT</span><span><strong style="color:white;">PA2-C03-A Fixed breadcrumb</strong> — always shows where user is</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--yellow);font-weight:700;flex-shrink:0;font-size:10px;margin-top:2px;">RESOLVE</span><span style="color:rgba(255,200,100,0.8);">Breadcrumb + sheet header conflict must be resolved before build — top bar can't hold both</span></li>
     </ul>
   </div>
 </div>
