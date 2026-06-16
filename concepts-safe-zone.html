@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safe Zone UX Concepts — Sticker App</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  background: #f5f5f7;
+  color: #1e1e1e;
+  min-height: 100vh;
+}
+
+:root {
+  --green: #00c389;
+  --green-dk: #006647;
+  --green-lt: #e6f9f3;
+  --yellow: #f5a623;
+  --red: #e00000;
+  --red-lt: #fff0f0;
+  --blue: #0063b8;
+  --gray-50: #f5f5f5;
+  --gray-100: #ebebeb;
+  --gray-200: #dddddd;
+  --gray-300: #cccccc;
+  --gray-400: #adadad;
+  --gray-500: #8e8e8e;
+  --gray-700: #595959;
+  --gray-900: #1e1e1e;
+}
+
+/* ── HEADER ── */
+.page-header {
+  background: var(--gray-900); color: white;
+  padding: 40px 48px 32px;
+}
+.page-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.page-header .sub {
+  font-size: 15px; color: rgba(255,255,255,0.55);
+  max-width: 600px; line-height: 1.6;
+}
+.tag-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.tag {
+  padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+}
+.tag.green { background: rgba(0,195,137,0.2); color: #00c389; }
+
+/* ── CONCEPT PROBLEM STATEMENT ── */
+.problem-bar {
+  background: white; border-bottom: 1px solid var(--gray-100);
+  padding: 20px 48px;
+  display: flex; gap: 48px; flex-wrap: wrap;
+}
+.problem-col { flex: 1; min-width: 220px; }
+.problem-col h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 6px; }
+.problem-col p { font-size: 14px; line-height: 1.6; color: var(--gray-700); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  padding: 28px 48px 16px;
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--gray-500);
+}
+
+/* ── CONCEPT GRID ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  padding: 0 48px 48px;
+}
+
+/* ── CONCEPT CARD ── */
+.concept-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid var(--gray-100);
+  transition: box-shadow 0.2s;
+}
+.concept-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+
+.concept-preview {
+  background: #e0e0e0;
+  height: 280px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.concept-info { padding: 20px; }
+.concept-num {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--green); margin-bottom: 4px;
+}
+.concept-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.concept-desc { font-size: 14px; color: var(--gray-700); line-height: 1.6; margin-bottom: 14px; }
+
+.behavior-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.behavior-list li {
+  font-size: 13px; color: var(--gray-700);
+  display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+}
+.behavior-list li::before { content: '→'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+.pros-cons { display: flex; gap: 12px; margin-top: 16px; }
+.pros, .cons {
+  flex: 1; padding: 10px 12px; border-radius: 10px; font-size: 12px; line-height: 1.6;
+}
+.pros { background: var(--green-lt); }
+.cons { background: #fff8f0; }
+.pros strong { color: var(--green-dk); }
+.cons strong { color: #b35f00; }
+
+/* ── CANVAS SKETCH ELEMENTS ── */
+.sketch-canvas {
+  position: relative;
+  width: 160px; height: 224px; /* 4x7 ratio */
+}
+.sketch-sheet {
+  position: absolute; inset: 0;
+  background: white;
+  border-radius: 3px;
+}
+.sketch-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-radius: 3px;
+}
+
+/* shape on canvas */
+.sketch-shape {
+  position: absolute;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── CONCEPT 1: Persistent Safe-Zone Frame ── */
+.c1-safe-zone {
+  position: absolute;
+  border: 1.5px dashed var(--green);
+  border-radius: 2px;
+  background: transparent;
+}
+.c1-label {
+  position: absolute;
+  background: var(--green);
+  color: white;
+  font-size: 8px; font-weight: 700;
+  padding: 2px 6px; border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* ── CONCEPT 2: Dimmed Overflow ── */
+.c2-overflow-mask {
+  position: absolute;
+  background: rgba(40,40,40,0.18);
+  pointer-events: none;
+}
+
+/* ── CONCEPT 3: Color-coded Zones ── */
+.c3-zone {
+  position: absolute;
+  border-radius: 2px;
+}
+
+/* ── CONCEPT 4: Smart Warning ── */
+.c4-warning-badge {
+  position: absolute;
+  background: var(--red);
+  color: white;
+  font-size: 9px; font-weight: 700;
+  padding: 3px 8px; border-radius: 100px;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 4px;
+  box-shadow: 0 2px 8px rgba(224,0,0,0.3);
+}
+.c4-element-outline {
+  position: absolute;
+  border: 2px dashed var(--red);
+  border-radius: 3px;
+}
+
+/* ── CONCEPT 5: Show-on-Selection Guides ── */
+.c5-guide-line {
+  position: absolute;
+  background: var(--blue);
+  opacity: 0.7;
+}
+.c5-guide-label {
+  position: absolute;
+  background: var(--blue);
+  color: white;
+  font-size: 7px; font-weight: 700;
+  padding: 1px 5px; border-radius: 2px;
+  white-space: nowrap;
+}
+.c5-snap-indicator {
+  position: absolute;
+  width: 8px; height: 8px;
+  border: 2px solid var(--blue);
+  border-radius: 50%;
+  background: white;
+}
+
+/* ── CONCEPT 6: Onboarding callout ── */
+.c6-spotlight {
+  position: absolute;
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  box-shadow: 0 0 0 999px rgba(0,0,0,0.28);
+  z-index: 2;
+}
+.c6-callout {
+  position: absolute;
+  background: var(--gray-900);
+  color: white;
+  font-size: 8.5px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  width: 130px;
+  line-height: 1.5;
+  z-index: 3;
+}
+.c6-callout::before {
+  content: '';
+  position: absolute;
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid var(--gray-900);
+  top: -6px; left: 16px;
+}
+.c6-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block; margin-right: 4px;
+}
+
+/* ── RECOMMENDATION BANNER ── */
+.rec-banner {
+  margin: 0 48px 48px;
+  background: var(--gray-900);
+  border-radius: 16px;
+  padding: 28px 32px;
+  display: flex; gap: 32px; align-items: flex-start;
+  flex-wrap: wrap;
+}
+.rec-banner h2 { font-size: 18px; font-weight: 700; color: white; margin-bottom: 8px; }
+.rec-banner p { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.7; }
+.rec-col { flex: 1; min-width: 200px; }
+.rec-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green); color: white;
+  font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 100px;
+  margin-bottom: 10px;
+}
+
+/* ── NEXT STEPS ── */
+.next-steps {
+  margin: 0 48px 64px;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.next-card {
+  flex: 1; min-width: 180px;
+  background: white;
+  border: 1.5px solid var(--gray-100);
+  border-radius: 14px;
+  padding: 20px;
+}
+.next-card .step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--green); color: white;
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
+}
+.next-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.next-card p { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+
+@media (max-width: 768px) {
+  .page-header, .problem-bar, .section-label, .concept-grid, .rec-banner, .next-steps { padding-left: 20px; padding-right: 20px; }
+  .concept-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="page-header">
+  <h1>Safe Zone — UX Concept Exploration</h1>
+  <p class="sub">How users understand the physical canvas, printable area, and where their design content is safe to place.</p>
+  <div class="tag-row">
+    <span class="tag green">Canvas Interaction</span>
+    <span class="tag">Boundary Behavior</span>
+    <span class="tag">Safe-Zone Patterns</span>
+    <span class="tag">Warning System</span>
+    <span class="tag">Onboarding</span>
+  </div>
+</div>
+
+<!-- ── PROBLEM STATEMENT ── -->
+<div class="problem-bar">
+  <div class="problem-col">
+    <h3>The Problem</h3>
+    <p>Users don't instinctively understand the difference between the digital canvas and the physical sticker sheet. Content placed outside the printable area leads to production mistakes, wasted materials, and frustration.</p>
+  </div>
+  <div class="problem-col">
+    <h3>UX Goal</h3>
+    <p>Make the boundary system legible at a glance — users should always know where it's safe to place content, what risk looks like, and what will happen at print time, without requiring prior knowledge or extra steps.</p>
+  </div>
+  <div class="problem-col">
+    <h3>Constraints</h3>
+    <p>Mobile canvas is small. Guides must not clutter the working area or add cognitive load. System should serve both first-time and power users without forcing onboarding.</p>
+  </div>
+</div>
+
+<div class="section-label">6 Concepts to Explore</div>
+
+<!-- ── CONCEPT GRID ── -->
+<div class="concept-grid">
+
+  <!-- ════ CONCEPT 1: PERSISTENT SAFE-ZONE FRAME ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas">
+        <div class="sketch-sheet">
+          <div class="sketch-grid"></div>
+
+          <!-- safe zone dashed border inset 8px -->
+          <div class="c1-safe-zone" style="inset:12px;"></div>
+          <div class="c1-label" style="top:8px;left:50%;transform:translateX(-50%);">SAFE ZONE</div>
+
+          <!-- sticker circles template (30% opacity) -->
+          <div style="position:absolute;left:18px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:18px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:18px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+
+          <!-- a shape sitting inside the safe zone -->
+          <div class="sketch-shape" style="left:42px;top:95px;width:36px;height:36px;background:#1e1e1e;border-radius:50%;opacity:0.85;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num">Concept 01</div>
+      <div class="concept-title">Persistent Safe-Zone Frame</div>
+      <div class="concept-desc">A always-visible dashed border sits inset from the sheet edge, clearly marking the printable boundary at all times — no interaction required.</div>
+      <ul class="behavior-list">
+        <li>Dashed green border = safe print boundary, always on</li>
+        <li>"SAFE ZONE" micro-label anchored to top edge</li>
+        <li>Frame stays visible while scrolling or zooming</li>
+        <li>No interaction required — purely ambient</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Zero effort to understand. Instantly scannable. Works for all users.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Adds visual noise on a crowded canvas. Frame may feel intrusive for power users.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CONCEPT 2: DIMMED OVERFLOW REGION ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas">
+        <div class="sketch-sheet">
+          <div class="sketch-grid"></div>
+
+          <!-- safe (bright) inner area -->
+          <!-- dim mask: top -->
+          <div class="c2-overflow-mask" style="top:0;left:0;right:0;height:10px;"></div>
+          <!-- dim mask: bottom -->
+          <div class="c2-overflow-mask" style="bottom:0;left:0;right:0;height:10px;"></div>
+          <!-- dim mask: left -->
+          <div class="c2-overflow-mask" style="top:10px;bottom:10px;left:0;width:10px;"></div>
+          <!-- dim mask: right -->
+          <div class="c2-overflow-mask" style="top:10px;bottom:10px;right:0;width:10px;"></div>
+
+          <!-- sticker template circles -->
+          <div style="position:absolute;left:18px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:18px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:18px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+
+          <!-- shape crossing into the dim zone -->
+          <div class="sketch-shape" style="left:112px;top:16px;width:40px;height:40px;background:#1e1e1e;opacity:0.7;border-radius:4px;"></div>
+          <!-- the overflowing portion is visually in the dim zone — naturally shows the issue -->
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num">Concept 02</div>
+      <div class="concept-title">Dimmed Overflow Region</div>
+      <div class="concept-desc">The outer margin of the sheet is always visually dimmed. Content that enters the dim zone is still movable but the visual feedback shows it's in unsafe territory.</div>
+      <ul class="behavior-list">
+        <li>Outer ~4mm margin dimmed at 20% opacity permanently</li>
+        <li>Inner working area stays bright and clean</li>
+        <li>No labels needed — the contrast does the work</li>
+        <li>Content can still be dragged into dim zone (not locked)</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Highly intuitive — same pattern as "out of bounds" in print design tools. Clean.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Risk is subtle. No active warning when content enters the dim region.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CONCEPT 3: COLOR-CODED RISK ZONES ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas">
+        <div class="sketch-sheet">
+          <!-- Zone: Red (outer margin — will be cut) -->
+          <div class="c3-zone" style="inset:0;background:rgba(224,0,0,0.08);"></div>
+          <!-- Zone: Yellow (caution margin) -->
+          <div class="c3-zone" style="inset:10px;background:rgba(245,166,35,0.1);"></div>
+          <!-- Zone: Green (safe) -->
+          <div class="c3-zone" style="inset:22px;background:rgba(0,195,137,0.07);"></div>
+
+          <!-- zone labels -->
+          <div style="position:absolute;top:2px;right:2px;font-size:7px;font-weight:700;color:#e00000;background:rgba(255,255,255,0.9);padding:1px 4px;border-radius:2px;">CUT</div>
+          <div style="position:absolute;top:12px;right:2px;font-size:7px;font-weight:700;color:#b35f00;background:rgba(255,255,255,0.9);padding:1px 4px;border-radius:2px;">CAUTION</div>
+          <div style="position:absolute;top:24px;right:2px;font-size:7px;font-weight:700;color:#006647;background:rgba(255,255,255,0.9);padding:1px 4px;border-radius:2px;">SAFE</div>
+
+          <!-- sticker circles -->
+          <div style="position:absolute;left:30px;top:50px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:86px;top:50px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:30px;top:104px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:86px;top:104px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+
+          <!-- shape in safe zone -->
+          <div class="sketch-shape" style="left:44px;top:110px;width:32px;height:32px;background:#1e1e1e;opacity:0.8;border-radius:50%;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num">Concept 03</div>
+      <div class="concept-title">Color-Coded Risk Zones</div>
+      <div class="concept-desc">Three concentric zones — green (safe), yellow (caution), red (cut off) — give users a traffic-light mental model for understanding where their content lands.</div>
+      <ul class="behavior-list">
+        <li>Green inner zone = guaranteed printable area</li>
+        <li>Yellow middle zone = may print but risky near edge</li>
+        <li>Red outer zone = will be cut off during production</li>
+        <li>Legend chip anchored to top corner of canvas</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Traffic-light model is universally understood. Nuanced — shows degrees of risk, not binary.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Three colored zones is visually busy. Color overlap may confuse with template colors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CONCEPT 4: SMART WARNINGS ON VIOLATION ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas" style="position:relative;">
+        <div class="sketch-sheet">
+          <div class="sketch-grid"></div>
+
+          <!-- Clean canvas — no permanent overlays -->
+          <!-- sticker circles -->
+          <div style="position:absolute;left:18px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:18px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:18px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute;left:88px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.2);"></div>
+
+          <!-- shape crossing the edge - with red dashed violation outline -->
+          <div class="sketch-shape" style="left:124px;top:60px;width:48px;height:48px;background:#1e1e1e;opacity:0.75;border-radius:4px;"></div>
+          <div class="c4-element-outline" style="left:122px;top:58px;width:52px;height:52px;"></div>
+
+          <!-- warning badge -->
+          <div class="c4-warning-badge" style="bottom:-16px;left:50%;transform:translateX(-50%);">
+            ⚠ May be cut off
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num">Concept 04</div>
+      <div class="concept-title">Smart Warnings on Violation</div>
+      <div class="concept-desc">Canvas stays completely clean. Warnings only appear the moment a user's content crosses the safe boundary — contextual, not permanent.</div>
+      <ul class="behavior-list">
+        <li>Canvas has zero overlays when no violation exists</li>
+        <li>When element crosses boundary: red dashed outline appears on element</li>
+        <li>Toast warning: "Part of your design may be cut off"</li>
+        <li>Warning auto-dismisses when element is moved back inside</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Cleanest canvas experience. Warning is contextual and non-disruptive. Zero added visual noise.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Reactive, not preventive. User must make the mistake first to learn the boundary.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CONCEPT 5: SHOW-ON-SELECTION GUIDES ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas">
+        <div class="sketch-sheet">
+          <div class="sketch-grid"></div>
+
+          <!-- Guides appear when element selected / near boundary -->
+          <!-- horizontal guides -->
+          <div class="c5-guide-line" style="top:10px;left:0;right:0;height:1px;"></div>
+          <div class="c5-guide-line" style="bottom:10px;left:0;right:0;height:1px;"></div>
+          <!-- vertical guides -->
+          <div class="c5-guide-line" style="left:10px;top:0;bottom:0;width:1px;"></div>
+          <div class="c5-guide-line" style="right:10px;top:0;bottom:0;width:1px;"></div>
+
+          <!-- guide labels -->
+          <div class="c5-guide-label" style="top:6px;left:14px;">Safe boundary</div>
+
+          <!-- snap indicator at corner -->
+          <div class="c5-snap-indicator" style="top:6px;left:6px;"></div>
+          <div class="c5-snap-indicator" style="top:6px;right:6px;"></div>
+          <div class="c5-snap-indicator" style="bottom:6px;left:6px;"></div>
+          <div class="c5-snap-indicator" style="bottom:6px;right:6px;"></div>
+
+          <!-- sticker circles -->
+          <div style="position:absolute;left:18px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:88px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:18px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:88px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:18px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute;left:88px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);"></div>
+
+          <!-- selected element -->
+          <div class="sketch-shape" style="left:50px;top:90px;width:42px;height:42px;background:#1e1e1e;opacity:0.85;border-radius:50%;box-shadow:0 0 0 2px #00c389;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num">Concept 05</div>
+      <div class="concept-title">Show-on-Selection Guides</div>
+      <div class="concept-desc">Boundary guides are invisible by default. The moment a user selects or starts dragging an element, the safe-zone boundary materializes to guide placement.</div>
+      <ul class="behavior-list">
+        <li>Guides invisible until element is tapped or being dragged</li>
+        <li>Blue guide lines appear showing exact safe boundary</li>
+        <li>Optional snap: element snaps to guide edge at boundary</li>
+        <li>Guides fade out 1.5s after element is released</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Clean default state. Guides feel smart and helpful, not imposed. Snap prevents accidents.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>Requires users to interact to discover the boundary. First-time users may never trigger it.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CONCEPT 6: GUIDED FIRST-TIME ONBOARDING ════ -->
+  <div class="concept-card">
+    <div class="concept-preview">
+      <div class="sketch-canvas" style="position:relative;">
+        <div class="sketch-sheet">
+          <div class="sketch-grid"></div>
+
+          <!-- sticker circles dim while spotlight is on -->
+          <div style="position:absolute;left:18px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);opacity:0.4;"></div>
+          <div style="position:absolute;left:88px;top:30px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);opacity:0.4;"></div>
+          <div style="position:absolute;left:18px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);opacity:0.4;"></div>
+          <div style="position:absolute;left:88px;top:90px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);opacity:0.4;"></div>
+          <div style="position:absolute;left:18px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);opacity:0.4;"></div>
+          <div style="position:absolute;left:88px;top:150px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);opacity:0.4;"></div>
+
+          <!-- Spotlight on the safe zone area -->
+          <div class="c6-spotlight" style="inset:10px;z-index:2;"></div>
+
+          <!-- overlay dim outside spotlight -->
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.28);z-index:1;"></div>
+
+          <!-- callout tooltip -->
+          <div class="c6-callout" style="bottom:8px;left:10px;">
+            <div style="margin-bottom:4px;font-weight:700;font-size:9px;display:flex;align-items:center;">
+              <span class="c6-dot" style="background:var(--green);"></span>This is your safe zone
+            </div>
+            Keep designs inside this boundary to ensure they print correctly.
+            <div style="margin-top:6px;color:var(--green);font-weight:700;font-size:8px;">Got it  →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-num">Concept 06</div>
+      <div class="concept-title">Guided First-Time Onboarding</div>
+      <div class="concept-desc">First time a user opens a new project, a single focused tutorial moment spotlights the safe zone with a simple one-tap dismissal. After that, canvas is clean.</div>
+      <ul class="behavior-list">
+        <li>Triggers only once on first project creation</li>
+        <li>Spotlight + overlay focuses attention on the boundary</li>
+        <li>Single callout explains "keep designs inside this area"</li>
+        <li>One tap to dismiss — never shown again (stored in preferences)</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><strong>✓ Pros</strong><br>Teaches the mental model once, clearly. Canvas stays clean after. Low ongoing friction.</div>
+        <div class="cons"><strong>✗ Cons</strong><br>One-shot education — users who dismiss quickly may forget. Doesn't help returning users who forget.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end concept grid -->
+
+
+<!-- ── RECOMMENDATION ── -->
+<div class="rec-banner">
+  <div class="rec-col">
+    <div class="rec-badge">★ Recommended Combination</div>
+    <h2>Layer the patterns by context</h2>
+    <p>No single concept solves all user types. The strongest system combines a clean default state with progressive disclosure — showing more detail as user behavior indicates they need it.</p>
+  </div>
+  <div class="rec-col">
+    <h2 style="color:white;font-size:15px;margin-bottom:10px;">Suggested stack</h2>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:#00c389;font-weight:700;flex-shrink:0;">01</span><span><strong style="color:white;">Always on:</strong> Concept 02 (Dimmed Overflow) — ambient, no labels, minimal noise</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:#00c389;font-weight:700;flex-shrink:0;">02</span><span><strong style="color:white;">On interaction:</strong> Concept 05 (Show-on-Selection Guides) — appear during drag, snap to safe edge</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:#00c389;font-weight:700;flex-shrink:0;">03</span><span><strong style="color:white;">On violation:</strong> Concept 04 (Smart Warning) — red outline + toast, only when actually crossing</span></li>
+      <li style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:flex-start;gap:8px;"><span style="color:#00c389;font-weight:700;flex-shrink:0;">04</span><span><strong style="color:white;">First-time only:</strong> Concept 06 (Onboarding) — teach the model once, then get out of the way</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ── NEXT STEPS ── -->
+<div class="section-label" style="padding-top:0;">Next Steps</div>
+<div class="next-steps">
+  <div class="next-card">
+    <div class="step-num">1</div>
+    <h4>Pick a direction</h4>
+    <p>Review concepts with the team and select 1–2 to build into interactive prototype states.</p>
+  </div>
+  <div class="next-card">
+    <div class="step-num">2</div>
+    <h4>Define boundary specs</h4>
+    <p>Specify safe-zone margins in mm per product type (circles, rectangles, squares differ).</p>
+  </div>
+  <div class="next-card">
+    <div class="step-num">3</div>
+    <h4>Build into prototype</h4>
+    <p>Implement selected pattern in the live sticker app prototype with real canvas interaction.</p>
+  </div>
+  <div class="next-card">
+    <div class="step-num">4</div>
+    <h4>Test with users</h4>
+    <p>Validate chosen pattern with 3–5 first-time users. Observe whether they understand the boundary without instruction.</p>
+  </div>
+</div>
+
+</body>
+</html>
