@@ -275,83 +275,64 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
   <div class="concept-wide-header">
     <div class="concept-num">Concept 02</div>
     <div class="concept-wide-title">Dimmed Overflow Region</div>
-    <div class="concept-wide-desc">The outer margin of the sheet is always visually different from the inner working area — the environment communicates the boundary without any overlay labels.</div>
+    <div class="concept-wide-desc">The workspace surrounding the artboard is a neutral gray — the white artboard and gray surround define the boundary through tonal contrast alone, without any overlay label or frame. This is already the behavior in the current Cricut Design Space. Variants explore contrast level and overflow treatment.</div>
   </div>
   <div class="variant-grid">
 
-    <!-- A ★ Subtle Gray Dim -->
+    <!-- A ★ Light Gray Workspace (current Cricut behavior) -->
     <div class="variant-col rec">
-      <div class="mini-canvas-wrap">
-        <div class="mini-sheet">
-          <div class="mini-grid"></div>
+      <div class="mini-canvas-wrap" style="background:#e8e8e8;">
+        <div class="mini-sheet" style="box-shadow:0 1px 4px rgba(0,0,0,0.1);">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
-          <div class="mc-el" style="left:72px;top:10px;width:18px;height:18px;opacity:0.85;"></div>
-          <!-- gray dim on margin edges -->
-          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.14);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,8px 8px,8px calc(100% - 8px),calc(100% - 8px) calc(100% - 8px),calc(100% - 8px) 8px,8px 8px);pointer-events:none;"></div>
         </div>
       </div>
       <div class="rec-badge">★ Recommended</div>
-      <div class="variant-name">Subtle Gray Dim</div>
-      <div class="vpros">Learnable fast — same model as Figma, Illustrator pasteboard margins</div>
-      <div class="vpros">No labels needed; dim-vs-bright contrast does all the communication</div>
-      <div class="vcons">Dim level must be calibrated — too light = invisible, too dark = alarming</div>
-      <div class="vcons">White sticker content on white sheet: dimmed area may be imperceptible</div>
+      <div class="variant-name">Light Gray Workspace</div>
+      <div class="vpros">Already implemented — zero engineering change; users familiar with the existing app already understand this model</div>
+      <div class="vpros">Non-intrusive: the artboard is fully clean for artwork, the boundary is felt as a surface, not read as a label</div>
+      <div class="vcons">Very light gray may be nearly invisible on bright displays or in high-ambient-light environments</div>
+      <div class="vcons">New users who've never used a design tool may treat the gray workspace as usable canvas — no clear "this doesn't print" signal</div>
+      <div class="vconflict">Conflicts with PA3-C01 (Fully Constrained Canvas): if elements can never leave the artboard, the gray workspace always stays empty — it looks like unused dead space and users may attempt to drag elements into it, not understanding it's off-limits.</div>
     </div>
 
-    <!-- B Checkerboard Pattern -->
+    <!-- B Darker Workspace -->
     <div class="variant-col">
-      <div class="mini-canvas-wrap">
-        <div class="mini-sheet" style="overflow:hidden;">
-          <div class="mini-grid"></div>
+      <div class="mini-canvas-wrap" style="background:#a8a8a8;">
+        <div class="mini-sheet" style="box-shadow:0 2px 8px rgba(0,0,0,0.18);">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
-          <div class="mc-el" style="left:72px;top:10px;width:18px;height:18px;opacity:0.85;"></div>
-          <!-- checkerboard on overflow margin using SVG -->
-          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="chk" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
-                <rect width="3" height="3" fill="rgba(0,0,0,0.12)"/>
-                <rect x="3" y="3" width="3" height="3" fill="rgba(0,0,0,0.12)"/>
-              </pattern>
-              <mask id="msk">
-                <rect width="110" height="154" fill="white"/>
-                <rect x="8" y="8" width="94" height="138" fill="black"/>
-              </mask>
-            </defs>
-            <rect width="110" height="154" fill="url(#chk)" mask="url(#msk)"/>
-          </svg>
         </div>
       </div>
-      <div class="variant-name">Checkerboard Margin</div>
-      <div class="vpros">Unmistakable — checkerboard = transparent/outside in every image tool</div>
-      <div class="vpros">Very strong contrast; impossible to miss even on complex designs</div>
-      <div class="vcons">Visually very busy — pattern fights with sticker artwork</div>
-      <div class="vcons">Checkerboard reads as "image transparency" not "print boundary" to consumers</div>
+      <div class="variant-name">Darker Neutral Workspace</div>
+      <div class="vpros">High contrast — artboard reads as clearly white even on bright displays; boundary unmissable at a quick glance</div>
+      <div class="vpros">Gray is dark enough that no user would mistake it for an editable canvas area</div>
+      <div class="vcons">Darker surround feels heavier; may read as "disabled" or "locked" to some users</div>
+      <div class="vcons">Strong contrast may be fatiguing during longer editing sessions</div>
+      <div class="vconflict">Conflicts with C01-B (Elevation + Darkened Workspace): both use a dark gray surround on a white artboard. If these concepts converge, the team needs a single decision — elevation shadow or tonal contrast — or the combined output risks looking redundant.</div>
     </div>
 
-    <!-- C Blur/Desaturate -->
+    <!-- C Workspace with overflow ghost -->
     <div class="variant-col">
-      <div class="mini-canvas-wrap">
-        <div class="mini-sheet" style="overflow:hidden;">
-          <div class="mini-grid"></div>
+      <div class="mini-canvas-wrap" style="background:#d0d0d0;position:relative;">
+        <!-- ghost of an element that has drifted into the workspace (off-artboard) -->
+        <div style="position:absolute;right:10px;top:28px;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(0,0,0,0.2);background:rgba(30,30,30,0.08);opacity:0.5;pointer-events:none;"></div>
+        <div style="position:absolute;right:12px;top:18px;font-size:6px;color:rgba(0,0,0,0.4);font-weight:700;white-space:nowrap;">off-canvas</div>
+        <div class="mini-sheet">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
-          <div class="mc c5"></div><div class="mc c6"></div>
-          <!-- element crossing boundary — visible desaturated in margin -->
-          <div class="mc-el" style="left:72px;top:10px;width:18px;height:18px;opacity:0.85;"></div>
-          <!-- desaturation overlay on margin -->
-          <div style="position:absolute;inset:0;background:linear-gradient(rgba(240,240,240,0.65),rgba(240,240,240,0.65));clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,9px 9px,9px calc(100% - 9px),calc(100% - 9px) calc(100% - 9px),calc(100% - 9px) 9px,9px 9px);pointer-events:none;filter:blur(0.5px);"></div>
-          <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.45);color:white;font-size:6px;font-weight:700;padding:1px 5px;border-radius:3px;white-space:nowrap;">fades out</div>
+          <div class="mc c5"></div>
+          <!-- c6 slot left empty to imply element drifted out -->
         </div>
       </div>
-      <div class="variant-name">Blur / Desaturate Overflow</div>
-      <div class="vpros">Strongest visual hierarchy — clearly shows what's "in" vs. "out"</div>
-      <div class="vpros">Immediately intuitive: blurred = won't be sharp in print</div>
-      <div class="vcons">CSS filter needs JavaScript to clip precisely to margin zone</div>
-      <div class="vcons">User may think their design has a rendering bug, not a boundary</div>
+      <div class="variant-name">Workspace with Off-Canvas Ghost</div>
+      <div class="vpros">Workspace is not "dead space" — it actively shows elements that have drifted off the artboard, making them easy to recover</div>
+      <div class="vpros">Ghost treatment (faded silhouette) communicates "here but not printing" without alarming the user</div>
+      <div class="vcons">Requires runtime compositing: the app must render a ghosted version of each off-canvas element in the workspace layer</div>
+      <div class="vcons">Users may see the ghost and think the element printed fine — unclear whether it's a warning or a feature</div>
+      <div class="vconflict">Conflicts with PA3-C02 (Infinite Staging): if elements in the workspace are shown as faded ghosts (implying "this doesn't print"), users can't tell the difference between an accidentally overflowed element and one intentionally staged for later. The ghost treatment undermines the staging paradigm.</div>
     </div>
 
   </div>
