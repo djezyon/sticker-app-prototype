@@ -966,89 +966,93 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
 <div style="margin:0 48px 32px;border:1.5px solid var(--g100);border-top:none;border-radius:0 0 16px 16px;overflow:hidden;">
 
 <!-- ══════════════════════════════════════════════════
-     PA2 · CONCEPT 01 — DOUBLE-TAP ENTER / EXIT
+     PA2 · CONCEPT 01 — LAYERED EXIT AFFORDANCES / ALL THREE ACTIVE
 ══════════════════════════════════════════════════ -->
 <div class="concept-wide" style="border-radius:0;border:none;border-bottom:1.5px solid var(--g100);">
   <div class="concept-wide-header">
     <div class="concept-num">PA 2 · Concept 01</div>
-    <div class="concept-wide-title">Double-Tap Enter / Exit</div>
-    <div class="concept-wide-desc">Tap once to select an element (shows handles). Double-tap to enter focus/edit mode. Three variants differ in how the user exits — the most controversial design decision.</div>
+    <div class="concept-wide-title">Layered Exit Affordances · All Three Active</div>
+    <div class="concept-wide-desc">Like a bottom sheet that simultaneously supports tap-outside, drag-to-dismiss, and a close button — focus mode exit should offer all three methods at once. Users reach for whichever feels natural in the moment; no user should ever feel "stuck" in focus mode. Each variant shows one exit layer for team discussion. The recommendation is to ship all three together.</div>
   </div>
   <div class="variant-grid">
 
-    <!-- A ★ Double-tap in, tap outside to exit -->
+    <!-- A ★ Tap outside (ambient primary exit) -->
     <div class="variant-col rec">
       <div class="mini-canvas-wrap">
         <div class="mini-sheet">
           <div class="mini-grid"></div>
-          <!-- primary element: star shape, in focus state -->
+          <!-- focused element: star -->
           <div class="el selected" style="left:22px;top:36px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
-          <!-- selection handles -->
           <div class="h" style="left:19px;top:33px;"></div><div class="h" style="left:70px;top:33px;"></div>
           <div class="h" style="left:19px;top:75px;"></div><div class="h" style="left:70px;top:75px;"></div>
-          <!-- double-tap rings -->
+          <!-- double-tap enter indicator -->
           <div class="tap-outer" style="left:30px;top:44px;width:30px;height:30px;"></div>
           <div class="tap-inner" style="left:37px;top:51px;width:16px;height:16px;"></div>
           <div class="tap-outer" style="left:25px;top:39px;width:40px;height:40px;opacity:0.4;"></div>
-          <!-- second element (unfocused) -->
+          <!-- unfocused element dims -->
           <div class="el" style="left:68px;top:95px;width:30px;height:22px;opacity:0.3;"></div>
-          <!-- tap-outside indicator -->
-          <div style="position:absolute;right:8px;top:20px;font-size:7px;color:var(--g500);text-align:right;line-height:1.4;">tap<br>outside<br>→ exit</div>
-          <!-- label -->
-          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--green);white-space:nowrap;">2× tap = enter focus</div>
+          <!-- tap-outside cue in empty canvas area -->
+          <div style="position:absolute;right:7px;top:18px;font-size:6.5px;color:var(--g500);text-align:right;line-height:1.5;">tap outside<br>→ exit</div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6px;font-weight:700;color:var(--green);white-space:nowrap;background:rgba(0,195,137,0.08);padding:1px 5px;border-radius:3px;">layer 1 of 3</div>
         </div>
       </div>
-      <div class="rec-badge">★ Recommended</div>
-      <div class="variant-name">Double-tap in · Tap outside to exit</div>
-      <div class="vpros">Standard iOS pattern — matches Maps, Photos, Safari tap-to-focus behavior</div>
-      <div class="vpros">Exit is self-evident: "tap outside to dismiss" is learned across all iOS apps</div>
-      <div class="vcons">Double-tap risks conflict with pinch-to-zoom if both are enabled on canvas</div>
-      <div class="vcons">Accidental double-tap mid-drag could trigger focus unintentionally</div>
-      <div class="vconflict">Conflicts with canvas pinch-to-zoom (PA gesture standard) — double-tap zooms in most apps. Must clearly decide: double-tap = zoom OR double-tap = focus, not both.</div>
+      <div class="rec-badge">★ All 3 together</div>
+      <div class="variant-name">Tap outside → exit  ·  ambient, no UI needed</div>
+      <div class="vpros">Zero additional UI — exit lives in negative space; works as a natural backstop for users who don't know the other two methods</div>
+      <div class="vpros">Already learned across all iOS apps (Maps, Photos, Safari) — tap outside to dismiss is a universal habit</div>
+      <div class="vcons">Not discoverable on its own — first-time users have no visual cue that tapping outside will exit; must be paired with visible affordances</div>
+      <div class="vcons">Accidental exit risk when tapping near a second element while still in focus mode</div>
+      <div class="vconflict">Conflicts with canvas pinch-to-zoom gesture standard — double-tap to enter conflicts with double-tap to zoom. The enter gesture (double-tap vs. single-tap + edit button) must be resolved first; the exit method is secondary.</div>
     </div>
 
-    <!-- B Double-tap in, double-tap out -->
+    <!-- B Done button (always-visible fallback) -->
     <div class="variant-col">
       <div class="mini-canvas-wrap">
         <div class="mini-sheet">
           <div class="mini-grid"></div>
-          <!-- element in focus — larger, centered, filling canvas -->
-          <div class="el" style="left:14px;top:24px;width:82px;height:64px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;outline:2px solid var(--green);outline-offset:3px;"></div>
-          <!-- double-tap rings (exiting) -->
-          <div class="tap-outer" style="left:38px;top:48px;width:30px;height:30px;"></div>
-          <div class="tap-inner" style="left:45px;top:55px;width:16px;height:16px;"></div>
-          <div class="tap-outer" style="left:33px;top:43px;width:40px;height:40px;opacity:0.4;"></div>
-          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">2× tap again = exit</div>
-        </div>
-      </div>
-      <div class="variant-name">Double-tap in · Double-tap to exit</div>
-      <div class="vpros">Symmetric — same gesture enters and exits; no separate mental model for exit</div>
-      <div class="vpros">No risk of accidental exit by touching near the element</div>
-      <div class="vcons">Non-standard iOS exit pattern — users may feel "trapped" in focus mode</div>
-      <div class="vcons">Double-tap on text elements selects a word — gesture is already overloaded</div>
-      <div class="vconflict">Conflicts with text editing: on a text element, double-tap to exit would fight with double-tap to select a word (iOS default). Needs a special case, increasing complexity.</div>
-    </div>
-
-    <!-- C Double-tap in, Back button to exit -->
-    <div class="variant-col">
-      <div class="mini-canvas-wrap">
-        <div class="mini-sheet">
-          <div class="mini-grid"></div>
-          <!-- back button top-left -->
-          <div style="position:absolute;top:5px;left:6px;background:var(--g900);color:white;font-size:7px;font-weight:700;padding:3px 8px;border-radius:100px;z-index:3;display:flex;align-items:center;gap:3px;">← Canvas</div>
-          <!-- element in focus -->
+          <!-- Done button top-right — always visible in focus mode -->
+          <div style="position:absolute;top:5px;right:5px;background:var(--green);color:white;font-size:7px;font-weight:700;padding:3px 8px;border-radius:100px;z-index:3;">Done ✓</div>
+          <!-- focused element -->
           <div class="el selected" style="left:18px;top:38px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
           <div class="h" style="left:15px;top:35px;"></div><div class="h" style="left:66px;top:35px;"></div>
           <div class="h" style="left:15px;top:77px;"></div><div class="h" style="left:66px;top:77px;"></div>
-          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;color:var(--g700);white-space:nowrap;">Back button = exit</div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6px;font-weight:700;color:var(--g700);white-space:nowrap;background:rgba(0,0,0,0.05);padding:1px 5px;border-radius:3px;">layer 2 of 3</div>
         </div>
       </div>
-      <div class="variant-name">Double-tap in · Back button to exit</div>
-      <div class="vpros">Always-visible exit — no guessing how to leave focus mode</div>
-      <div class="vpros">Consistent with iOS navigation (sheet view → canvas is a nav hierarchy)</div>
-      <div class="vcons">Adds nav hierarchy to a flat canvas — users may expect Back to navigate to Home screen</div>
-      <div class="vcons">Back button takes top-bar real estate shared with breadcrumb concept</div>
-      <div class="vconflict">Conflicts with PA2-03 Breadcrumb Navigation — both need the top bar. Also conflicts with sheet header label (currently shows machine name + sheet type at top of canvas).</div>
+      <div class="variant-name">Done button → exit  ·  always-visible escape hatch</div>
+      <div class="vpros">Zero guessing — users who feel stuck always have a visible button to tap; the most important accessibility affordance of the three</div>
+      <div class="vpros">"Done ✓" signals intentional completion, not an accidental exit — reinforces the idea that focus mode is a deliberate editing state</div>
+      <div class="vcons">Takes top-bar real estate — must coexist with breadcrumb (PA2-C03) and sheet header label; requires toolbar layout planning</div>
+      <div class="vcons">Visible at all times during focus mode — users who rely on Tap-Outside may find it redundant visual noise</div>
+      <div class="vconflict">Conflicts with PA2-C03 (Breadcrumb navigation): both need to live in the top bar simultaneously. Recommend: breadcrumb left, Done right — but this requires the breadcrumb to be concise enough not to crowd the Done button on a 390px screen.</div>
+    </div>
+
+    <!-- C Swipe-down gesture (sheet pull-to-dismiss mirror) -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap">
+        <div class="mini-sheet">
+          <div class="mini-grid"></div>
+          <!-- focused element positioned near top -->
+          <div class="el selected" style="left:22px;top:22px;width:54px;height:44px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border-radius:0;"></div>
+          <div class="h" style="left:19px;top:19px;"></div><div class="h" style="left:70px;top:19px;"></div>
+          <div class="h" style="left:19px;top:61px;"></div><div class="h" style="left:70px;top:61px;"></div>
+          <!-- grab handle below element (mirrors bottom-sheet grabber) -->
+          <div style="position:absolute;left:50%;top:72px;transform:translateX(-50%);width:24px;height:3px;background:rgba(0,0,0,0.18);border-radius:2px;"></div>
+          <!-- swipe-down gesture path -->
+          <div style="position:absolute;left:50%;top:80px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="width:1px;height:20px;background:repeating-linear-gradient(to bottom,rgba(0,0,0,0.2) 0,rgba(0,0,0,0.2) 3px,transparent 3px,transparent 6px);"></div>
+            <div style="font-size:8px;color:rgba(0,0,0,0.22);">↓</div>
+          </div>
+          <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:6px;font-weight:700;color:var(--g700);white-space:nowrap;background:rgba(0,0,0,0.05);padding:1px 5px;border-radius:3px;">layer 3 of 3</div>
+          <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:6.5px;color:var(--g500);white-space:nowrap;">swipe ↓ to exit</div>
+        </div>
+      </div>
+      <div class="variant-name">Swipe down → exit  ·  sheet pull-to-dismiss mirror</div>
+      <div class="vpros">Mirrors the bottom sheet pull-to-dismiss that users already know from iOS — the physical gesture of "pushing the canvas down" is intuitive for collapsing a mode</div>
+      <div class="vpros">Keeps hands on canvas — no reaching up to a button; fluid and low-friction for experienced users who move quickly between elements</div>
+      <div class="vcons">Not discoverable at all without a grabber affordance or onboarding — most users will never find it without being shown</div>
+      <div class="vcons">Swipe-down conflicts with "scroll canvas" on a pan-able canvas — gesture threshold and direction must be precisely tuned to distinguish exit-swipe from pan</div>
+      <div class="vconflict">Conflicts with PA3-C02 (Infinite Staging / infinite canvas): on an infinite canvas that pans in all directions, a downward swipe means pan-down, not exit. The swipe-down exit gesture only works cleanly if the canvas is constrained or if the gesture is anchored to the element (not the canvas background).</div>
     </div>
 
   </div>
