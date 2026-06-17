@@ -207,16 +207,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
 
     <!-- A ★ Slightly Elevated Artboard -->
     <div class="variant-col rec">
-      <div class="mini-canvas-wrap" style="background:#b8b8b8;position:relative;">
-        <!-- workspace surface: subtle dot grid to suggest the canvas "table" -->
-        <div style="position:absolute;inset:0;border-radius:8px;background-image:radial-gradient(circle,rgba(0,0,0,0.13) 1px,transparent 1px);background-size:9px 9px;pointer-events:none;"></div>
+      <div class="mini-canvas-wrap" style="background:#b8b8b8;">
         <!-- artboard: white, slightly elevated via shadow, no border or labels -->
-        <div class="mini-sheet" style="box-shadow:0 5px 20px rgba(0,0,0,0.22),0 2px 6px rgba(0,0,0,0.13);position:relative;z-index:1;">
-          <div class="mini-grid"></div>
+        <div class="mini-sheet" style="box-shadow:0 5px 20px rgba(0,0,0,0.22),0 2px 6px rgba(0,0,0,0.13);">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
-          <!-- small "4×7 in" material label — faint, structural, not a UI overlay -->
           <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:5.5px;color:rgba(0,0,0,0.22);white-space:nowrap;font-weight:600;letter-spacing:0.04em;">4 × 7 in</div>
         </div>
       </div>
@@ -229,35 +225,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
       <div class="vconflict">Conflicts with PA2-C04 (Pinch-focus zoom): when the artboard is zoomed to fill the screen, the gray workspace surrounding it disappears — and with it, the only boundary signal. Focus mode needs a fallback indicator (e.g. a faint edge highlight) to replace the elevation cue.</div>
     </div>
 
-    <!-- B Elevation + Workspace Surface Grid -->
+    <!-- B Elevation + Darkened Workspace -->
     <div class="variant-col">
-      <div class="mini-canvas-wrap" style="background:#b4b4b4;position:relative;">
-        <!-- workspace: cutting-mat style line grid to make the surface more intentional -->
-        <div style="position:absolute;inset:0;border-radius:8px;background-image:linear-gradient(rgba(255,255,255,0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.12) 1px,transparent 1px);background-size:14px 14px;pointer-events:none;"></div>
-        <div class="mini-sheet" style="box-shadow:0 5px 20px rgba(0,0,0,0.22),0 2px 6px rgba(0,0,0,0.13);position:relative;z-index:1;">
-          <div class="mini-grid"></div>
+      <div class="mini-canvas-wrap" style="background:#878787;">
+        <div class="mini-sheet" style="box-shadow:0 5px 20px rgba(0,0,0,0.28),0 2px 6px rgba(0,0,0,0.18);">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
           <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:5.5px;color:rgba(0,0,0,0.22);white-space:nowrap;font-weight:600;letter-spacing:0.04em;">4 × 7 in</div>
         </div>
       </div>
-      <div class="variant-name">Elevation + Workspace Grid</div>
-      <div class="vpros">Grid reinforces the "surface" metaphor — users understand the artboard sits on a workspace, not that it is the workspace</div>
-      <div class="vpros">Workspace grid adds spatial depth at all zoom levels, keeping the boundary legible even when less gray is visible</div>
-      <div class="vcons">Grid texture adds low-level visual noise to the area outside the artboard — may feel busy or distracting on larger screens</div>
-      <div class="vcons">White-on-grid separation relies on contrast — could fail in low-brightness environments or accessibility settings</div>
-      <div class="vconflict">Conflicts with PA3-C02 (Infinite Staging): if the workspace extends infinitely, the grid must also tile infinitely. A seamlessly looping grid is technically simple but may feel monotonous and lose the "surface" metaphor at scale.</div>
+      <div class="variant-name">Elevation + Darkened Workspace</div>
+      <div class="vpros">Stronger white-to-gray contrast makes the artboard boundary legible even at a quick glance — especially useful at smaller zoom levels</div>
+      <div class="vpros">Dark workspace recedes visually, keeping user focus entirely on the artboard and the work on it</div>
+      <div class="vcons">Darker workspace may feel heavy or industrial for a consumer-facing product — less friendly than a neutral mid-gray</div>
+      <div class="vcons">High contrast creates a "spotlight" feeling that may be fatiguing during long editing sessions</div>
+      <div class="vconflict">Conflicts with PA1-C06 (Spotlight Onboarding): both concepts use a dark surround and white-highlighted artboard. If both are in the product, the persistent dark workspace and the onboarding spotlight look identical — users cannot tell if they're in an "intro mode" or normal editing state.</div>
     </div>
 
     <!-- C Elevation + Sheet Material Tint -->
     <div class="variant-col">
-      <div class="mini-canvas-wrap" style="background:#b0b0b0;position:relative;">
-        <!-- workspace: neutral dot grid -->
-        <div style="position:absolute;inset:0;border-radius:8px;background-image:radial-gradient(circle,rgba(0,0,0,0.1) 1px,transparent 1px);background-size:9px 9px;pointer-events:none;"></div>
+      <div class="mini-canvas-wrap" style="background:#b0b0b0;">
         <!-- artboard: tinted to match a chosen sheet material (kraft shown here) -->
-        <div class="mini-sheet" style="background:#f5e9d2;box-shadow:0 5px 20px rgba(0,0,0,0.22),0 2px 6px rgba(0,0,0,0.13);position:relative;z-index:1;">
-          <div class="mini-grid"></div>
+        <div class="mini-sheet" style="background:#f5e9d2;box-shadow:0 5px 20px rgba(0,0,0,0.22),0 2px 6px rgba(0,0,0,0.13);">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
