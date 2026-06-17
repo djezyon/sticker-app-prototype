@@ -448,28 +448,46 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
   </div>
   <div class="variant-grid">
 
-    <!-- A ★ Red Outline + Toast -->
+    <!-- A ★ Red Outline + Toast + Magnified Edge Detail -->
     <div class="variant-col rec">
-      <div class="mini-canvas-wrap">
-        <div class="mini-sheet">
-          <div class="mini-grid"></div>
+      <div class="mini-canvas-wrap" style="position:relative;">
+        <div class="mini-sheet" style="overflow:visible;">
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
-          <!-- element crossing boundary — right side -->
-          <div class="mc-el" style="left:76px;top:10px;width:22px;height:22px;border-radius:4px;opacity:0.8;"></div>
-          <!-- red dashed outline on violating element -->
-          <div style="position:absolute;left:74px;top:8px;width:26px;height:26px;border:1.5px dashed #e00000;border-radius:4px;pointer-events:none;"></div>
-          <!-- toast at bottom -->
-          <div style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);background:#e00000;color:white;font-size:7px;font-weight:700;padding:3px 8px;border-radius:100px;white-space:nowrap;">⚠ May be cut off</div>
+          <!-- artwork inside c2 too close to sticker edge (the violation) -->
+          <div style="position:absolute;left:88px;top:14px;width:12px;height:12px;background:rgba(30,30,30,0.65);border-radius:50%;z-index:1;"></div>
+          <!-- red ring violation indicator on c2 sticker -->
+          <div style="position:absolute;left:56px;top:3px;width:48px;height:48px;border-radius:50%;border:2px solid rgba(220,30,30,0.9);pointer-events:none;z-index:2;"></div>
+          <!-- connector: dotted vertical from c2 down to popup -->
+          <div style="position:absolute;left:82px;top:51px;width:0;height:42px;border-left:1px dashed rgba(0,0,0,0.22);z-index:2;pointer-events:none;"></div>
+          <div style="position:absolute;left:79px;top:49px;width:6px;height:6px;border-radius:50%;background:rgba(220,30,30,0.75);z-index:3;"></div>
+          <!-- MAGNIFIED EDGE DETAIL POPUP -->
+          <div style="position:absolute;left:42px;top:95px;width:66px;height:56px;background:white;border-radius:7px;box-shadow:0 3px 14px rgba(0,0,0,0.24);border:1px solid rgba(0,0,0,0.09);overflow:hidden;z-index:4;">
+            <div style="background:rgba(220,30,30,0.08);border-bottom:1px solid rgba(0,0,0,0.07);padding:2px 5px;font-size:5px;font-weight:700;color:rgba(210,30,30,0.85);white-space:nowrap;">⊕ cut edge — zoomed</div>
+            <!-- sticker interior / safe artwork area -->
+            <div style="position:absolute;top:16px;left:0;right:0;bottom:22px;background:#f9f9f9;"></div>
+            <!-- risk band between safe zone and cut line -->
+            <div style="position:absolute;left:0;right:0;bottom:11px;height:11px;background:rgba(220,40,40,0.07);"></div>
+            <!-- safe zone: red dashed line -->
+            <div style="position:absolute;left:0;right:0;bottom:22px;height:1.5px;background:repeating-linear-gradient(to right,rgba(210,50,50,0.9) 0,rgba(210,50,50,0.9) 4px,transparent 4px,transparent 7px);pointer-events:none;"></div>
+            <!-- cut line: thin solid grey -->
+            <div style="position:absolute;left:0;right:0;bottom:11px;height:1px;background:rgba(0,0,0,0.32);pointer-events:none;"></div>
+            <!-- labels -->
+            <div style="position:absolute;bottom:24px;right:3px;font-size:4.5px;color:rgba(210,50,50,0.85);font-weight:700;white-space:nowrap;">- - safe zone</div>
+            <div style="position:absolute;bottom:12px;right:3px;font-size:4.5px;color:rgba(0,0,0,0.38);font-weight:700;white-space:nowrap;">── cut line</div>
+          </div>
+          <!-- toast -->
+          <div style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:#e00000;color:white;font-size:7px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;z-index:5;">⚠ May be cut off</div>
         </div>
       </div>
       <div class="rec-badge">★ Recommended</div>
-      <div class="variant-name">Red Outline + Toast</div>
-      <div class="vpros">Two-layer alert: spatial (on element) + global (toast) — hard to miss</div>
-      <div class="vpros">Zero canvas noise when everything is in bounds — cleanest default state</div>
-      <div class="vcons">Reactive not preventive — user must make the mistake first to learn the rule</div>
-      <div class="vcons">Toast auto-dismisses; if user is focused on dragging they may miss it</div>
+      <div class="variant-name">Red Outline + Toast + Magnified Edge Detail</div>
+      <div class="vpros">Three-layer alert: red ring on the sticker + zoomed popup showing exactly how much content falls in the cut zone + toast — concrete, not just alarming</div>
+      <div class="vpros">Popup makes the risk spatial and legible: the red dashed safe zone and grey cut line show precisely where the boundary is, not just that one exists</div>
+      <div class="vcons">Reactive not preventive — user must trigger the violation before the popup appears; no way to pre-visualize the boundary from a clean state</div>
+      <div class="vcons">If multiple stickers violate simultaneously, only one popup can appear at a time — a priority rule is needed for which sticker the zoom focuses on</div>
+      <div class="vconflict">Conflicts with PA2-C04 (Pinch-focus zoom): if the user pinch-zooms into the violating sticker to fix it, the popup must follow into the zoomed context or re-trigger — its behavior inside focus mode needs a separate interaction spec.</div>
     </div>
 
     <!-- B Inline Annotation -->
