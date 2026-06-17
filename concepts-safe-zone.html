@@ -340,85 +340,97 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif
 
 
 <!-- ══════════════════════════════════════════════════
-     CONCEPT 03 — COLOR-CODED RISK ZONES
+     CONCEPT 03 — COLOR-CODED RING GUIDES PER STICKER
 ══════════════════════════════════════════════════ -->
 <div class="concept-wide">
   <div class="concept-wide-header">
     <div class="concept-num">Concept 03</div>
-    <div class="concept-wide-title">Color-Coded Risk Zones</div>
-    <div class="concept-wide-desc">Traffic-light model: three concentric zones show degrees of risk — green (safe), yellow (caution), red (will be cut). Different executions trade off information density vs. visual noise.</div>
+    <div class="concept-wide-title">Color-Coded Ring Guides per Sticker</div>
+    <div class="concept-wide-desc">Color-coded dashed rings wrap each individual sticker shape — an outer red ring marks the cut/bleed boundary, an inner blue ring marks the safe zone for important content. A guide toggle in the toolbar lets users show or hide all rings, keeping the canvas clean during creative focus while the information is always one tap away.</div>
   </div>
   <div class="variant-grid">
 
-    <!-- A Filled Zones -->
-    <div class="variant-col">
-      <div class="mini-canvas-wrap">
-        <div class="mini-sheet">
-          <div style="position:absolute;inset:0;background:rgba(224,0,0,0.1);border-radius:2px;"></div>
-          <div style="position:absolute;inset:7px;background:rgba(245,166,35,0.12);"></div>
-          <div style="position:absolute;inset:14px;background:rgba(0,195,137,0.1);"></div>
-          <div class="mini-grid"></div>
-          <div class="mc c1"></div><div class="mc c2"></div>
-          <div class="mc c3"></div><div class="mc c4"></div>
-          <div class="mc c5"></div><div class="mc c6"></div>
-          <div class="mc-el" style="left:20px;top:60px;width:18px;height:18px;opacity:0.85;"></div>
-          <div style="position:absolute;top:1px;right:2px;font-size:6px;font-weight:700;color:#e00000;">CUT</div>
-          <div style="position:absolute;top:8px;right:2px;font-size:6px;font-weight:700;color:#b35f00;">±</div>
-          <div style="position:absolute;top:15px;right:2px;font-size:6px;font-weight:700;color:#006647;">✓</div>
-        </div>
-      </div>
-      <div class="variant-name">Three Filled Zones</div>
-      <div class="vpros">Nuanced — shows three distinct risk levels, not just safe/unsafe</div>
-      <div class="vpros">Works without hovering or interaction to understand meaning</div>
-      <div class="vcons">Three colored fills compete heavily with sticker artwork</div>
-      <div class="vcons">Colors overlap with common sticker colors — green fill conflicts with green stickers</div>
-    </div>
-
-    <!-- B ★ Border Lines Only -->
+    <!-- A ★ Dual rings: cut line + safe zone, guides ON -->
     <div class="variant-col rec">
-      <div class="mini-canvas-wrap">
+      <div class="mini-canvas-wrap" style="background:#d4d4d4;position:relative;">
+        <!-- guide toggle pill — ON state, in workspace area above artboard -->
+        <div style="position:absolute;top:8px;right:8px;background:var(--green);color:white;border-radius:5px;font-size:5.5px;font-weight:700;padding:2px 6px;white-space:nowrap;z-index:5;letter-spacing:0.02em;">⊙ guides</div>
         <div class="mini-sheet">
-          <div class="mini-grid"></div>
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
-          <div class="mc-el" style="left:20px;top:60px;width:18px;height:18px;opacity:0.85;"></div>
-          <!-- three dashed border lines, no fill -->
-          <div style="position:absolute;inset:4px;border:1.5px dashed rgba(224,0,0,0.7);pointer-events:none;"></div>
-          <div style="position:absolute;inset:9px;border:1.5px dashed rgba(245,166,35,0.8);pointer-events:none;"></div>
-          <div style="position:absolute;inset:14px;border:1.5px dashed rgba(0,195,137,0.9);pointer-events:none;"></div>
-          <div style="position:absolute;top:0;right:2px;font-size:6px;font-weight:700;color:#e00000;">cut</div>
-          <div style="position:absolute;top:6px;right:2px;font-size:6px;font-weight:700;color:#b35f00;">±</div>
-          <div style="position:absolute;top:12px;right:2px;font-size:6px;font-weight:700;color:#006647;">safe</div>
+          <!-- c1 rings -->
+          <div style="position:absolute;left:6px;top:3px;width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(210,50,50,0.8);pointer-events:none;"></div>
+          <div style="position:absolute;left:13px;top:10px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <!-- c2 rings -->
+          <div style="position:absolute;left:56px;top:3px;width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(210,50,50,0.8);pointer-events:none;"></div>
+          <div style="position:absolute;left:63px;top:10px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <!-- c3 rings -->
+          <div style="position:absolute;left:6px;top:52px;width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(210,50,50,0.8);pointer-events:none;"></div>
+          <div style="position:absolute;left:13px;top:59px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <!-- c4 rings -->
+          <div style="position:absolute;left:56px;top:52px;width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(210,50,50,0.8);pointer-events:none;"></div>
+          <div style="position:absolute;left:63px;top:59px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <!-- c5 rings -->
+          <div style="position:absolute;left:6px;top:101px;width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(210,50,50,0.8);pointer-events:none;"></div>
+          <div style="position:absolute;left:13px;top:108px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <!-- c6 rings -->
+          <div style="position:absolute;left:56px;top:101px;width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(210,50,50,0.8);pointer-events:none;"></div>
+          <div style="position:absolute;left:63px;top:108px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
         </div>
       </div>
       <div class="rec-badge">★ Recommended</div>
-      <div class="variant-name">Border Lines Only</div>
-      <div class="vpros">Same information density as filled zones, dramatically less visual noise</div>
-      <div class="vpros">Matches Sticker Mule / professional print tool conventions exactly</div>
-      <div class="vcons">Three overlapping line colors at similar insets can feel cluttered on a small sheet</div>
-      <div class="vcons">Red/orange/green color meaning not self-evident — needs a legend</div>
+      <div class="variant-name">Dual rings: cut line + safe zone</div>
+      <div class="vpros">Complete information at a glance — red outer = where the cut falls, blue inner = where content is safe; matches the reference image</div>
+      <div class="vpros">Per-sticker rings are intuitive: each sticker is its own object with its own boundary, not a sheet-level overlay</div>
+      <div class="vcons">6 stickers × 2 rings = 12 guide circles on screen at once — can feel dense on a fully laid-out sheet</div>
+      <div class="vcons">Red + blue meaning requires a legend or first-time tooltip; colors are not self-evident without context</div>
+      <div class="vconflict">Conflicts with PA2-C02 (Floating Edit pill): the guide rings surround each sticker in the same spatial zone where the floating edit pill appears above a selected element — visual collision needs a priority rule or alternate pill placement.</div>
     </div>
 
-    <!-- C Single Safe Zone -->
+    <!-- B Single ring: safe zone only, guides ON -->
     <div class="variant-col">
-      <div class="mini-canvas-wrap">
+      <div class="mini-canvas-wrap" style="background:#d4d4d4;position:relative;">
+        <div style="position:absolute;top:8px;right:8px;background:var(--green);color:white;border-radius:5px;font-size:5.5px;font-weight:700;padding:2px 6px;white-space:nowrap;z-index:5;letter-spacing:0.02em;">⊙ guides</div>
         <div class="mini-sheet">
-          <div class="mini-grid"></div>
           <div class="mc c1"></div><div class="mc c2"></div>
           <div class="mc c3"></div><div class="mc c4"></div>
           <div class="mc c5"></div><div class="mc c6"></div>
-          <div class="mc-el" style="left:20px;top:60px;width:18px;height:18px;opacity:0.85;"></div>
-          <!-- only green safe zone border -->
-          <div style="position:absolute;inset:12px;border:1.5px dashed var(--green);pointer-events:none;"></div>
-          <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:6px;font-weight:700;color:var(--green);white-space:nowrap;">safe to print</div>
+          <!-- blue safe zone ring only, each sticker -->
+          <div style="position:absolute;left:13px;top:10px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <div style="position:absolute;left:63px;top:10px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <div style="position:absolute;left:13px;top:59px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <div style="position:absolute;left:63px;top:59px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <div style="position:absolute;left:13px;top:108px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
+          <div style="position:absolute;left:63px;top:108px;width:34px;height:34px;border-radius:50%;border:1.5px dashed rgba(80,120,210,0.85);pointer-events:none;"></div>
         </div>
       </div>
-      <div class="variant-name">Single Safe Zone Only</div>
-      <div class="vpros">Simplest — one thing to understand; no legend required</div>
-      <div class="vpros">Cognitive load near zero; suitable for first-time consumer users</div>
-      <div class="vcons">Loses the "cut line" concept — users don't see where the die cut happens</div>
-      <div class="vcons">No gradient of risk — binary (safe / not safe) misses the caution zone</div>
+      <div class="variant-name">Single ring: safe zone only</div>
+      <div class="vpros">One ring = one rule — minimal cognitive load; first-time users only need to know "keep your content inside the blue line"</div>
+      <div class="vpros">Blue is less alarming than red — feels like helpful guidance rather than a warning; lower visual tension during layout</div>
+      <div class="vcons">Omits the cut line — users cannot see exactly where the die cut falls, potentially placing elements too close to the sticker edge</div>
+      <div class="vcons">Blue ring sits close to the sticker border itself — two concentric circles at small sizes can visually merge into one ambiguous line</div>
+      <div class="vconflict">Conflicts with PA1-C04 (Smart Warning on Violation): if a persistent blue ring is always shown, and a smart warning fires when content crosses that same ring, two signals exist for one boundary — the persistent ring becomes noise once the warning appears.</div>
+    </div>
+
+    <!-- C Guides OFF toggle -->
+    <div class="variant-col">
+      <div class="mini-canvas-wrap" style="background:#d4d4d4;position:relative;">
+        <!-- guide toggle — OFF / inactive state -->
+        <div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.38);border-radius:5px;font-size:5.5px;font-weight:700;padding:2px 6px;white-space:nowrap;border:1px solid rgba(0,0,0,0.14);z-index:5;letter-spacing:0.02em;">⊙ guides</div>
+        <div class="mini-sheet">
+          <div class="mc c1"></div><div class="mc c2"></div>
+          <div class="mc c3"></div><div class="mc c4"></div>
+          <div class="mc c5"></div><div class="mc c6"></div>
+          <!-- no rings — pure clean canvas -->
+        </div>
+      </div>
+      <div class="variant-name">Guides OFF — clean canvas</div>
+      <div class="vpros">Canvas shows exactly what prints — no decorative rings competing with artwork; ideal for reviewing final composition</div>
+      <div class="vpros">Toggle state persists — users who switch off guides stay in a focused creative mode until they choose to turn them back on</div>
+      <div class="vcons">Without rings, new users have zero boundary feedback — content can silently drift outside the safe zone with no visual cue</div>
+      <div class="vcons">The toggle must be prominently placed and labeled; if buried in a settings menu, users may never discover guides exist</div>
+      <div class="vconflict">Conflicts with PA2-C01 (Double-tap focus mode): when a user enters focus-edit on a sticker, should the guide rings temporarily reappear for that sticker — even if guides are globally toggled off? The interaction between toggle state and per-context guide visibility needs a product decision.</div>
     </div>
 
   </div>
