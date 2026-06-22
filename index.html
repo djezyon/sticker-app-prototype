@@ -88,10 +88,25 @@ body {
 .overlay.hidden { display: none; }
 .sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 0 0 34px; display: flex; flex-direction: column; animation: slideUp 0.28s cubic-bezier(.32,.72,0,1); overflow: hidden; }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* Full modal variant (used when opening from home FAB) */
+.overlay.full-modal { justify-content: center; padding: 20px; }
+.overlay.full-modal .sheet { width: calc(100% - 40px); height: calc(100% - 40px); max-height: none; border-radius: 18px; animation: popIn 0.22s cubic-bezier(.32,.72,0,1); }
+@keyframes popIn { from { transform: translateY(12px) scale(0.99); opacity: 0.98; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
+/* Edge-to-edge full-screen modal */
+.overlay.full-edge { justify-content: flex-end; padding: 0; }
+.overlay.full-edge .sheet { width: 100%; height: 100%; max-height: none; border-radius: 0; animation: slideUp 0.22s cubic-bezier(.32,.72,0,1); }
 .sheet-bar { padding: 12px 20px 0; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
 .sheet-pill { width: 36px; height: 4px; background: var(--gray-300); border-radius: 2px; }
 .sheet-x-btn { position: absolute; right: 16px; top: 12px; width: 32px; height: 32px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--gray-700); }
-.sheet-heading { font-size: 17px; font-weight: 700; text-align: center; padding: 12px 20px 0; flex-shrink: 0; }
+.sheet-heading { font-size: 20px; font-weight: 700; text-align: center; padding: 18px 20px 8px; flex-shrink: 0; }
+.overlay.full-edge .sheet-x-btn { right: 18px; top: 18px; background: transparent; color: #111; }
+
+/* Card / type visuals tuned to match Figma */
+.np-type-card { box-shadow: 0 6px 18px rgba(17,24,39,0.06); border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); }
+.np-type-thumb { aspect-ratio: 1; background: var(--gray-50); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+.np-type-label { padding: 12px 8px; text-align: center; font-size: 15px; font-weight: 700; color: #111; }
 .sheet-close-btn { position: absolute; right: 20px; top: 14px; color: var(--green); font-size: 15px; font-weight: 600; cursor: pointer; }
 
 /* ── NEW PROJECT — STEP 1 (type choice) ── */
@@ -354,7 +369,7 @@ body {
       <div class="sheet-pill"></div>
       <div class="sheet-x-btn" onclick="closeStep1()">✕</div>
     </div>
-    <div style="padding:16px 16px 0;font-size:20px;font-weight:700;font-family:var(--font-display);">New Project</div>
+    <div class="sheet-heading">New Project</div>
     <div class="np-type-row">
       <!-- Sticker -->
       <div class="np-type-card" onclick="openStep2()">
@@ -660,16 +675,24 @@ function showCanvas() { showScreen('screen-canvas'); }
 
 // ─────────────────── STEP 1 ───────────────────
 function openStep1() {
-  document.getElementById('np-step1-overlay').classList.remove('hidden');
+  const el = document.getElementById('np-step1-overlay');
+  el.classList.remove('hidden');
+  // present as an edge-to-edge full modal when opened from the home FAB
+  el.classList.add('full-edge');
 }
 function closeStep1(e) {
-  if (!e || e.target === document.getElementById('np-step1-overlay'))
-    document.getElementById('np-step1-overlay').classList.add('hidden');
+  const el = document.getElementById('np-step1-overlay');
+  if (!e || e.target === el) {
+    el.classList.add('hidden');
+    el.classList.remove('full-edge');
+  }
 }
 
 // ─────────────────── STEP 2 ───────────────────
 function openStep2() {
-  document.getElementById('np-step1-overlay').classList.add('hidden');
+  const el1 = document.getElementById('np-step1-overlay');
+  el1.classList.add('hidden');
+  el1.classList.remove('full-edge');
   // Reset selection
   selectedSheetType = null;
   document.querySelectorAll('.np-sheet-card').forEach(c => c.classList.remove('selected'));
