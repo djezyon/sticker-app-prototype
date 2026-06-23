@@ -602,6 +602,49 @@ body {
 .uploaded-toast.show { opacity: 1; }
 .toast-dot { width: 20px; height: 20px; background: var(--text-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
+/* ── STICKER CONTAINERS ── */
+.sticker-container { position:absolute; cursor:pointer; transition:opacity 0.22s; }
+.sticker-container.dimmed { opacity:0.18; pointer-events:none; }
+.sticker-container-ring { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:visible; }
+.sticker-container-content { position:absolute; inset:0; z-index:1; pointer-events:none; }
+
+/* ── SHAPES OVERLAY (full-screen) ── */
+#shapes-overlay { position:absolute; inset:0; z-index:200; background:#fff; display:none; flex-direction:column; }
+#shapes-overlay.visible { display:flex; }
+.shapes-hdr { display:flex; align-items:center; justify-content:center; padding:14px 16px; border-bottom:0.5px solid var(--gray-100); flex-shrink:0; position:relative; }
+.shapes-hdr-title { font-family:var(--font-display); font-size:17px; font-weight:700; color:#121212; }
+.shapes-hdr-done { position:absolute; right:16px; color:var(--text-accent); font-family:var(--font-body); font-size:16px; font-weight:500; cursor:pointer; }
+.shapes-body { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:24px; }
+.shapes-body::-webkit-scrollbar { display:none; }
+.shapes-sect-lbl { font-family:var(--font-display); font-size:15px; font-weight:700; color:#121212; padding:16px 16px 10px; display:flex; align-items:center; gap:8px; }
+.shapes-sect-badge { width:22px; height:22px; background:var(--text-accent); border-radius:5px; display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-size:11px; font-weight:700; flex-shrink:0; }
+.shapes-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding:0 16px; }
+.shapes-cell { aspect-ratio:1; border-radius:12px; border:1.5px solid var(--gray-100); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; overflow:hidden; }
+.shapes-cell:active { background:var(--gray-50); }
+.shapes-sub-badge { position:absolute; top:6px; left:6px; width:18px; height:18px; background:var(--text-accent); border-radius:4px; display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-size:9px; font-weight:700; }
+.shapes-footer { margin:16px 16px 0; background:var(--gray-50); border-radius:12px; padding:14px 16px; }
+.shapes-footer-body { font-family:var(--font-body); font-size:14px; color:#121212; margin-bottom:4px; line-height:1.4; }
+.shapes-footer-cta { font-family:var(--font-body); font-size:14px; font-weight:600; color:var(--text-accent); cursor:pointer; }
+
+/* ── CONTAINMENT SHEET ── */
+#containment-sheet { position:absolute; inset:0; z-index:401; display:none; flex-direction:column; justify-content:flex-end; background:rgba(0,0,0,0.3); }
+#containment-sheet.visible { display:flex; }
+.contain-panel { background:#fff; border-radius:16px 16px 0 0; padding-bottom:28px; }
+.contain-pill { width:36px; height:4px; background:var(--gray-300); border-radius:2px; margin:10px auto 0; }
+.contain-title { font-family:var(--font-body); font-size:17px; font-weight:600; text-align:center; padding:10px 16px 16px; }
+.contain-opts { display:flex; gap:8px; padding:0 16px 12px; }
+.contain-opt { flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 8px 12px; border-radius:12px; cursor:pointer; border:2px solid var(--gray-200); transition:border-color 0.15s,background 0.15s; }
+.contain-opt.selected { background:rgba(0,133,93,0.07); border-color:var(--text-accent); }
+.contain-opt:active { background:var(--gray-50); }
+.contain-opt-lbl { font-family:var(--font-body); font-size:13px; font-weight:600; color:#121212; }
+.contain-desc { font-family:var(--font-body); font-size:12px; color:var(--gray-600); text-align:center; padding:0 20px 4px; min-height:32px; line-height:1.5; }
+
+/* Edit tool disabled state */
+.edit-tool.disabled { opacity:0.35; pointer-events:none; }
+
+/* Canvas world zoom transition */
+#canvas-world { transform-origin:0 0; transition:transform 0.28s cubic-bezier(.32,.72,0,1); }
+
 /* ── FILL SHEET ── */
 #fill-sheet { position: absolute; inset: 0; z-index: 400; display: none; flex-direction: column; justify-content: flex-end; background: rgba(0,0,0,0.3); }
 #fill-sheet.visible { display: flex; }
@@ -1123,12 +1166,10 @@ body {
   </div>
   <div class="canvas-fab-wrap">
     <div class="fab-popup" id="fab-popup">
-      <div class="fab-popup-item" onclick="openContentSheet('templates')"><span class="fab-popup-icon">🖼️</span>Templates</div>
-      <div class="fab-popup-item" onclick="openContentSheet('images')"><span class="fab-popup-icon">🌅</span>Image</div>
-      <div class="fab-popup-item" onclick="openContentSheet('shapes')"><span class="fab-popup-icon">△</span>Shape</div>
-      <div class="fab-popup-item" onclick="addText()"><span class="fab-popup-icon" style="font-weight:700;font-size:18px;">T</span>Text</div>
-      <div class="fab-popup-item"><span class="fab-popup-icon">✦</span>Create AI</div>
-      <div class="fab-popup-item" onclick="openUploadPanel()"><span class="fab-popup-icon">⬆</span>Upload</div>
+      <div class="fab-popup-item" onclick="openContentSheet('images');closeFab()"><span class="fab-popup-icon">🌅</span>Image</div>
+      <div class="fab-popup-item" onclick="openShapesOverlay();closeFab()"><span class="fab-popup-icon">△</span>Shape</div>
+      <div class="fab-popup-item" onclick="addText();closeFab()"><span class="fab-popup-icon" style="font-weight:700;font-size:18px;">T</span>Text</div>
+      <div class="fab-popup-item" onclick="openUploadPanel();closeFab()"><span class="fab-popup-icon">⬆</span>Upload</div>
     </div>
     <div class="c-fab" id="c-fab" onclick="toggleFab()">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><line x1="14" y1="4" x2="14" y2="24" stroke="white" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="14" x2="24" y2="14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
@@ -1397,6 +1438,38 @@ body {
   <div class="imgd-preview" id="imgd-preview"></div>
 </div>
 
+<!-- ════════════════ SHAPES OVERLAY (full-screen) ════════════════ -->
+<div id="shapes-overlay">
+  <div class="shapes-hdr">
+    <span class="shapes-hdr-title">Shapes</span>
+    <span class="shapes-hdr-done" onclick="closeShapesOverlay()">Done</span>
+  </div>
+  <div class="shapes-body" id="shapes-body"></div>
+</div>
+
+<!-- ════════════════ CONTAINMENT SHEET ════════════════ -->
+<div id="containment-sheet" onclick="closeContainmentSheet(event)">
+  <div class="contain-panel" onclick="event.stopPropagation()">
+    <div class="contain-pill"></div>
+    <div class="contain-title">Containment</div>
+    <div class="contain-opts">
+      <div class="contain-opt" id="contain-opt-clipped" onclick="setContainment('clipped')">
+        <svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="4" width="28" height="28" rx="4" fill="#e8f5f0"/><rect x="10" y="10" width="22" height="22" rx="3" fill="#00855d" opacity="0.5"/><clipPath id="ccl"><rect x="4" y="4" width="28" height="28" rx="4"/></clipPath></svg>
+        <span class="contain-opt-lbl">Clipped</span>
+      </div>
+      <div class="contain-opt" id="contain-opt-overflow" onclick="setContainment('overflow')">
+        <svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="4" width="28" height="28" rx="4" fill="#e8f5f0" stroke="#00855d" stroke-width="1.5" stroke-dasharray="4,2"/><rect x="2" y="8" width="30" height="22" rx="3" fill="#00855d" opacity="0.4"/></svg>
+        <span class="contain-opt-lbl">Overflow</span>
+      </div>
+      <div class="contain-opt" id="contain-opt-contained" onclick="setContainment('contained')">
+        <svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="4" width="28" height="28" rx="4" fill="#e8f5f0"/><rect x="9" y="9" width="18" height="18" rx="3" fill="#00855d" opacity="0.6"/></svg>
+        <span class="contain-opt-lbl">Contained</span>
+      </div>
+    </div>
+    <div class="contain-desc" id="contain-desc">Image clips to the sticker shape.</div>
+  </div>
+</div>
+
 <!-- FILL SHEET -->
 <div id="fill-sheet" onclick="closeFillSheet(event)">
   <div class="fill-panel">
@@ -1509,10 +1582,14 @@ const SHEET_THUMBS = {
   squares: `<svg width="30" height="38" viewBox="0 0 30 38" fill="none"><rect x="1" y="1" width="28" height="36" rx="3" fill="white" stroke="#ddd" stroke-width="1.2"/><rect x="3" y="3" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="16" y="3" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="3" y="15" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="16" y="15" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="3" y="27" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/><rect x="16" y="27" width="11" height="10" rx="2" stroke="#aaa" stroke-width="1" fill="rgba(0,0,0,0.04)"/></svg>`,
 };
 
+// ─────────────────── CANVAS CONSTANTS ───────────────────
+const SHEET_L = 17, SHEET_T = 80, SHEET_W = 320, SHEET_H = 472;
+
 // ─────────────────── STATE ───────────────────
 let selectedSheetType = null; // 'blank' | 'circles' | 'rectangles' | 'squares'
 let elements = [], elId = 0, selectedId = null, fabOpen = false;
 let canvasReady = false;
+let containers = [], selectedContainerId = null;
 
 // ─────────────────── NAVIGATION ───────────────────
 function showScreen(id) {
@@ -1641,50 +1718,326 @@ function startDesigning() {
 // ─────────────────── CANVAS SHEET RENDERING ───────────────────
 function buildSheet(type) {
   const sheet = document.getElementById('sticker-sheet');
-  const W = 320, H = 472;
-  const L = 17, T = 80; // centered in ~353px scroll area (390 - 22px ruler), padded from top
-  sheet.style.cssText = `left:${L}px;top:${T}px;width:${W}px;height:${H}px;`;
+  sheet.style.cssText = `left:${SHEET_L}px;top:${SHEET_T}px;width:${SHEET_W}px;height:${SHEET_H}px;`;
   const bgBtn = document.getElementById('canvas-bg-btn');
   if (bgBtn) {
-    bgBtn.style.cssText = `left:${L + Math.round((W - 130) / 2)}px;top:${T + H + 14}px;display:flex;`;
+    bgBtn.style.cssText = `left:${SHEET_L + Math.round((SHEET_W - 130) / 2)}px;top:${SHEET_T + SHEET_H + 14}px;display:flex;`;
+  }
+
+  containers = [];
+  let slotList = [];
+
+  if (type === 'circles') {
+    const d = 96, cols = 2, rows = 3;
+    const gx = (SHEET_W - cols * d) / (cols + 1);
+    const gy = (SHEET_H - rows * d) / (rows + 1);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      slotList.push({ x: gx + c * (d + gx), y: gy + r * (d + gy), w: d, h: d, shape: 'circle' });
+    }
+  } else if (type === 'rectangles') {
+    const rW = 190, rH = 60, gap = 16;
+    const totalH = 5 * rH + 4 * gap;
+    const startY = (SHEET_H - totalH) / 2;
+    const startX = (SHEET_W - rW) / 2;
+    for (let i = 0; i < 5; i++) {
+      slotList.push({ x: startX, y: startY + i * (rH + gap), w: rW, h: rH, shape: 'rect' });
+    }
+  } else if (type === 'squares') {
+    const d = 96, cols = 2, rows = 3;
+    const gx = (SHEET_W - cols * d) / (cols + 1);
+    const gy = (SHEET_H - rows * d) / (rows + 1);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      slotList.push({ x: gx + c * (d + gx), y: gy + r * (d + gy), w: d, h: d, shape: 'square' });
+    }
   }
 
   let html = '';
-  if (type === 'blank') {
-    html = ''; // just white sheet
-  }
-  else if (type === 'circles') {
-    // 2 cols × 3 rows, 38mm circles → 38/25.4*72 ≈ 107.7px, cap at 96px to fit
-    const d = 96, cols = 2, rows = 3;
-    const gx = (W - cols * d) / (cols + 1);
-    const gy = (H - rows * d) / (rows + 1);
-    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-      const x = gx + c * (d + gx), y = gy + r * (d + gy);
-      html += `<div style="position:absolute;left:${x}px;top:${y}px;width:${d}px;height:${d}px;border-radius:50%;border:1px solid rgba(0,0,0,0.25);background:rgba(0,0,0,0.02);"></div>`;
-    }
-  }
-  else if (type === 'rectangles') {
-    // 5 stacked, 67mm wide → 67/25.4*72 ≈ 190px
-    const rW = 190, rH = 60, gap = 16;
-    const totalH = 5 * rH + 4 * gap;
-    const startY = (H - totalH) / 2;
-    const startX = (W - rW) / 2;
-    for (let i = 0; i < 5; i++) {
-      const y = startY + i * (rH + gap);
-      html += `<div style="position:absolute;left:${startX}px;top:${y}px;width:${rW}px;height:${rH}px;border-radius:8px;border:1px solid rgba(0,0,0,0.25);background:rgba(0,0,0,0.02);"></div>`;
-    }
-  }
-  else if (type === 'squares') {
-    // 2 cols × 3 rows of 38mm squares (same size as circles)
-    const d = 96, cols = 2, rows = 3;
-    const gx = (W - cols * d) / (cols + 1);
-    const gy = (H - rows * d) / (rows + 1);
-    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-      const x = gx + c * (d + gx), y = gy + r * (d + gy);
-      html += `<div style="position:absolute;left:${x}px;top:${y}px;width:${d}px;height:${d}px;border-radius:10px;border:1px solid rgba(0,0,0,0.25);background:rgba(0,0,0,0.02);"></div>`;
-    }
-  }
+  slotList.forEach((slot, i) => {
+    const id = 'cont_' + i;
+    containers.push({ id, x: slot.x, y: slot.y, w: slot.w, h: slot.h, shape: slot.shape, containment: 'clipped', childElId: null, bgColor: null });
+    html += _containerHtml(id, slot);
+  });
   sheet.innerHTML = html;
+
+  // Attach click handlers
+  containers.forEach(cont => {
+    const el = document.getElementById(cont.id);
+    if (el) el.addEventListener('pointerdown', e => { e.stopPropagation(); selectContainer(cont.id); });
+  });
+}
+
+function _containerHtml(id, slot) {
+  const { x, y, w, h, shape } = slot;
+  // Compute SVG ring params
+  const isCircle = shape === 'circle';
+  const rx = isCircle ? w / 2 : (shape === 'rect' ? 8 : 10);
+  const outerInset = 3, innerInset = 9;
+
+  let outerRing, innerRing, clipDef;
+  if (isCircle) {
+    const cx = w / 2, cy = h / 2;
+    const ro = w / 2 - outerInset, ri = w / 2 - innerInset;
+    outerRing = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="none" stroke="#cc3333" stroke-width="1.2" stroke-dasharray="5,3"/>`;
+    innerRing = `<circle cx="${cx}" cy="${cy}" r="${ri}" fill="none" stroke="#4a7fc1" stroke-width="1" stroke-dasharray="5,3"/>`;
+    clipDef = `<clipPath id="clip_${id}"><circle cx="${cx}" cy="${cy}" r="${ri}"/></clipPath>`;
+  } else {
+    const o = outerInset, i2 = innerInset;
+    outerRing = `<rect x="${o}" y="${o}" width="${w - o*2}" height="${h - o*2}" rx="${rx}" fill="none" stroke="#cc3333" stroke-width="1.2" stroke-dasharray="5,3"/>`;
+    innerRing = `<rect x="${i2}" y="${i2}" width="${w - i2*2}" height="${h - i2*2}" rx="${Math.max(rx - 4, 2)}" fill="none" stroke="#4a7fc1" stroke-width="1" stroke-dasharray="5,3"/>`;
+    clipDef = `<clipPath id="clip_${id}"><rect x="${i2}" y="${i2}" width="${w - i2*2}" height="${h - i2*2}" rx="${Math.max(rx - 4, 2)}"/></clipPath>`;
+  }
+
+  return `<div class="sticker-container" id="${id}" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;">
+    <div class="sticker-container-content" id="${id}_content"></div>
+    <svg class="sticker-container-ring" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+      <defs>${clipDef}</defs>
+      ${outerRing}${innerRing}
+    </svg>
+  </div>`;
+}
+
+// ─────────────────── CONTAINER SELECTION ───────────────────
+function selectContainer(id) {
+  if (selectedContainerId === id) return;
+  deselectContainer(false);
+  selectedContainerId = id;
+  const cont = containers.find(c => c.id === id);
+  if (!cont) return;
+
+  // Dim all other containers
+  containers.forEach(c => {
+    const el = document.getElementById(c.id);
+    if (el) el.classList.toggle('dimmed', c.id !== id);
+  });
+
+  // Zoom to this container
+  zoomToContainer(cont);
+
+  // Show the container action bar
+  renderContainerBar(cont);
+
+  // If there's a child element, select it
+  if (cont.childElId) {
+    selectedId = cont.childElId;
+    renderEditBar(elements.find(e => e.id === cont.childElId));
+  }
+}
+
+function deselectContainer(resetZoom = true) {
+  if (!selectedContainerId) return;
+  selectedContainerId = null;
+  containers.forEach(c => {
+    const el = document.getElementById(c.id);
+    if (el) el.classList.remove('dimmed');
+  });
+  if (resetZoom) zoomToContainer(null);
+  // Clear the container bar (restore normal bottom bar state)
+  const bar = document.getElementById('edit-tools-row');
+  if (bar) bar.innerHTML = '';
+  selectedId = null;
+}
+
+function zoomToContainer(cont) {
+  const world = document.getElementById('canvas-world');
+  const scroll = document.getElementById('canvas-scroll');
+  if (!world || !scroll) return;
+
+  if (!cont) {
+    world.style.transform = 'scale(1)';
+    world.style.transformOrigin = '0 0';
+    return;
+  }
+
+  // Target: container fills 72% of viewport height
+  const vpH = scroll.clientHeight || 520;
+  const vpW = scroll.clientWidth || 390;
+  const targetScale = Math.min((vpH * 0.72) / cont.h, (vpW * 0.85) / cont.w, 2.5);
+
+  // Container center in world coords
+  const worldContCX = SHEET_L + cont.x + cont.w / 2;
+  const worldContCY = SHEET_T + cont.y + cont.h / 2;
+
+  world.style.transformOrigin = `${worldContCX}px ${worldContCY}px`;
+  world.style.transform = `scale(${targetScale})`;
+
+  // Scroll so the scaled container center is at viewport center
+  const scaledCX = worldContCX * targetScale;
+  const scaledCY = worldContCY * targetScale;
+  scroll.scrollTo({
+    left: scaledCX - vpW / 2,
+    top: scaledCY - vpH / 2,
+    behavior: 'smooth'
+  });
+}
+
+// ─────────────────── CONTAINER BAR ───────────────────
+function renderContainerBar(cont) {
+  const bar = document.getElementById('edit-tools-row');
+  if (!bar) return;
+  const hasChild = !!cont.childElId;
+
+  bar.innerHTML = `
+    <button class="edit-tool" onclick="openContainerColorPicker('${cont.id}')">
+      <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9" fill="${cont.bgColor || '#e0e0e0'}" stroke="#ccc" stroke-width="1.5"/></svg>
+      <span>Color</span>
+    </button>
+    <button class="edit-tool" onclick="openContainmentSheet('${cont.id}')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="4" stroke="#333" stroke-width="1.5"/><rect x="6" y="6" width="10" height="10" rx="2" fill="#333" opacity="0.4"/></svg>
+      <span>Containment</span>
+    </button>
+    ${hasChild ? `
+    <button class="edit-tool" onclick="copyContainerChild('${cont.id}')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="7" y="2" width="13" height="13" rx="2.5" stroke="#333" stroke-width="1.5"/><rect x="2" y="7" width="13" height="13" rx="2.5" fill="#fff" stroke="#333" stroke-width="1.5"/></svg>
+      <span>Copy</span>
+    </button>
+    <button class="edit-tool" onclick="duplicateToAll('${cont.id}')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="1.5" fill="#333" opacity="0.7"/><rect x="12" y="2" width="8" height="8" rx="1.5" fill="#333" opacity="0.7"/><rect x="2" y="12" width="8" height="8" rx="1.5" fill="#333" opacity="0.7"/><rect x="12" y="12" width="8" height="8" rx="1.5" fill="#333" opacity="0.7"/></svg>
+      <span style="font-size:10px;">Dup to All</span>
+    </button>` : ''}
+  `;
+}
+
+function openContainerColorPicker(contId) {
+  // Reuse fill sheet for container background color
+  openFillSheet(null, contId);
+}
+
+// ─────────────────── CONTAINMENT ───────────────────
+let _containmentTargetId = null;
+
+function openContainmentSheet(contId) {
+  _containmentTargetId = contId;
+  const cont = containers.find(c => c.id === contId);
+  const mode = cont ? cont.containment : 'clipped';
+  ['clipped','overflow','contained'].forEach(m => {
+    document.getElementById('contain-opt-' + m)?.classList.toggle('selected', m === mode);
+  });
+  const descs = { clipped:'Image clips to the sticker shape.', overflow:'Image extends beyond the sticker edge.', contained:'Image scales to fit inside the sticker.' };
+  const d = document.getElementById('contain-desc');
+  if (d) d.textContent = descs[mode] || '';
+  document.getElementById('containment-sheet').classList.add('visible');
+}
+
+function closeContainmentSheet(e) {
+  if (e && e.target !== document.getElementById('containment-sheet')) return;
+  document.getElementById('containment-sheet').classList.remove('visible');
+  _containmentTargetId = null;
+}
+
+function setContainment(mode) {
+  if (!_containmentTargetId) return;
+  const cont = containers.find(c => c.id === _containmentTargetId);
+  if (!cont) return;
+  cont.containment = mode;
+  ['clipped','overflow','contained'].forEach(m => {
+    document.getElementById('contain-opt-' + m)?.classList.toggle('selected', m === mode);
+  });
+  const descs = { clipped:'Image clips to the sticker shape.', overflow:'Image extends beyond the sticker edge.', contained:'Image scales to fit inside the sticker.' };
+  const d = document.getElementById('contain-desc');
+  if (d) d.textContent = descs[mode] || '';
+  if (cont.childElId) {
+    const el = elements.find(e => e.id === cont.childElId);
+    if (el) _applyContainmentStyle(el, cont);
+  }
+}
+
+function _applyContainmentStyle(el, cont) {
+  const domEl = document.getElementById('el_' + el.id);
+  if (!domEl) return;
+  if (cont.containment === 'clipped') {
+    const clipVal = cont.shape === 'circle'
+      ? `circle(${(cont.w / 2 - 9)}px at ${cont.w/2}px ${cont.h/2}px)`
+      : `inset(0 round ${cont.shape === 'rect' ? 8 : 10}px)`;
+    domEl.style.clipPath = clipVal;
+    domEl.style.overflow = 'hidden';
+  } else if (cont.containment === 'overflow') {
+    domEl.style.clipPath = '';
+    domEl.style.overflow = 'visible';
+  } else if (cont.containment === 'contained') {
+    domEl.style.clipPath = '';
+    domEl.style.overflow = 'hidden';
+    // Scale to fit
+    const scaleX = cont.w / el.w;
+    const scaleY = cont.h / el.h;
+    const s = Math.min(scaleX, scaleY, 1);
+    domEl.style.transform = `scale(${s})`;
+    domEl.style.transformOrigin = 'center center';
+  }
+}
+
+// ─────────────────── DUPLICATE TO ALL ───────────────────
+function copyContainerChild(contId) {
+  const cont = containers.find(c => c.id === contId);
+  if (!cont || !cont.childElId) return;
+  const el = elements.find(e => e.id === cont.childElId);
+  if (!el) return;
+  // Store a reference for paste (future)
+  window._clipboard = { ...el };
+}
+
+function duplicateToAll(sourceContId) {
+  const source = containers.find(c => c.id === sourceContId);
+  if (!source || !source.childElId) return;
+  const srcEl = elements.find(e => e.id === source.childElId);
+  if (!srcEl) return;
+
+  containers.forEach(cont => {
+    if (cont.id === sourceContId) return;
+    if (cont.childElId) return; // skip if already has content
+    const newEl = _cloneElIntoContainer(srcEl, cont);
+    addElToCanvas(newEl);
+    cont.childElId = newEl.id;
+    newEl.containerId = cont.id;
+    _applyContainmentStyle(newEl, cont);
+  });
+}
+
+function _cloneElIntoContainer(srcEl, cont) {
+  elId++;
+  return {
+    ...srcEl,
+    id: elId,
+    x: SHEET_L + cont.x + cont.w / 2 - srcEl.w / 2,
+    y: SHEET_T + cont.y + cont.h / 2 - srcEl.h / 2,
+    containerId: cont.id,
+  };
+}
+
+// ─────────────────── SHAPES OVERLAY ───────────────────
+function openShapesOverlay() {
+  _renderShapesGrid();
+  document.getElementById('shapes-overlay').classList.add('visible');
+}
+
+function closeShapesOverlay() {
+  document.getElementById('shapes-overlay').classList.remove('visible');
+}
+
+function _renderShapesGrid() {
+  const body = document.getElementById('shapes-body');
+  if (!body) return;
+  const free = Object.entries(SHAPE_DEFS).filter(([,d]) => d.free);
+  const sub  = Object.entries(SHAPE_DEFS).filter(([,d]) => !d.free);
+
+  const cellHtml = ([key, def], showBadge) =>
+    `<div class="shapes-cell" onclick="addShapeToCanvas('${key}');closeShapesOverlay()">
+      <svg width="52" height="52" viewBox="0 0 100 100" style="color:#333">${def.svg}</svg>
+      ${showBadge ? '<div class="shapes-sub-badge">a</div>' : ''}
+    </div>`;
+
+  body.innerHTML = `
+    <div class="shapes-sect-lbl">Free</div>
+    <div class="shapes-grid-3">${free.map(e => cellHtml(e, false)).join('')}</div>
+    <div class="shapes-sect-lbl" style="margin-top:12px;">
+      Included with Subscription
+      <div class="shapes-sect-badge">a</div>
+    </div>
+    <div class="shapes-grid-3">${sub.map(e => cellHtml(e, true)).join('')}</div>
+    <div class="shapes-footer">
+      <div class="shapes-footer-body">Don't see what you want? Search for shapes in Images.</div>
+      <div class="shapes-footer-cta" onclick="openContentSheet('images');closeShapesOverlay()">Search shapes in Images ›</div>
+    </div>
+  `;
 }
 
 // ─────────────────── RULERS ───────────────────
@@ -1765,16 +2118,19 @@ function renderUploadGrid(tab) {
   ).join('');
 }
 function placeUploadedImage(src, thumbEl) {
-  // Toggle selection highlight, then place on canvas
   document.querySelectorAll('.upload-thumb').forEach(t => t.classList.remove('selected'));
   thumbEl.classList.add('selected');
   setTimeout(() => {
     closeUploadPanel();
+    const w = 180, h = 180;
+    const pos = _elDefaultPos(w, h);
     const id = `el${elId++}`;
-    const el = { id, isImage: true, imgSrc: src, label: 'Image', x: 50, y: 100, w: 180, h: 180, rot: 0 };
+    const el = { id, isImage: true, imgSrc: src, label: 'Image', ...pos, w, h, rot: 0 };
     elements.push(el);
     document.getElementById('canvas-world').appendChild(makeElDiv(el));
+    _placeElInContainer(el);
     selectEl(id);
+    if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
   }, 180);
 }
 
@@ -1792,26 +2148,48 @@ function handleFileSelect(e) {
     renderUploadGrid();
     // Auto-place on canvas and close panel
     closeUploadPanel();
+    const w2 = 180, h2 = 180;
+    const pos2 = _elDefaultPos(w2, h2);
     const id = `el${elId++}`;
-    const el = { id, isImage: true, imgSrc: dataUrl, label: 'Image', x: 50, y: 100, w: 180, h: 180, rot: 0 };
+    const el = { id, isImage: true, imgSrc: dataUrl, label: 'Image', ...pos2, w: w2, h: h2, rot: 0 };
     elements.push(el);
     document.getElementById('canvas-world').appendChild(makeElDiv(el));
+    _placeElInContainer(el);
     selectEl(id);
+    if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
   };
   reader.readAsDataURL(file);
   e.target.value = ''; // reset so same file can be re-selected
 }
 
 // ─────────────────── SHAPE DEFINITIONS (inline SVG, viewBox 0 0 100 100) ───────────────────
+// free:true = no subscription required
 const SHAPE_DEFS = {
-  rect:     { label:'Rectangle', svg:'<rect x="5" y="18" width="90" height="64" rx="6" fill="currentColor"/>' },
-  circle:   { label:'Circle',    svg:'<circle cx="50" cy="50" r="46" fill="currentColor"/>' },
-  triangle: { label:'Triangle',  svg:'<polygon points="50,6 96,90 4,90" fill="currentColor"/>' },
-  heart:    { label:'Heart',     svg:'<path d="M50,82 C22,62 4,46 4,30 C4,14 17,4 30,4 C39,4 46,10 50,18 C54,10 61,4 70,4 C83,4 96,14 96,30 C96,46 78,62 50,82Z" fill="currentColor"/>' },
-  star:     { label:'Star',      svg:'<polygon points="50,4 61,36 95,36 68,56 79,90 50,70 21,90 32,56 5,36 39,36" fill="currentColor"/>' },
-  diamond:  { label:'Diamond',   svg:'<polygon points="50,4 96,50 50,96 4,50" fill="currentColor"/>' },
-  hexagon:  { label:'Hexagon',   svg:'<polygon points="50,4 92,27 92,73 50,96 8,73 8,27" fill="currentColor"/>' },
-  burst:    { label:'Burst',     svg:'<polygon points="50,2 57,34 88,18 71,46 98,58 66,60 72,92 50,74 28,92 34,60 2,58 29,46 12,18 43,34" fill="currentColor"/>' },
+  // Free shapes (top section in picker)
+  rect:      { label:'Rectangle',    free:true,  svg:'<rect x="5" y="18" width="90" height="64" rx="6" fill="currentColor"/>' },
+  wedge:     { label:'Wedge',        free:true,  svg:'<path d="M50,10 L90,90 L10,90 Z" fill="currentColor"/>' },
+  dome:      { label:'Dome',         free:true,  svg:'<path d="M4,84 Q4,16 50,16 Q96,16 96,84 Z" fill="currentColor"/>' },
+  ellipse:   { label:'Ellipse',      free:true,  svg:'<ellipse cx="50" cy="50" rx="46" ry="30" fill="currentColor"/>' },
+  square:    { label:'Square',       free:true,  svg:'<rect x="8" y="8" width="84" height="84" fill="currentColor"/>' },
+  rect_l:    { label:'Rectangle',    free:true,  svg:'<rect x="2" y="36" width="96" height="28" rx="4" fill="currentColor"/>' },
+  tall:      { label:'Rectangle',    free:true,  svg:'<rect x="33" y="4" width="34" height="92" rx="6" fill="currentColor"/>' },
+  stadium:   { label:'Rounded Rect', free:true,  svg:'<rect x="8" y="28" width="84" height="44" rx="22" fill="currentColor"/>' },
+  // Subscription shapes
+  circle:    { label:'Circle',       free:false, svg:'<circle cx="50" cy="50" r="46" fill="currentColor"/>' },
+  triangle:  { label:'Triangle',     free:false, svg:'<polygon points="50,6 96,90 4,90" fill="currentColor"/>' },
+  heart:     { label:'Heart',        free:false, svg:'<path d="M50,82 C22,62 4,46 4,30 C4,14 17,4 30,4 C39,4 46,10 50,18 C54,10 61,4 70,4 C83,4 96,14 96,30 C96,46 78,62 50,82Z" fill="currentColor"/>' },
+  drop:      { label:'Drop',         free:false, svg:'<path d="M50,5 C50,5 14,55 14,68 A36,36 0 0,0 86,68 C86,55 50,5 50,5Z" fill="currentColor"/>' },
+  starburst: { label:'Starburst',    free:false, svg:'<polygon points="50,2 54,38 85,18 65,45 96,50 66,60 82,88 50,68 18,88 34,60 4,50 35,45 15,18 46,38" fill="currentColor"/>' },
+  crescent:  { label:'Crescent',     free:false, svg:'<path d="M65,12 A40,40 0 1,0 65,88 A30,30 0 1,1 65,12Z" fill="currentColor"/>' },
+  arch:      { label:'Arch',         free:false, svg:'<path d="M5,90 A45,45 0 0,1 95,90" stroke="currentColor" stroke-width="16" stroke-linecap="round" fill="none"/>' },
+  star:      { label:'Star',         free:false, svg:'<polygon points="50,4 61,36 95,36 68,56 79,90 50,70 21,90 32,56 5,36 39,36" fill="currentColor"/>' },
+  diamond:   { label:'Diamond',      free:false, svg:'<polygon points="50,4 96,50 50,96 4,50" fill="currentColor"/>' },
+  hexagon:   { label:'Hexagon',      free:false, svg:'<polygon points="50,4 92,27 92,73 50,96 8,73 8,27" fill="currentColor"/>' },
+  burst:     { label:'Burst',        free:false, svg:'<polygon points="50,2 57,34 88,18 71,46 98,58 66,60 72,92 50,74 28,92 34,60 2,58 29,46 12,18 43,34" fill="currentColor"/>' },
+  parallelogram: { label:'Parallelogram', free:false, svg:'<polygon points="20,15 95,15 80,85 5,85" fill="currentColor"/>' },
+  kite:      { label:'Tag',          free:false, svg:'<path d="M50,5 L95,50 L50,80 L5,50 Z" fill="currentColor"/>' },
+  fan:       { label:'Fan',          free:false, svg:'<path d="M15,90 Q15,20 50,10 Q85,20 85,90 L50,90 Z" fill="currentColor"/>' },
+  ribbon:    { label:'Ribbon',       free:false, svg:'<path d="M10,10 L90,10 L90,55 L50,45 L10,55 Z" fill="currentColor"/>' },
 };
 
 function shapeSVG(key, size, color) {
@@ -1925,30 +2303,64 @@ function closeSettings(e) {
 }
 
 // ─────────────────── ELEMENTS ───────────────────
+function _elDefaultPos(w, h) {
+  // If a container is focused, center element inside it; else default canvas position
+  if (selectedContainerId) {
+    const cont = containers.find(c => c.id === selectedContainerId);
+    if (cont) return { x: SHEET_L + cont.x + cont.w/2 - w/2, y: SHEET_T + cont.y + cont.h/2 - h/2 };
+  }
+  return { x: 80, y: 100 };
+}
+
+function _placeElInContainer(el) {
+  if (!selectedContainerId) return;
+  const cont = containers.find(c => c.id === selectedContainerId);
+  if (!cont || cont.childElId) return;
+  cont.childElId = el.id;
+  el.containerId = cont.id;
+  _applyContainmentStyle(el, cont);
+}
+
 function addShapeToCanvas(shapeKey) {
   closeContentSheet();
+  const w = 120, h = 120;
+  const pos = _elDefaultPos(w, h);
   const id = `el${elId++}`;
-  const el = { id, shapeKey, label: SHAPE_DEFS[shapeKey].label, x:80, y:80, w:120, h:120, rot:0, color:'#1e1e1e', isText:false };
+  const el = { id, shapeKey, label: SHAPE_DEFS[shapeKey].label, ...pos, w, h, rot:0, color:'#1e1e1e', isText:false };
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  _placeElInContainer(el);
   selectEl(id);
+  if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
 }
 function addShapeFromSheet(icon, label) {
   closeContentSheet();
+  const w = 120, h = 120;
+  const pos = _elDefaultPos(w, h);
   const id = `el${elId++}`;
-  const el = { id, icon, label, x:80, y:80, w:120, h:120, rot:0, color:'#000', isText:false };
+  const el = { id, icon, label, ...pos, w, h, rot:0, color:'#000', isText:false };
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  _placeElInContainer(el);
   selectEl(id);
 }
 function addText() {
-  closeFab();
+  const w = 150, h = 65;
+  const pos = _elDefaultPos(w, h);
   const id = `el${elId++}`;
-  const el = { id, label:'Text', x:70, y:100, w:150, h:65, rot:0, color:'#000', isText:true };
+  const el = { id, label:'Text', ...pos, w, h, rot:0, color:'#000', isText:true };
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  _placeElInContainer(el);
   selectEl(id);
+  if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
 }
+function addElToCanvas(el) {
+  elements.push(el);
+  document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
+}
+
 function makeElDiv(el) {
   const div = document.createElement('div');
   div.id = el.id; div.className = 'el-wrapper';
@@ -2121,12 +2533,23 @@ function renderEditBar(el) {
 }
 
 // ─────────────────── DELETE / DUPLICATE ───────────────────
-function deleteEl(id) { document.getElementById(id)?.remove(); elements=elements.filter(e=>e.id!==id); deselectAll(); document.getElementById('make-btn')?.classList.toggle('active',elements.length>0); }
+function deleteEl(id) {
+  document.getElementById(id)?.remove();
+  const el = elements.find(e => e.id === id);
+  if (el && el.containerId) {
+    const cont = containers.find(c => c.id === el.containerId);
+    if (cont) { cont.childElId = null; renderContainerBar(cont); }
+  }
+  elements = elements.filter(e => e.id !== id);
+  deselectAll();
+  document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
+}
 function duplicateEl(id) { const el=elements.find(e=>e.id===id); if(!el) return; const nid=`el${elId++}`; const nel={...el,id:nid,x:el.x+20,y:el.y+20}; elements.push(nel); document.getElementById('canvas-world').appendChild(makeElDiv(nel)); selectEl(nid); }
 
 // ─────────────────── DESELECT ON CANVAS TAP ───────────────────
 document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
-  if ([document.getElementById('canvas-scroll'), document.getElementById('canvas-world'), document.getElementById('sticker-sheet')].includes(e.target) || e.target.classList.contains('canvas-grid-overlay')) { deselectAll(); closeFab(); }
+  const isBg = [document.getElementById('canvas-scroll'), document.getElementById('canvas-world'), document.getElementById('sticker-sheet')].includes(e.target) || e.target.classList.contains('canvas-grid-overlay');
+  if (isBg) { deselectAll(); deselectContainer(); closeFab(); }
 });
 document.addEventListener('touchmove', e => {
   if (e.target.closest('.t-corner,.t-side-h,.t-side-v,.t-rotate-btn,.el-wrapper')) e.preventDefault();
