@@ -26,12 +26,64 @@ body {
 .screen.active { display: flex; }
 
 :root {
-  --green: #00c389; --green-dk: #006647; --green-lt: #e6f9f3;
+  /* Patchwork design system tokens */
+  --green: #00c389;           /* FAB / button fill */
+  --text-accent: #00855d;     /* patch/color/text/accent-primary — links, active icons */
+  --green-dk: #006647; --green-lt: #e6f9f3;
   --gray-50: #f5f5f5; --gray-100: #ebebeb; --gray-200: #dddddd;
   --gray-300: #cccccc; --gray-400: #adadad; --gray-500: #8e8e8e;
   --gray-600: #6e6e6e; --gray-700: #595959; --gray-900: #1e1e1e;
+  --surface: #f5f5f5;         /* patch/color/surface/primary */
+  --border-primary: #cccccc;  /* patch/color/border/primary */
+  --error: #ba3003;           /* patch/color/fill/error */
   --font-display: 'Euclid Circular B', -apple-system, sans-serif;
+  --font-body: 'Graphik', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* ── PATCHWORK TOKEN OVERRIDES ── */
+.canvas-link { color: var(--text-accent) !important; }
+.nav-item.active { color: var(--text-accent) !important; }
+
+/* ── HOME v2 — TOP BAR ── */
+.home-topbar { padding: 4px 12px 4px 16px; display: flex; align-items: center; gap: 0; flex-shrink: 0; }
+.topbar-left { display: flex; align-items: center; gap: 4px; flex: 1; }
+.nav-badge { position: absolute; top: 0; right: 0; min-width: 16px; height: 16px; background: var(--error); border-radius: 100px; font-size: 10px; font-weight: 600; color: white; display: flex; align-items: center; justify-content: center; padding: 0 3px; line-height: 1; pointer-events: none; }
+
+/* ── HOME v2 — CATEGORY HEADING ── */
+.home-main-heading { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--gray-900); text-align: center; padding: 20px 20px 16px; line-height: 1.3; }
+
+/* ── HOME v2 — CATEGORY 2×2 GRID ── */
+.cat-grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 20px; }
+.cat-tile { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: white; border: 1px solid var(--gray-200); border-radius: 100px; cursor: pointer; transition: border-color 0.15s; }
+.cat-tile:active { border-color: var(--text-accent); }
+.cat-tile-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.cat-tile-label { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--gray-900); line-height: 1.2; }
+
+/* ── HOME v2 — SECTION HEADINGS ── */
+.home-section { padding: 0 0 4px; }
+.section-title-lg { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--gray-900); padding: 4px 16px 12px; text-align: center; }
+.section-title-left { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--gray-900); padding: 4px 16px 2px; }
+.section-sub { font-family: var(--font-body); font-size: 13px; color: var(--gray-600); padding: 0 16px 12px; }
+
+/* ── HOME v2 — FILTER CHIPS ── */
+.filter-chips { display: flex; gap: 8px; padding: 0 16px 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0; }
+.filter-chips::-webkit-scrollbar { display: none; }
+.filter-chip { padding: 6px 14px; border-radius: 100px; border: 1.5px solid var(--gray-300); font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--gray-700); white-space: nowrap; cursor: pointer; background: white; flex-shrink: 0; }
+.filter-chip.active { background: var(--text-accent); border-color: var(--text-accent); color: white; }
+
+/* ── HOME v2 — PROJECT CARDS ── */
+.project-grid-v2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px 20px; }
+.project-card-v2 { border-radius: 12px; overflow: hidden; background: white; border: 1px solid var(--gray-100); cursor: pointer; }
+.project-card-v2-img { position: relative; aspect-ratio: 1; background: var(--gray-50); overflow: hidden; }
+.project-card-v2-img img { width: 100%; height: 100%; object-fit: cover; }
+.project-card-plus-btn { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.85); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--gray-700); }
+.project-card-v2-info { padding: 8px 10px 10px; }
+.project-card-v2-name { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--gray-900); line-height: 1.3; margin-bottom: 3px; }
+.project-card-v2-desc { font-family: var(--font-body); font-size: 11px; color: var(--gray-600); line-height: 1.4; margin-bottom: 6px; }
+.project-card-v2-cta { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-accent); }
+
+/* ── HOME v2 — BOTTOM NAV ── */
+.home-bottom-nav { background: var(--surface); border-top: 1px solid var(--border-primary); }
 
 /* ── STATUS BAR ── */
 .status-bar {
@@ -178,15 +230,17 @@ body {
 }
 
 /* ── CANVAS SCREEN ── */
-#screen-canvas { background: #e8e8e8; }
+#screen-canvas { background: #e9eaed; }
 .canvas-topbar {
-  background: #fff; height: 52px; padding: 0 10px;
-  display: flex; align-items: center; gap: 2px;
+  background: #fff; height: 48px; padding: 0 4px;
+  display: flex; align-items: center; gap: 0;
   border-bottom: 1px solid var(--gray-100); flex-shrink: 0; z-index: 10;
 }
 .tbar-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--gray-700); border-radius: 8px; font-size: 18px; flex-shrink: 0; }
 .tbar-btn:active { background: var(--gray-50); }
-.tbar-make { margin-left: auto; padding: 7px 18px; border: 2px solid var(--gray-300); border-radius: 100px; font-size: 15px; font-weight: 600; color: var(--gray-500); background: #fff; cursor: pointer; flex-shrink: 0; transition: border-color 0.2s, color 0.2s; }
+.tbar-layers-wrap { position: relative; }
+.tbar-badge { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; background: #ba3003; border-radius: 50%; border: 1.5px solid #fff; pointer-events: none; }
+.tbar-make { padding: 6px 15px; border: 1.5px solid #ccc; border-radius: 100px; font-size: 14px; font-weight: 600; color: #8f8f8f; background: #fff; cursor: pointer; flex-shrink: 0; transition: border-color 0.2s, color 0.2s; }
 .tbar-make.active { border-color: var(--green); color: var(--green); }
 
 .ruler-row { display: flex; flex-shrink: 0; background: var(--gray-50); }
@@ -194,16 +248,43 @@ body {
 .ruler-h { flex: 1; height: 22px; border-bottom: 1px solid var(--gray-200); overflow: hidden; }
 .canvas-body { display: flex; flex: 1; overflow: hidden; }
 .ruler-v { width: 22px; background: var(--gray-50); border-right: 1px solid var(--gray-200); flex-shrink: 0; overflow: hidden; }
-.canvas-scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; position: relative; background: #e0e0e0; }
+.canvas-scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; position: relative; background: #e9eaed; }
 .canvas-scroll::-webkit-scrollbar { display: none; }
 .canvas-world { position: relative; width: 680px; height: 960px; }
-.sticker-sheet { position: absolute; background: #fff; border: 1px solid var(--gray-300); }
-.canvas-grid-overlay { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px); background-size: 48px 48px; }
+.sticker-sheet { position: absolute; background: #fff; border: 1px solid #ccc; box-shadow: 0 3px 8px rgba(18,18,18,0.2); }
+.canvas-grid-overlay { position: absolute; inset: 0; pointer-events: none; }
 
 /* ── CANVAS FAB ── */
-.canvas-fab-wrap { position: absolute; bottom: 20px; right: 16px; z-index: 80; }
-.c-fab { width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,195,137,0.45); cursor: pointer; transition: background 0.18s, transform 0.18s; }
+.canvas-fab-wrap { position: absolute; bottom: 32px; right: 16px; z-index: 80; }
+.c-fab { width: 56px; height: 56px; border-radius: 50%; background: #00855d; color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.22); cursor: pointer; transition: background 0.18s, transform 0.18s; }
 .c-fab.open { background: var(--gray-900); }
+/* ── UPLOAD PANEL ── */
+.upload-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.upload-header { display: flex; align-items: center; justify-content: center; position: relative; padding: 12px 16px 10px; flex-shrink: 0; }
+.upload-header-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: #121212; }
+.upload-header-close { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-family: var(--font-body); font-size: 16px; font-weight: 500; color: var(--text-accent); cursor: pointer; padding: 4px 0; }
+.access-ad { margin: 0 16px 12px; border: 1px solid #e8e8e8; border-radius: 12px; padding: 12px 36px 12px 12px; display: flex; gap: 10px; position: relative; flex-shrink: 0; background: #fff; }
+.access-ad-icon { width: 24px; height: 24px; flex-shrink: 0; margin-top: 1px; }
+.access-ad-brand { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: #00855d; }
+.access-ad-desc { font-family: var(--font-body); font-size: 12px; color: #595959; line-height: 16px; margin: 3px 0 6px; }
+.access-ad-link { font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--text-accent); }
+.access-ad-x { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #8f8f8f; }
+.upload-seg { display: flex; margin: 0 16px 12px; background: #f5f5f5; border-radius: 9px; padding: 2px; flex-shrink: 0; gap: 2px; }
+.upload-seg-btn { flex: 1; padding: 5px 0; border-radius: 7px; font-family: var(--font-body); font-size: 14px; font-weight: 500; text-align: center; color: #595959; cursor: pointer; transition: background 0.15s, color 0.15s, box-shadow 0.15s; }
+.upload-seg-btn.active { background: #fff; color: #121212; box-shadow: 0 1px 3px rgba(0,0,0,0.14); }
+.upload-grid { flex: 1; overflow-y: auto; padding: 0 16px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
+.upload-thumb { aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #f0f0f0; cursor: pointer; position: relative; transition: opacity 0.14s; }
+.upload-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.upload-thumb.selected::after { content: ''; position: absolute; inset: 0; border: 3px solid var(--text-accent); border-radius: 10px; pointer-events: none; }
+.upload-thumb.selected::before { content: '✓'; position: absolute; bottom: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--text-accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.upload-footer { padding: 12px 16px 28px; border-top: 1px solid #f0f0f0; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0; border-radius: 100px; font-family: var(--font-body); font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+.upload-btn-primary { background: var(--text-accent); color: #fff; }
+.upload-btn-secondary { background: #fff; color: #121212; border: 1.5px solid #e0e0e0; }
+/* ── CANVAS BACKGROUND BUTTON ── */
+.canvas-bg-btn { position: absolute; display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 8px; padding: 8px 14px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.canvas-bg-swatch { width: 18px; height: 18px; border-radius: 4px; background: #fff; border: 1px solid #e6e6e6; flex-shrink: 0; }
+.canvas-bg-label { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: #121212; }
 .fab-popup { position: absolute; bottom: 68px; right: 0; background: #fff; border-radius: 16px; padding: 6px 0; min-width: 164px; box-shadow: 0 4px 28px rgba(0,0,0,0.18); opacity: 0; pointer-events: none; transform: scale(0.92) translateY(10px); transform-origin: bottom right; transition: opacity 0.18s, transform 0.18s; }
 .fab-popup.open { opacity: 1; pointer-events: all; transform: scale(1) translateY(0); }
 .fab-popup-item { display: flex; align-items: center; gap: 14px; padding: 13px 20px; cursor: pointer; font-size: 16px; font-weight: 500; }
@@ -289,6 +370,278 @@ body {
 .toggle.off { background: var(--gray-300); }
 .toggle.off::after { right: auto; left: 2px; }
 .settings-value { color: var(--green); font-weight: 500; }
+
+/* ── STEP 2 v2 — PAPER TYPE SELECTION ── */
+.step2-pull-tab { display: flex; align-items: center; justify-content: center; padding: 12px 20px 0; flex-shrink: 0; }
+.step2-pill { width: 36px; height: 4px; background: var(--gray-300); border-radius: 2px; }
+.step2-header { display: flex; align-items: center; padding: 8px 12px; flex-shrink: 0; }
+.step2-back { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.step2-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: #121212; text-align: center; flex: 1; line-height: 24px; }
+.step2-card-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 12px 0; overflow-y: auto; flex: 1; align-content: flex-start; }
+.step2-card {
+  width: 168px; border: 1px solid #e6e6e6; border-radius: 16px;
+  padding: 8px; background: white; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.step2-card.selected { border-color: var(--text-accent); box-shadow: 0 0 0 2px rgba(0,133,93,0.12); }
+.step2-card:active { border-color: var(--text-accent); }
+.step2-thumb-container { height: 147px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+.step2-thumb-svg { width: 100%; height: 147px; display: block; }
+.step2-info-btn {
+  position: absolute; top: 14px; right: 14px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 5;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.14);
+  border: 1px solid rgba(0,0,0,0.07);
+}
+.step2-info-btn:active { background: white; }
+.step2-tooltip {
+  position: absolute; top: 36px; right: 6px;
+  width: 158px; background: white;
+  border-radius: 8px; padding: 10px 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  z-index: 20; display: none;
+  border: 1px solid var(--gray-100);
+}
+.step2-tooltip.visible { display: block; }
+.step2-tooltip-text { font-family: var(--font-body); font-size: 12px; color: var(--gray-700); line-height: 16px; margin-bottom: 7px; }
+.step2-tooltip-shop { font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--text-accent); cursor: pointer; line-height: 16px; }
+.step2-card-label { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: #121212; text-align: center; line-height: 16px; padding: 0 4px 2px; }
+.step2-banner {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: #ecf2f9; border-radius: 8px;
+  padding: 16px; margin: 12px 12px 0; flex-shrink: 0;
+}
+.step2-banner-content { flex: 1; }
+.step2-banner-title { font-family: var(--font-body); font-size: 15px; font-weight: 500; color: #235285; line-height: 22px; margin-bottom: 3px; }
+.step2-banner-body { font-family: var(--font-body); font-size: 15px; color: #235285; line-height: 22px; }
+.step2-start-btn {
+  display: block; width: calc(100% - 24px); margin: 12px 12px 28px;
+  padding: 14px; background: var(--gray-100); color: var(--gray-400);
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  border: none; border-radius: 100px; cursor: not-allowed;
+  text-align: center; flex-shrink: 0; transition: background 0.18s, color 0.18s;
+}
+.step2-start-btn.active { background: var(--green); color: white; cursor: pointer; }
+
+/* ── STICKERS SUBCATEGORY OVERLAY ── */
+#stickers-overlay.full-edge .sheet { border-radius: 12px 12px 0 0; }
+.stickers-header {
+  display: flex; align-items: center; padding: 20px 16px 12px;
+  position: relative; flex-shrink: 0;
+}
+.stickers-back {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.stickers-close {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.stickers-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 600;
+  color: #121212; text-align: center; flex: 1; line-height: 24px;
+}
+.stickers-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; padding: 4px 16px 28px; overflow-y: auto; flex: 1;
+}
+.sticker-type-card {
+  border: 1px solid #e6e6e6; border-radius: 16px;
+  padding: 8px; background: white; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sticker-type-card:active { border-color: var(--text-accent); box-shadow: 0 0 0 3px rgba(0,133,93,0.1); }
+.sticker-type-thumb {
+  height: 147px; border-radius: 8px; overflow: hidden;
+  background: #f0f0f0; position: relative; margin-bottom: 8px;
+}
+.sticker-type-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.sticker-type-blank {
+  height: 147px; border-radius: 8px; background: #ebebeb;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 8px;
+}
+.sticker-type-label {
+  font-family: var(--font-body); font-size: 12px; font-weight: 500;
+  color: #121212; text-align: center; line-height: 16px; padding: 0 4px 2px;
+}
+
+/* ── NEW PROJECT STEP 1 — v2 (Figma match) ── */
+#np-step1-overlay.full-edge .sheet { border-radius: 10px 10px 0 0; }
+.np-step1-header { padding: 12px 12px 0; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; min-height: 44px; }
+.np-step1-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: #121212; text-align: center; line-height: 24px; }
+.np-step1-close { position: absolute; right: 12px; top: 0; width: 32px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.np-step1-sub { font-family: var(--font-body); text-align: center; font-size: 15px; color: #121212; line-height: 22px; padding: 2px 24px 24px; flex-shrink: 0; }
+.np-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 28px; overflow-y: auto; flex: 1; }
+.np-type-card-v2 { border: 1px solid #e6e6e6; border-radius: 16px; padding: 8px; background: white; cursor: pointer; transition: border-color 0.18s, box-shadow 0.18s; }
+.np-type-card-v2:active { border-color: var(--text-accent); box-shadow: 0 0 0 3px rgba(0,133,93,0.12); }
+.np-type-thumb-v2 { height: 147px; border-radius: 8px; overflow: hidden; background: linear-gradient(to bottom, #f2f6f9, #dfe7ec); position: relative; margin-bottom: 8px; }
+.np-type-thumb-v2 img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.np-type-name-v2 { font-family: var(--font-body); font-size: 15px; font-weight: 500; text-align: center; color: #121212; line-height: 22px; }
+.np-type-sub-v2 { font-family: var(--font-body); font-size: 12px; color: #595959; text-align: center; line-height: 16px; padding-bottom: 2px; }
+
+/* ── UPLOAD ACTION SHEET ── */
+#upload-action-sheet { position: absolute; inset: 0; z-index: 300; background: rgba(0,0,0,0.4); display: none; flex-direction: column; justify-content: flex-end; }
+#upload-action-sheet.visible { display: flex; }
+.as-group { background: rgba(252,252,252,0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 14px; margin: 0 8px 8px; overflow: hidden; }
+.as-item { padding: 17px 16px; text-align: center; font-family: var(--font-body); font-size: 18px; color: var(--text-accent); cursor: pointer; border-bottom: 0.5px solid rgba(60,60,67,0.2); line-height: 1.2; }
+.as-item:last-child { border-bottom: none; }
+.as-item:active { background: rgba(0,0,0,0.06); }
+.as-cancel { background: rgba(252,252,252,0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 14px; margin: 0 8px 24px; overflow: hidden; }
+.as-cancel-item { padding: 17px 16px; text-align: center; font-family: var(--font-body); font-size: 18px; font-weight: 600; color: var(--text-accent); cursor: pointer; }
+.as-cancel-item:active { background: rgba(0,0,0,0.06); }
+
+/* ── BGr FULL SCREEN ── */
+#bgr-screen { position: absolute; inset: 0; z-index: 310; background: #fff; display: none; flex-direction: column; }
+#bgr-screen.visible { display: flex; }
+.bgr-topbar { display: flex; align-items: center; padding: 10px 12px; gap: 6px; flex-shrink: 0; border-bottom: 0.5px solid var(--gray-100); }
+.bgr-topbar-back { width: 32px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.bgr-topbar-spacer { flex: 1; }
+.bgr-topbar-meatball { width: 32px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.bgr-apply-btn { padding: 7px 16px; border-radius: 100px; font-family: var(--font-body); font-size: 14px; font-weight: 600; background: var(--text-accent); color: #fff; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
+.bgr-apply-btn.disabled { background: var(--gray-200); color: var(--gray-500); pointer-events: none; }
+.bgr-panel { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.bgr-panel.active { display: flex; }
+
+/* BGr Intro */
+.bgr-intro-body { flex: 1; overflow-y: auto; padding: 20px 16px 0; display: flex; flex-direction: column; gap: 14px; }
+.bgr-feature-header { display: flex; align-items: flex-start; gap: 12px; }
+.bgr-access-badge { width: 30px; height: 30px; background: var(--text-accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-family: var(--font-display); font-size: 17px; font-weight: 700; margin-top: 1px; }
+.bgr-feature-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #121212; line-height: 26px; }
+.bgr-feature-sub { font-family: var(--font-body); font-size: 14px; color: var(--gray-600); line-height: 20px; margin-top: 2px; }
+.bgr-image-preview { flex: 1; min-height: 180px; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; background: #fafafa; display: flex; align-items: center; justify-content: center; }
+.bgr-image-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.bgr-intro-footer { padding: 16px 16px 28px; display: flex; flex-direction: column; align-items: center; gap: 14px; flex-shrink: 0; }
+.bgr-auto-btn { width: 100%; padding: 14px; border-radius: 100px; background: var(--text-accent); color: #fff; font-family: var(--font-body); font-size: 16px; font-weight: 600; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.bgr-a-badge { width: 22px; height: 22px; background: rgba(255,255,255,0.25); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.bgr-manual-link { font-family: var(--font-body); font-size: 15px; font-weight: 500; color: var(--text-accent); cursor: pointer; }
+
+/* BGr Processing */
+.bgr-processing-area { flex: 1; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 0; position: relative; }
+.bgr-proc-img-wrap { position: relative; display: inline-block; }
+#bgr-proc-img { max-width: 358px; max-height: 480px; display: block; }
+.bgr-proc-spinner-ring { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.35); }
+.bgr-proc-ring { width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: bgr-spin 0.8s linear infinite; }
+@keyframes bgr-spin { to { transform: rotate(360deg); } }
+.bgr-proc-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 48px 32px; background: #111; flex-shrink: 0; }
+.bgr-proc-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.bgr-proc-btn-x { background: rgba(255,255,255,0.15); }
+.bgr-proc-btn-ok { background: #fff; }
+
+/* BGr Editor */
+.bgr-undo-row { display: flex; gap: 4px; padding: 8px 12px 4px; flex-shrink: 0; }
+.bgr-undo-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 8px; }
+.bgr-undo-btn:active { background: var(--gray-100); }
+.bgr-undo-btn.disabled { opacity: 0.3; pointer-events: none; }
+.bgr-editor-area { flex: 1; min-height: 0; overflow: hidden; position: relative; background: #e8e8e8; display: flex; align-items: center; justify-content: center; }
+.checker-bg { background-image: linear-gradient(45deg,#bbb 25%,transparent 25%),linear-gradient(-45deg,#bbb 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#bbb 75%),linear-gradient(-45deg,transparent 75%,#bbb 75%); background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0; background-color: #fff; }
+#bgr-canvas { display: block; max-width: 100%; max-height: 100%; touch-action: none; cursor: crosshair; }
+.bgr-crop-layer { position: absolute; pointer-events: none; visibility: hidden; }
+.bgr-crop-layer.active { visibility: visible; pointer-events: auto; }
+.bgr-crop-rect { position: absolute; border: 2px solid #fff; }
+.bgr-crop-shade { position: absolute; background: rgba(0,0,0,0.5); }
+.bgr-crop-handle { position: absolute; width: 20px; height: 20px; cursor: pointer; pointer-events: auto; }
+.bgr-crop-handle::before { content:''; position: absolute; border-color: #fff; border-style: solid; }
+.bgr-ch-tl::before { top:0;left:0;width:12px;height:12px;border-width:3px 0 0 3px; }
+.bgr-ch-tr::before { top:0;right:0;width:12px;height:12px;border-width:3px 3px 0 0; }
+.bgr-ch-bl::before { bottom:0;left:0;width:12px;height:12px;border-width:0 0 3px 3px; }
+.bgr-ch-br::before { bottom:0;right:0;width:12px;height:12px;border-width:0 3px 3px 0; }
+.bgr-tool-ctrl { min-height: 44px; padding: 6px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; border-top: 0.5px solid var(--gray-100); }
+.bgr-ctrl-label { font-family: var(--font-body); font-size: 13px; color: var(--gray-600); flex-shrink: 0; }
+.bgr-ctrl-val { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: #121212; width: 28px; text-align: right; flex-shrink: 0; }
+.bgr-ctrl-slider { flex: 1; accent-color: var(--text-accent); }
+.bgr-ctrl-select { border: none; outline: none; font-family: var(--font-body); font-size: 14px; color: #121212; background: transparent; cursor: pointer; }
+.bgr-toolbar { display: flex; border-top: 0.5px solid var(--gray-200); flex-shrink: 0; }
+.bgr-tool { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0 12px; cursor: pointer; }
+.bgr-tool-lbl { font-family: var(--font-body); font-size: 11px; color: var(--gray-600); }
+.bgr-tool.active .bgr-tool-lbl { color: var(--text-accent); }
+.bgr-tool.active svg { color: var(--text-accent); }
+
+/* ── CONVERT UPLOAD TO ── */
+#convert-screen { position: absolute; inset: 0; z-index: 320; background: #fff; display: none; flex-direction: column; }
+#convert-screen.visible { display: flex; }
+.cvt-topbar { display: flex; align-items: center; padding: 12px 16px; flex-shrink: 0; border-bottom: 0.5px solid var(--gray-100); }
+.cvt-back { width: 36px; height: 36px; display: flex; align-items: center; cursor: pointer; flex-shrink: 0; }
+.cvt-title { flex: 1; font-family: var(--font-display); font-size: 17px; font-weight: 700; color: #121212; text-align: center; }
+.cvt-next { padding: 7px 18px; border-radius: 100px; background: var(--text-accent); color: #fff; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+.cvt-list { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.cvt-option { display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 14px 12px; cursor: pointer; position: relative; }
+.cvt-option.selected { border-color: var(--text-accent); }
+.cvt-thumb { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; flex-shrink: 0; position: relative; background-image: linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%); background-size: 10px 10px; background-position: 0 0,0 5px,5px -5px,-5px 0; background-color: #fff; }
+.cvt-thumb img, .cvt-thumb canvas { width: 100%; height: 100%; object-fit: contain; display: block; }
+.cvt-a-badge { position: absolute; top: 4px; left: 4px; width: 18px; height: 18px; background: var(--text-accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-display); font-size: 10px; font-weight: 700; z-index: 1; }
+.cvt-info { flex: 1; }
+.cvt-option-title { font-family: var(--font-body); font-size: 16px; font-weight: 600; color: #121212; margin-bottom: 3px; }
+.cvt-option-desc { font-family: var(--font-body); font-size: 13px; color: var(--gray-600); line-height: 18px; }
+.cvt-beta { background: #333; color: #fff; font-family: var(--font-body); font-size: 11px; font-weight: 600; border-radius: 6px; padding: 3px 8px; flex-shrink: 0; }
+
+/* ── IMAGE DETAILS ── */
+#imgdetails-screen { position: absolute; inset: 0; z-index: 330; background: #fff; display: none; flex-direction: column; }
+#imgdetails-screen.visible { display: flex; }
+.imgd-topbar { display: flex; align-items: center; padding: 12px 16px; flex-shrink: 0; border-bottom: 0.5px solid var(--gray-100); }
+.imgd-back { width: 36px; height: 36px; display: flex; align-items: center; cursor: pointer; flex-shrink: 0; }
+.imgd-title { flex: 1; font-family: var(--font-display); font-size: 17px; font-weight: 700; color: #121212; text-align: center; }
+.imgd-upload-btn { padding: 7px 18px; border-radius: 100px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+.imgd-upload-btn.ready { background: var(--text-accent); color: #fff; }
+.imgd-upload-btn.off { background: var(--gray-200); color: var(--gray-500); pointer-events: none; }
+.imgd-name-row { display: flex; align-items: center; padding: 14px 16px; border-bottom: 0.5px solid var(--gray-200); border-top: 0.5px solid var(--gray-200); flex-shrink: 0; background: #fff; }
+.imgd-name-label { font-family: var(--font-body); font-size: 15px; font-weight: 600; color: #121212; width: 100px; flex-shrink: 0; }
+.imgd-name-input { flex: 1; border: none; outline: none; font-family: var(--font-body); font-size: 15px; color: #121212; background: transparent; }
+.imgd-name-input::placeholder { color: var(--gray-400); }
+.imgd-preview { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background-image: linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%); background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0; background-color: #fff; }
+.imgd-preview img, .imgd-preview canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+/* ── UPLOADED TOAST ── */
+.uploaded-toast { position: absolute; bottom: 76px; left: 50%; transform: translateX(-50%); background: #1e1e1e; color: #fff; border-radius: 100px; padding: 10px 18px; display: flex; align-items: center; gap: 8px; font-family: var(--font-body); font-size: 14px; font-weight: 500; white-space: nowrap; z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.uploaded-toast.show { opacity: 1; }
+.toast-dot { width: 20px; height: 20px; background: var(--text-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* ── FILL SHEET ── */
+#fill-sheet { position: absolute; inset: 0; z-index: 400; display: none; flex-direction: column; justify-content: flex-end; background: rgba(0,0,0,0.3); }
+#fill-sheet.visible { display: flex; }
+.fill-panel { background: #fff; border-radius: 16px 16px 0 0; display: flex; flex-direction: column; max-height: 88%; }
+.fill-drag-pill { width: 36px; height: 4px; background: var(--gray-300); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
+.fill-header { display: flex; align-items: center; padding: 10px 16px 4px; flex-shrink: 0; }
+.fill-title { flex: 1; text-align: center; font-family: var(--font-body); font-size: 17px; font-weight: 600; color: #121212; }
+.fill-close-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.fill-content { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 16px 8px; }
+.fill-tab-bar { display: flex; border-top: 1px solid var(--gray-100); flex-shrink: 0; padding: 0 8px; }
+.fill-tab { flex: 1; text-align: center; padding: 12px 0 20px; font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--gray-500); cursor: pointer; border-top: 2px solid transparent; margin-top: -1px; }
+.fill-tab.active { color: var(--text-accent); border-top-color: var(--text-accent); font-weight: 600; }
+/* Colors tab */
+.fill-colors-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 9px; margin-bottom: 20px; }
+.fill-swatch { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.12s; }
+.fill-swatch:active { transform: scale(0.88); }
+.fill-swatch.selected { box-shadow: 0 0 0 2.5px #fff, 0 0 0 4.5px var(--text-accent); }
+.fill-swatch[data-color="#ffffff"] { border-color: var(--gray-200); }
+.fill-adv-label { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: #121212; margin-bottom: 10px; }
+.fill-adv-canvas { width: 100%; height: 150px; border-radius: 10px; display: block; touch-action: none; cursor: crosshair; }
+.fill-hue-row { margin: 12px 0 10px; }
+.fill-hue-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 14px; border-radius: 7px; background: linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%); outline: none; border: none; cursor: pointer; }
+.fill-hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid rgba(0,0,0,0.18); box-shadow: 0 1px 5px rgba(0,0,0,0.3); cursor: pointer; }
+.fill-hex-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.fill-hex-preview { width: 34px; height: 34px; border-radius: 7px; border: 1.5px solid var(--gray-200); flex-shrink: 0; }
+.fill-hex-input { flex: 1; height: 36px; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 0 10px; font-family: var(--font-body); font-size: 14px; font-weight: 500; color: #121212; outline: none; }
+.fill-hex-input:focus { border-color: var(--text-accent); }
+/* Patterns tab */
+.fill-patterns-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fill-pattern-tile { aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2.5px solid transparent; }
+.fill-pattern-tile.selected { border-color: var(--text-accent); }
+.fill-pattern-tile:active { opacity: 0.82; }
+.fill-pattern-inner { width: 100%; height: 100%; }
+/* Photos tab */
+.fill-photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.fill-photo-tile { aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2.5px solid transparent; background: var(--gray-50); }
+.fill-photo-tile.selected { border-color: var(--text-accent); }
+.fill-photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fill-upload-photo-btn { width: 100%; padding: 14px; border-radius: 100px; background: var(--text-accent); color: #fff; text-align: center; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; }
+.fill-upload-photo-btn:active { opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -296,62 +649,146 @@ body {
 
 <!-- ════════════════ HOME SCREEN ════════════════ -->
 <div class="screen active" id="screen-home">
-  <div class="status-bar"><span>10:04</span><span>▲▲▲ 5G 93%</span></div>
+  <div class="status-bar"><span>9:41</span><span>
+    <svg width="68" height="12" viewBox="0 0 68 12" fill="none" style="vertical-align:middle;">
+      <rect x="0" y="3" width="3" height="9" rx="1" fill="#595959" opacity=".4"/>
+      <rect x="5" y="2" width="3" height="10" rx="1" fill="#595959" opacity=".6"/>
+      <rect x="10" y="0" width="3" height="12" rx="1" fill="#595959"/>
+      <path d="M16 4a7 7 0 0 1 7 0" stroke="#595959" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+      <path d="M17.5 6.5A5 5 0 0 1 22 6.5" stroke="#595959" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+      <path d="M19 9a2.5 2.5 0 0 1 3.5 0" stroke="#595959" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="28" y="2" width="38" height="8" rx="2.5" stroke="#595959" stroke-width="1"/>
+      <rect x="29" y="3" width="30" height="6" rx="1.5" fill="#595959"/>
+      <path d="M67 4.5v3a1.5 1.5 0 0 0 0-3z" fill="#595959" opacity=".4"/>
+    </svg>
+  </span></div>
+
+  <!-- Top bar -->
   <div class="home-topbar">
-    <div class="icon-btn">
-      <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><rect y="0" width="20" height="2" rx="1" fill="#595959"/><rect y="6" width="20" height="2" rx="1" fill="#595959"/><rect y="12" width="20" height="2" rx="1" fill="#595959"/></svg>
-    </div>
-    <div class="icon-btn">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#595959" stroke-width="1.8"/><text x="11" y="15.5" font-size="11" text-anchor="middle" fill="#595959" font-weight="600">?</text></svg>
-    </div>
-    <div class="machine-label">
-      <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect x="1" y="3" width="16" height="10" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="4" y="0" width="10" height="4" rx="1" fill="#595959"/></svg>
-      <span>Scout</span>
+    <div class="topbar-left">
+      <div class="icon-btn" style="position:relative;">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><rect y="0" width="20" height="2" rx="1" fill="#595959"/><rect y="6" width="20" height="2" rx="1" fill="#595959"/><rect y="12" width="20" height="2" rx="1" fill="#595959"/></svg>
+        <div class="nav-badge">3</div>
+      </div>
+      <div class="icon-btn">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#595959" stroke-width="1.8"/><text x="11" y="15.5" font-size="11" text-anchor="middle" fill="#595959" font-weight="600">?</text></svg>
+      </div>
+      <div class="machine-label">
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect x="1" y="3" width="16" height="10" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="4" y="0" width="10" height="4" rx="1" fill="#595959"/></svg>
+        <span>Gemini</span>
+      </div>
     </div>
     <span class="canvas-link" onclick="showCanvas()">Canvas</span>
   </div>
-  <div class="home-search">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#adadad" stroke-width="1.6"/><line x1="11" y1="11" x2="15" y2="15" stroke="#adadad" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <span>What are you looking for?</span>
-  </div>
+
+  <!-- Scrollable content -->
   <div class="home-scroll">
-    <div class="home-hero">
-      <svg class="home-hero-wave" viewBox="0 0 390 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,0 H390 V28 C340,58 280,14 220,36 C160,58 90,18 40,42 C22,50 10,46 0,48 Z" fill="#006647"/>
-      </svg>
-      <h1>Hi Jiyoun,<br>what do you want<br>to make?</h1>
+
+    <!-- Heading -->
+    <h2 class="home-main-heading">What do you want<br>to make?</h2>
+
+    <!-- 2×2 Category tiles -->
+    <div class="cat-grid-2x2">
+      <div class="cat-tile" onclick="openStickers()">
+        <img class="cat-tile-img" src="assets/images/cat-stickers.jpg" alt="Stickers"/>
+        <span class="cat-tile-label">Stickers</span>
+      </div>
+      <div class="cat-tile" onclick="openStep1()">
+        <img class="cat-tile-img" src="assets/images/cat-labels.jpg" alt="Labels"/>
+        <span class="cat-tile-label">Labels</span>
+      </div>
+      <div class="cat-tile" onclick="openStep1()">
+        <img class="cat-tile-img" src="assets/images/cat-photo-prints.jpg" alt="Photo Prints"/>
+        <span class="cat-tile-label">Photo Prints</span>
+      </div>
+      <div class="cat-tile" onclick="openStep1()">
+        <img class="cat-tile-img" src="assets/images/cat-cards-invites.jpg" alt="Cards &amp; Invites"/>
+        <span class="cat-tile-label">Cards &amp; Invites</span>
+      </div>
     </div>
-    <div class="categories-row">
-      <div class="cat-item"><div class="cat-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="4" y="4" width="18" height="18" rx="2" stroke="white" stroke-width="2"/></svg></div><span class="cat-label">Iron On</span></div>
-      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M6 10l6-6 6 6" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="cat-label">Engrave</span></div>
-      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="white" stroke-width="2"/></svg></div><span class="cat-label">Vinyl Decal</span></div>
-      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3C9 3 6 6 6 9c0 4 6 12 6 12s6-8 6-12c0-3-3-6-6-6z" stroke="white" stroke-width="2"/></svg></div><span class="cat-label">Iron-On T-Shirt</span></div>
-      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="white" stroke-width="2"/><path d="M4 8h16" stroke="white" stroke-width="1.5"/></svg></div><span class="cat-label">Card</span></div>
-      <div class="cat-item"><div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="white" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="cat-label">Sticker</span></div>
+
+    <!-- Start with a Template -->
+    <div class="home-section">
+      <div class="section-title-lg">Start with a Template</div>
+      <div class="filter-chips">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip" onclick="toggleFilterChip(this)">Stickers</div>
+        <div class="filter-chip" onclick="toggleFilterChip(this)">Labels</div>
+        <div class="filter-chip" onclick="toggleFilterChip(this)">Photo Prints</div>
+        <div class="filter-chip" onclick="toggleFilterChip(this)">Cards &amp; Invites</div>
+      </div>
     </div>
-    <div class="section-title">Start With a Free and Quick<br>Vinyl Decal!</div>
-    <div class="project-grid">
-      <div class="project-card"><div class="project-thumb">🐾<div class="project-thumb-badge">Paws-itively Ready...</div><div class="bookmark-btn">🔖</div></div></div>
-      <div class="project-card"><div class="project-thumb">📱<div class="project-thumb-badge">Please Hesitate to...</div><div class="bookmark-btn">🔖</div></div></div>
-      <div class="project-card"><div class="project-thumb">💭<div class="project-thumb-badge">Currently Overthin...</div><div class="bookmark-btn">🔖</div></div></div>
-      <div class="project-card"><div class="project-thumb">👾<div class="project-thumb-badge">Doodle Monsters...</div><div class="bookmark-btn">🔖</div></div></div>
+
+    <!-- Made with Your Photo -->
+    <div class="home-section">
+      <div class="section-title-left">Made with Your Photo</div>
+      <div class="section-sub">Upload a photo. Get a finished, custom design.</div>
+      <div class="project-grid-v2">
+        <div class="project-card-v2">
+          <div class="project-card-v2-img">
+            <img src="assets/images/project-pet-stickers.jpg" alt="Pet Stickers"/>
+            <div class="project-card-plus-btn">✦</div>
+          </div>
+          <div class="project-card-v2-info">
+            <div class="project-card-v2-name">Pet Stickers</div>
+            <div class="project-card-v2-desc">Upload a photo of your pet and make custom stickers of your furry friend</div>
+            <div class="project-card-v2-cta">Make it</div>
+          </div>
+        </div>
+        <div class="project-card-v2">
+          <div class="project-card-v2-img">
+            <img src="assets/images/project-stylized-stickers.jpg" alt="Stylized Stickers"/>
+            <div class="project-card-plus-btn">✦</div>
+          </div>
+          <div class="project-card-v2-info">
+            <div class="project-card-v2-name">Stylized Stickers</div>
+            <div class="project-card-v2-desc">Upload a photo and transform the style into a rad graphic style</div>
+            <div class="project-card-v2-cta">Make it</div>
+          </div>
+        </div>
+        <div class="project-card-v2">
+          <div class="project-card-v2-img">
+            <img src="assets/images/project-polaroid.jpg" alt="Polaroid Prints"/>
+            <div class="project-card-plus-btn">✦</div>
+          </div>
+          <div class="project-card-v2-info">
+            <div class="project-card-v2-name">Polaroid Prints</div>
+            <div class="project-card-v2-desc">Turn your favorite photos into a set of polaroid-style stickers</div>
+            <div class="project-card-v2-cta">Make it</div>
+          </div>
+        </div>
+        <div class="project-card-v2">
+          <div class="project-card-v2-img">
+            <img src="assets/images/project-labels.jpg" alt="Custom Labels"/>
+            <div class="project-card-plus-btn">✦</div>
+          </div>
+          <div class="project-card-v2-info">
+            <div class="project-card-v2-name">Custom Labels</div>
+            <div class="project-card-v2-desc">Create personalized labels for gifts, jars, and more</div>
+            <div class="project-card-v2-cta">Make it</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div style="height:16px;"></div>
+
+    <div style="height:20px;"></div>
   </div>
+
+  <!-- Bottom nav -->
   <div class="home-bottom-nav">
     <div class="nav-item active">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#00c389" stroke-width="1.8"/><rect x="8" y="13" width="6" height="7" rx="1" fill="#00c389"/></svg>
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" fill="#00855d" stroke="#00855d" stroke-width="1.6"/><rect x="8" y="13" width="6" height="7" rx="1" fill="white"/></svg>
       <span>Home</span>
     </div>
     <div class="nav-item">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#adadad" stroke-width="1.8"/><path d="M8 11l2 2 4-4" stroke="#adadad" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <span>Subscription</span>
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3C6.6 3 3 6.6 3 11s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8z" stroke="#adadad" stroke-width="1.8"/><path d="M7.5 11l2.5 2.5 5-5" stroke="#adadad" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Cricut Access</span>
     </div>
     <div class="nav-fab-wrap">
       <div class="nav-fab" onclick="openStep1()">+</div>
     </div>
     <div class="nav-item">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="3" stroke="#adadad" stroke-width="1.8"/><path d="M7 8h8M7 12h6" stroke="#adadad" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="2" width="14" height="18" rx="2" stroke="#adadad" stroke-width="1.8"/><path d="M7 7h8M7 11h8M7 15h5" stroke="#adadad" stroke-width="1.6" stroke-linecap="round"/></svg>
       <span>My Stuff</span>
     </div>
     <div class="nav-item">
@@ -364,144 +801,268 @@ body {
 
 <!-- ════════════════ NEW PROJECT — STEP 1 (Type choice) ════════════════ -->
 <div class="overlay hidden" id="np-step1-overlay" onclick="closeStep1(event)">
-  <div class="sheet" onclick="event.stopPropagation()" style="padding-bottom:28px;">
-    <div class="sheet-bar">
-      <div class="sheet-pill"></div>
-      <div class="sheet-x-btn" onclick="closeStep1()">✕</div>
-    </div>
-    <div class="sheet-heading">New Project</div>
-    <div class="np-type-row">
-      <!-- Sticker -->
-      <div class="np-type-card" onclick="openStep2()">
-        <div class="np-type-thumb">
-          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
-            <rect x="8" y="4" width="64" height="92" rx="6" fill="#f5f5f5" stroke="#ddd" stroke-width="1.5"/>
-            <circle cx="26" cy="28" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
-            <circle cx="54" cy="28" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
-            <circle cx="26" cy="54" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
-            <circle cx="54" cy="54" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
-            <circle cx="26" cy="80" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
-            <circle cx="54" cy="80" r="12" stroke="#00c389" stroke-width="1.5" fill="rgba(0,195,137,0.06)"/>
-          </svg>
-        </div>
-        <div class="np-type-label">Sticker</div>
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="np-step1-header">
+      <span class="np-step1-title">What do you want to make?</span>
+      <div class="np-step1-close" onclick="closeStep1()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><line x1="1.5" y1="1.5" x2="16.5" y2="16.5" stroke="#121212" stroke-width="2" stroke-linecap="round"/><line x1="16.5" y1="1.5" x2="1.5" y2="16.5" stroke="#121212" stroke-width="2" stroke-linecap="round"/></svg>
       </div>
-      <!-- Photo -->
-      <div class="np-type-card">
-        <div class="np-type-thumb">
-          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
-            <rect x="8" y="4" width="64" height="92" rx="6" fill="#f5f5f5" stroke="#ddd" stroke-width="1.5"/>
-            <rect x="14" y="12" width="52" height="38" rx="4" fill="#e0e8f0" stroke="#b0c4d8" stroke-width="1"/>
-            <circle cx="26" cy="26" r="6" fill="#b0c4d8"/>
-            <path d="M14 38l14-12 12 10 8-6 18 8" stroke="#8aabbf" stroke-width="1.5" fill="none"/>
-            <rect x="14" y="58" width="52" height="30" rx="4" fill="#e0e8f0" stroke="#b0c4d8" stroke-width="1"/>
-            <circle cx="26" cy="70" r="5" fill="#b0c4d8"/>
-            <path d="M14 76l10-8 10 8 10-6 22 6" stroke="#8aabbf" stroke-width="1.5" fill="none"/>
+    </div>
+    <div class="np-step1-sub">Select a project type</div>
+
+    <div class="np-type-grid">
+
+      <!-- Stickers -->
+      <div class="np-type-card-v2" onclick="openStep2()">
+        <div class="np-type-thumb-v2">
+          <img src="assets/images/cat-stickers.jpg" alt="Stickers"/>
+        </div>
+        <div class="np-type-name-v2">Stickers</div>
+        <div class="np-type-sub-v2">Pre-cut Sticker Paper</div>
+      </div>
+
+      <!-- Labels -->
+      <div class="np-type-card-v2">
+        <div class="np-type-thumb-v2">
+          <img src="assets/images/cat-labels.jpg" alt="Labels"/>
+        </div>
+        <div class="np-type-name-v2">Labels</div>
+        <div class="np-type-sub-v2">Pre-cut Sticker Paper</div>
+      </div>
+
+      <!-- Photo Prints -->
+      <div class="np-type-card-v2">
+        <div class="np-type-thumb-v2">
+          <img src="assets/images/cat-photo-prints.jpg" alt="Photo Prints"/>
+        </div>
+        <div class="np-type-name-v2">Photo Prints</div>
+        <div class="np-type-sub-v2">Sticker Paper</div>
+      </div>
+
+      <!-- Cards & Invites -->
+      <div class="np-type-card-v2">
+        <div class="np-type-thumb-v2">
+          <img src="assets/images/cat-cards-invites.jpg" alt="Cards &amp; Invites"/>
+        </div>
+        <div class="np-type-name-v2">Cards &amp; Invites</div>
+        <div class="np-type-sub-v2">Sticker Paper</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ STICKERS SUBCATEGORY ════════════════ -->
+<div class="overlay hidden" id="stickers-overlay" onclick="closeStickers(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="stickers-header">
+      <div class="stickers-back" onclick="closeStickers()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18l-6-6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="stickers-title">Stickers</span>
+      <div class="stickers-close" onclick="closeStickers()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <line x1="1" y1="1" x2="17" y2="17" stroke="#121212" stroke-width="2" stroke-linecap="round"/>
+          <line x1="17" y1="1" x2="1" y2="17" stroke="#121212" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="stickers-grid">
+      <!-- Photo Stickers -->
+      <div class="sticker-type-card" onclick="closeStickers(); openStep2From('stickers');">
+        <div class="sticker-type-thumb">
+          <img src="assets/images/photo-stickers-thumb.jpg" alt="Photo Stickers"/>
+        </div>
+        <div class="sticker-type-label">Photo Stickers</div>
+      </div>
+
+      <!-- Decorative Stickers -->
+      <div class="sticker-type-card" onclick="closeStickers(); openStep2From('stickers');">
+        <div class="sticker-type-thumb">
+          <img src="assets/images/decorative-stickers-thumb.jpg" alt="Decorative Stickers"/>
+        </div>
+        <div class="sticker-type-label">Decorative Stickers</div>
+      </div>
+
+      <!-- Stationary Stickers -->
+      <div class="sticker-type-card" onclick="closeStickers(); openStep2From('stickers');">
+        <div class="sticker-type-thumb">
+          <img src="assets/images/stationary-stickers-thumb.jpg" alt="Stationary Stickers"/>
+        </div>
+        <div class="sticker-type-label">Stationary Stickers</div>
+      </div>
+
+      <!-- Blank Sheet -->
+      <div class="sticker-type-card" onclick="closeStickers(); openStep2From('stickers');">
+        <div class="sticker-type-blank">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <line x1="18" y1="4" x2="18" y2="32" stroke="#595959" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="4" y1="18" x2="32" y2="18" stroke="#595959" stroke-width="2.5" stroke-linecap="round"/>
           </svg>
         </div>
-        <div class="np-type-label">Photo</div>
+        <div class="sticker-type-label">Blank Sheet</div>
       </div>
     </div>
   </div>
 </div>
 
 
-<!-- ════════════════ NEW PROJECT — STEP 2 (Sheet selection) ════════════════ -->
+<!-- ════════════════ NEW PROJECT — STEP 2 (Paper type) ════════════════ -->
 <div class="overlay hidden" id="np-step2-overlay" onclick="closeStep2(event)">
-  <div class="sheet" onclick="event.stopPropagation()" style="max-height:88%;">
-    <div class="sheet-bar">
-      <div class="sheet-pill"></div>
-      <div class="sheet-x-btn" onclick="closeStep2()">✕</div>
+  <div class="sheet" onclick="event.stopPropagation()" style="max-height:92%; border-radius:12px 12px 0 0;">
+
+    <!-- Pull tab -->
+    <div class="step2-pull-tab"><div class="step2-pill"></div></div>
+
+    <!-- Header: back + title -->
+    <div class="step2-header">
+      <div class="step2-back" onclick="backFromStep2()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18l-6-6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="step2-title">Select a paper type</span>
+      <div style="width:32px; flex-shrink:0;"></div>
     </div>
 
-    <!-- Header with back -->
-    <div class="np-header">
-      <span class="np-back" onclick="backToStep1()">‹</span>
-      <span class="np-title">Sticker</span>
+    <!-- 3-card grid -->
+    <div class="step2-card-grid">
+
+      <!-- Round Stickers -->
+      <div class="step2-card" onclick="selectStep2Card(this,'circles')" data-sheet="circles">
+        <div class="step2-thumb-container">
+          <svg class="step2-thumb-svg" viewBox="0 0 152 147" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sbg1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d6d8d6"/>
+                <stop offset="66%" stop-color="#e7e7e7"/>
+              </linearGradient>
+              <filter id="sf1" x="-20%" y="-10%" width="140%" height="125%">
+                <feDropShadow dx="0" dy="2.4" stdDeviation="1.6" flood-color="#121212" flood-opacity="0.2"/>
+              </filter>
+              <clipPath id="cp1"><rect x="31" y="7.5" width="90" height="132"/></clipPath>
+            </defs>
+            <rect width="152" height="147" fill="url(#sbg1)"/>
+            <g filter="url(#sf1)">
+              <rect x="31" y="7.5" width="90" height="132" fill="white"/>
+              <g clip-path="url(#cp1)">
+                <circle cx="54.8" cy="31.3" r="18.5" fill="#e1f6f6" stroke="#e6e6e6" stroke-width="0.4"/>
+                <circle cx="97"    cy="31"   r="18.5" fill="#e1f6f6" stroke="#e6e6e6" stroke-width="0.4"/>
+                <circle cx="54.8" cy="73.6" r="18.5" fill="#e1f6f6" stroke="#e6e6e6" stroke-width="0.4"/>
+                <circle cx="97"   cy="73.6" r="18.5" fill="#e1f6f6" stroke="#e6e6e6" stroke-width="0.4"/>
+                <circle cx="54.2" cy="116"  r="18.5" fill="#e1f6f6" stroke="#e6e6e6" stroke-width="0.4"/>
+                <circle cx="97"   cy="116"  r="18.5" fill="#e1f6f6" stroke="#e6e6e6" stroke-width="0.4"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="step2-info-btn" onclick="showStep2Tooltip(event,'step2-tip-round')">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="#595959" stroke-width="1"/><rect x="6" y="5.5" width="1" height="4.5" rx="0.5" fill="#595959"/><circle cx="6.5" cy="3.8" r="0.65" fill="#595959"/></svg>
+        </div>
+        <div class="step2-tooltip" id="step2-tip-round">
+          <div class="step2-tooltip-text">2×3 grid, 38mm circles</div>
+          <div class="step2-tooltip-shop">Shop Stickersheet</div>
+        </div>
+        <div class="step2-card-label">Round Stickers</div>
+      </div>
+
+      <!-- Square Stickers -->
+      <div class="step2-card" onclick="selectStep2Card(this,'squares')" data-sheet="squares">
+        <div class="step2-thumb-container">
+          <svg class="step2-thumb-svg" viewBox="0 0 152 147" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sbg2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d6d8d6"/>
+                <stop offset="66%" stop-color="#e7e7e7"/>
+              </linearGradient>
+              <filter id="sf2" x="-20%" y="-10%" width="140%" height="125%">
+                <feDropShadow dx="0" dy="2.4" stdDeviation="1.6" flood-color="#121212" flood-opacity="0.2"/>
+              </filter>
+              <clipPath id="cp2"><rect x="31" y="7.5" width="90" height="132"/></clipPath>
+            </defs>
+            <rect width="152" height="147" fill="url(#sbg2)"/>
+            <g filter="url(#sf2)">
+              <rect x="31" y="7.5" width="90" height="132" fill="white"/>
+              <g clip-path="url(#cp2)">
+                <rect x="36.3" y="12.8" width="37" height="37" rx="4" fill="#f8edf5" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="78.5" y="12.5" width="37" height="37" rx="4" fill="#f8edf5" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="36.3" y="55.1" width="37" height="37" rx="4" fill="#f8edf5" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="78.5" y="55.1" width="37" height="37" rx="4" fill="#f8edf5" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="35.7" y="97.5" width="37" height="37" rx="4" fill="#f8edf5" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="78.5" y="97.5" width="37" height="37" rx="4" fill="#f8edf5" stroke="#e6e6e6" stroke-width="0.4"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="step2-info-btn" onclick="showStep2Tooltip(event,'step2-tip-square')">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="#595959" stroke-width="1"/><rect x="6" y="5.5" width="1" height="4.5" rx="0.5" fill="#595959"/><circle cx="6.5" cy="3.8" r="0.65" fill="#595959"/></svg>
+        </div>
+        <div class="step2-tooltip" id="step2-tip-square">
+          <div class="step2-tooltip-text">2×3 grid, 38mm squares</div>
+          <div class="step2-tooltip-shop">Shop Stickersheet</div>
+        </div>
+        <div class="step2-card-label">Square Stickers</div>
+      </div>
+
+      <!-- Rectangle Stickers -->
+      <div class="step2-card" onclick="selectStep2Card(this,'rectangles')" data-sheet="rectangles">
+        <div class="step2-thumb-container">
+          <svg class="step2-thumb-svg" viewBox="0 0 152 147" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sbg3" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d6d8d6"/>
+                <stop offset="66%" stop-color="#e7e7e7"/>
+              </linearGradient>
+              <filter id="sf3" x="-20%" y="-10%" width="140%" height="125%">
+                <feDropShadow dx="0" dy="2.4" stdDeviation="1.6" flood-color="#121212" flood-opacity="0.2"/>
+              </filter>
+              <clipPath id="cp3"><rect x="31" y="7.5" width="90" height="132"/></clipPath>
+            </defs>
+            <rect width="152" height="147" fill="url(#sbg3)"/>
+            <g filter="url(#sf3)">
+              <rect x="31" y="7.5" width="90" height="132" fill="white"/>
+              <g clip-path="url(#cp3)">
+                <rect x="36" y="23.8"  width="80" height="21.5" rx="2.8" fill="#ecf2f9" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="36" y="48.7"  width="80" height="21.5" rx="2.8" fill="#ecf2f9" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="36" y="73.5"  width="80" height="21.5" rx="2.8" fill="#ecf2f9" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="36" y="98.3"  width="80" height="21.5" rx="2.8" fill="#ecf2f9" stroke="#e6e6e6" stroke-width="0.4"/>
+                <rect x="36" y="123.1" width="80" height="21.5" rx="2.8" fill="#ecf2f9" stroke="#e6e6e6" stroke-width="0.4"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="step2-info-btn" onclick="showStep2Tooltip(event,'step2-tip-rect')">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="#595959" stroke-width="1"/><rect x="6" y="5.5" width="1" height="4.5" rx="0.5" fill="#595959"/><circle cx="6.5" cy="3.8" r="0.65" fill="#595959"/></svg>
+        </div>
+        <div class="step2-tooltip" id="step2-tip-rect">
+          <div class="step2-tooltip-text">5 per sheet, 67mm wide</div>
+          <div class="step2-tooltip-shop">Shop Stickersheet</div>
+        </div>
+        <div class="step2-card-label">Rectangle Stickers</div>
+      </div>
+
+    </div><!-- end card grid -->
+
+    <!-- Info banner -->
+    <div class="step2-banner">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:1px;">
+        <circle cx="10" cy="10" r="9.5" stroke="#235285" stroke-width="1"/>
+        <rect x="9.5" y="9" width="1" height="6" rx="0.5" fill="#235285"/>
+        <circle cx="10" cy="6.5" r="0.8" fill="#235285"/>
+      </svg>
+      <div class="step2-banner-content">
+        <div class="step2-banner-title">Choose the correct pre-cut sticker</div>
+        <div class="step2-banner-body">Make sure your pre-cut sticker paper matches the category you select when printing your project.</div>
+      </div>
     </div>
 
-    <!-- Paper size info row -->
-    <div class="np-info-row">
-      <div class="np-info-left">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#3366cc" stroke-width="1.5"/><line x1="8" y1="7" x2="8" y2="12" stroke="#3366cc" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.8" fill="#3366cc"/></svg>
-        <span class="np-info-text">4 × 7 inches sheet</span>
-      </div>
-      <div class="np-shop-btn">Shop ›</div>
-    </div>
+    <!-- Start Designing -->
+    <button class="step2-start-btn" id="np-start-btn" onclick="startDesigning()">Start Designing</button>
 
-    <!-- Section title -->
-    <div class="np-section-title">Scout Sticker Sheets</div>
-
-    <!-- Sheet cards — horizontal scroll -->
-    <div class="np-sheets-row" id="np-sheets-row">
-
-      <!-- Blank -->
-      <div class="np-sheet-card" onclick="selectSheet('blank')" data-sheet="blank">
-        <div class="np-sheet-thumb">
-          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
-            <rect x="8" y="4" width="64" height="92" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
-          </svg>
-        </div>
-        <div class="np-sheet-name">Blank sticker sheet</div>
-        <div class="np-sheet-desc">&nbsp;</div>
-      </div>
-
-      <!-- 6 Circles -->
-      <div class="np-sheet-card" onclick="selectSheet('circles')" data-sheet="circles">
-        <div class="np-sheet-thumb">
-          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
-            <rect x="4" y="2" width="72" height="96" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
-            <circle cx="24" cy="22" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <circle cx="56" cy="22" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <circle cx="24" cy="50" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <circle cx="56" cy="50" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <circle cx="24" cy="78" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <circle cx="56" cy="78" r="14" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-          </svg>
-        </div>
-        <div class="np-sheet-name">6 Circles</div>
-        <div class="np-sheet-desc">2×3 grid, 38mm circles</div>
-      </div>
-
-      <!-- 5 Rectangles -->
-      <div class="np-sheet-card" onclick="selectSheet('rectangles')" data-sheet="rectangles">
-        <div class="np-sheet-thumb">
-          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
-            <rect x="4" y="2" width="72" height="96" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
-            <rect x="12" y="10" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="12" y="28" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="12" y="46" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="12" y="64" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="12" y="82" width="56" height="14" rx="3" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-          </svg>
-        </div>
-        <div class="np-sheet-name">5 Rectangles</div>
-        <div class="np-sheet-desc">Stacked, 67mm wide</div>
-      </div>
-
-      <!-- 6 Squares -->
-      <div class="np-sheet-card" onclick="selectSheet('squares')" data-sheet="squares">
-        <div class="np-sheet-thumb">
-          <svg width="80" height="100" viewBox="0 0 80 100" fill="none">
-            <rect x="4" y="2" width="72" height="96" rx="5" fill="white" stroke="#ddd" stroke-width="1.5"/>
-            <rect x="10" y="8" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="44" y="8" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="10" y="38" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="44" y="38" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="10" y="68" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-            <rect x="44" y="68" width="26" height="26" rx="4" stroke="#aaa" stroke-width="1.2" fill="rgba(0,0,0,0.03)"/>
-          </svg>
-        </div>
-        <div class="np-sheet-name">6 Squares</div>
-        <div class="np-sheet-desc">2×3 grid, 38mm squares</div>
-      </div>
-
-    </div><!-- end sheets row -->
-
-    <button class="btn-full" id="np-start-btn" onclick="startDesigning()" disabled
-      style="opacity:0.4;cursor:not-allowed;margin-top:16px;">
-      Start Designing
-    </button>
   </div>
 </div>
 
@@ -510,17 +1071,32 @@ body {
 <div class="screen" id="screen-canvas">
   <div class="status-bar" style="background:#fff;"><span>10:06</span><span>▲▲▲ 5G 93%</span></div>
   <div class="canvas-topbar">
+    <!-- left: back, meatball, save -->
     <div class="tbar-btn" onclick="showScreen('screen-home')">
-      <svg width="12" height="20" viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#595959" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9l8 8" stroke="#595959" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
     <div class="tbar-btn" onclick="openMeatball()">
-      <svg width="18" height="4" viewBox="0 0 18 4" fill="none"><circle cx="2" cy="2" r="2" fill="#595959"/><circle cx="9" cy="2" r="2" fill="#595959"/><circle cx="16" cy="2" r="2" fill="#595959"/></svg>
+      <svg width="16" height="4" viewBox="0 0 16 4" fill="none"><circle cx="2" cy="2" r="1.8" fill="#595959"/><circle cx="8" cy="2" r="1.8" fill="#595959"/><circle cx="14" cy="2" r="1.8" fill="#595959"/></svg>
     </div>
-    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="14" height="16" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="5" y="1" width="14" height="16" rx="2" stroke="#595959" stroke-width="1.6" fill="white"/></svg></div>
-    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="2" stroke="#595959" stroke-width="1.6"/><rect x="6" y="2" width="8" height="6" rx="1" fill="#595959"/><rect x="5" y="11" width="10" height="7" rx="1" fill="#595959"/></svg></div>
-    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 8H14a4 4 0 010 8H8" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8L7 5M4 8l3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16 8H6a4 4 0 000 8h6" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M16 8l-3-3M16 8l-3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-    <div class="tbar-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 14l8 4 8-4M2 10l8 4 8-4M10 2L2 6l8 4 8-4-8-4z" stroke="#595959" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+    <div class="tbar-btn">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="#595959" stroke-width="1.6"/><rect x="7" y="11" width="6" height="6" rx="1" fill="#e6e6e6" stroke="#595959" stroke-width="1"/><rect x="5.5" y="2" width="9" height="7" rx="1.5" fill="#595959"/></svg>
+    </div>
+    <!-- center spacer -->
+    <div style="flex:1;"></div>
+    <!-- center: undo, redo -->
+    <div class="tbar-btn">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 8H14a4 4 0 010 8H8" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8L7 5M4 8l3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </div>
+    <div class="tbar-btn">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16 8H6a4 4 0 000 8h6" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M16 8l-3-3M16 8l-3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </div>
+    <!-- right spacer -->
+    <div style="flex:1;"></div>
+    <!-- right: layers + badge, Make -->
+    <div class="tbar-btn tbar-layers-wrap">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 14l8 4 8-4M2 10l8 4 8-4M10 2L2 6l8 4 8-4-8-4z" stroke="#595959" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      <div class="tbar-badge"></div>
+    </div>
     <button class="tbar-make" id="make-btn">Make</button>
   </div>
   <div class="ruler-row">
@@ -533,6 +1109,10 @@ body {
       <div class="canvas-world" id="canvas-world">
         <div class="canvas-grid-overlay"></div>
         <div class="sticker-sheet" id="sticker-sheet"></div>
+        <div class="canvas-bg-btn" id="canvas-bg-btn" style="display:none;">
+          <div class="canvas-bg-swatch"></div>
+          <span class="canvas-bg-label">Background</span>
+        </div>
       </div>
     </div>
   </div>
@@ -546,7 +1126,7 @@ body {
       <div class="fab-popup-item" onclick="openContentSheet('shapes')"><span class="fab-popup-icon">△</span>Shape</div>
       <div class="fab-popup-item" onclick="addText()"><span class="fab-popup-icon" style="font-weight:700;font-size:18px;">T</span>Text</div>
       <div class="fab-popup-item"><span class="fab-popup-icon">✦</span>Create AI</div>
-      <div class="fab-popup-item"><span class="fab-popup-icon">⬆</span>Upload</div>
+      <div class="fab-popup-item" onclick="openUploadPanel()"><span class="fab-popup-icon">⬆</span>Upload</div>
     </div>
     <div class="c-fab" id="c-fab" onclick="toggleFab()">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><line x1="14" y1="4" x2="14" y2="24" stroke="white" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="14" x2="24" y2="14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
@@ -574,6 +1154,267 @@ body {
     <div style="height:8px;flex-shrink:0;"></div>
   </div>
 </div>
+
+
+<!-- ════════════════ UPLOAD PANEL ════════════════ -->
+<input type="file" id="upload-file-input" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+<div class="overlay hidden" id="upload-overlay" onclick="closeUploadPanel(event)">
+  <div class="sheet" style="max-height:92%; border-radius:12px 12px 0 0; padding-bottom:0;" onclick="event.stopPropagation()">
+    <div class="upload-panel">
+      <!-- Pill + Header -->
+      <div class="sheet-bar" style="padding-bottom:0;">
+        <div class="sheet-pill"></div>
+      </div>
+      <div class="upload-header">
+        <span class="upload-header-title">Upload</span>
+        <span class="upload-header-close" onclick="closeUploadPanel()">Close</span>
+      </div>
+
+      <!-- Cricut Access ad -->
+      <div class="access-ad" id="access-ad">
+        <div class="access-ad-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="24" height="24" rx="6" fill="#00855d"/>
+            <path d="M12 6C8.686 6 6 8.686 6 12s2.686 6 6 6c1.18 0 2.28-.34 3.2-.93l-1.42-1.42A4.002 4.002 0 0 1 12 16a4 4 0 0 1 0-8c.82 0 1.58.25 2.22.67L15.64 7.25A5.96 5.96 0 0 0 12 6z" fill="white"/>
+          </svg>
+        </div>
+        <div style="flex:1;">
+          <div class="access-ad-brand">cricut access.</div>
+          <div class="access-ad-desc">Try our background remover and elevate your designs.</div>
+          <div class="access-ad-link">Start Free Trial ↗</div>
+        </div>
+        <div class="access-ad-x" onclick="document.getElementById('access-ad').style.display='none'">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="#8f8f8f" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="#8f8f8f" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <!-- Segmented control -->
+      <div class="upload-seg">
+        <div class="upload-seg-btn active" onclick="switchUploadTab(this,'uploaded')">Uploaded</div>
+        <div class="upload-seg-btn" onclick="switchUploadTab(this,'edited')">Edited</div>
+      </div>
+
+      <!-- Image grid -->
+      <div class="upload-grid" id="upload-grid"></div>
+
+      <!-- Footer buttons -->
+      <div class="upload-footer">
+        <div class="upload-btn upload-btn-primary" onclick="openUploadActionSheet()">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="10" width="16" height="8" rx="2" stroke="white" stroke-width="1.6"/><path d="M10 2v8M7 5l3-3 3 3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Upload Image
+        </div>
+        <div class="upload-btn upload-btn-secondary" onclick="openUploadActionSheet()">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="#595959" stroke-width="1.6"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="#595959" stroke-width="1.6"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="#595959" stroke-width="1.6"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="#595959" stroke-width="1.6"/></svg>
+          Upload Pattern
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ UPLOAD ACTION SHEET ════════════════ -->
+<div id="upload-action-sheet" onclick="closeUploadActionSheet(event)">
+  <div class="as-group">
+    <div class="as-item" onclick="triggerUploadCamera()">Take a Photo</div>
+    <div class="as-item" onclick="triggerUploadLibrary()">Select from Photo Library</div>
+    <div class="as-item" onclick="triggerUploadFiles()">Browse Files</div>
+    <div class="as-item" onclick="openUploadedFromSheet()">Open Uploaded Images</div>
+  </div>
+  <div class="as-cancel">
+    <div class="as-cancel-item" onclick="closeUploadActionSheet()">Cancel</div>
+  </div>
+</div>
+<input type="file" id="as-camera-input" accept="image/*" capture="environment" style="display:none;" onchange="handleUploadFile(event)">
+<input type="file" id="as-library-input" accept="image/*" style="display:none;" onchange="handleUploadFile(event)">
+<input type="file" id="as-files-input" accept="image/*,.pdf,.svg" style="display:none;" onchange="handleUploadFile(event)">
+
+
+<!-- ════════════════ BACKGROUND REMOVER SCREEN ════════════════ -->
+<div id="bgr-screen">
+
+  <!-- Shared top bar -->
+  <div class="bgr-topbar">
+    <div class="bgr-topbar-back" onclick="closeBgrScreen()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="bgr-topbar-spacer"></div>
+    <div class="bgr-topbar-meatball">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="4" cy="10" r="2" fill="#121212"/><circle cx="10" cy="10" r="2" fill="#121212"/><circle cx="16" cy="10" r="2" fill="#121212"/></svg>
+    </div>
+    <div class="bgr-apply-btn disabled" id="bgr-apply-btn" onclick="applyBgr()">Apply</div>
+  </div>
+
+  <!-- ── INTRO PANEL ── -->
+  <div class="bgr-panel active" id="bgr-intro">
+    <div class="bgr-intro-body">
+      <div class="bgr-feature-header">
+        <div class="bgr-access-badge">a</div>
+        <div>
+          <div class="bgr-feature-title">Automatic Background Remover</div>
+          <div class="bgr-feature-sub">Quick and easy way to create ready-to-cut images.</div>
+        </div>
+      </div>
+      <div class="bgr-image-preview" id="bgr-intro-preview"></div>
+    </div>
+    <div class="bgr-intro-footer">
+      <div class="bgr-auto-btn" onclick="startAutoRemoval()">
+        <div class="bgr-a-badge">a</div>
+        Remove Background Automatically
+      </div>
+      <div class="bgr-manual-link" onclick="startManualEdit()">Remove Background Manually</div>
+    </div>
+  </div>
+
+  <!-- ── PROCESSING PANEL ── -->
+  <div class="bgr-panel" id="bgr-processing">
+    <div class="bgr-processing-area">
+      <div class="bgr-proc-img-wrap">
+        <img id="bgr-proc-img" src="" alt="">
+        <div class="bgr-proc-spinner-ring" id="bgr-proc-spinner">
+          <div class="bgr-proc-ring"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bgr-proc-footer">
+      <div class="bgr-proc-btn bgr-proc-btn-x" onclick="cancelBgrProcessing()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><line x1="4" y1="4" x2="18" y2="18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="4" x2="4" y2="18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <div style="flex:1;"></div>
+      <div class="bgr-proc-btn bgr-proc-btn-ok" onclick="acceptProcessing()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5 9-9" stroke="#121212" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EDITOR PANEL ── -->
+  <div class="bgr-panel" id="bgr-editor">
+    <div class="bgr-undo-row">
+      <div class="bgr-undo-btn disabled" id="bgr-undo" onclick="bgrUndo()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 8h10a5 5 0 010 10H8" stroke="#121212" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 4L4 8l4 4" stroke="#121212" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="bgr-undo-btn disabled" id="bgr-redo" onclick="bgrRedo()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M18 8H8a5 5 0 000 10h6" stroke="#121212" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 4l4 4-4 4" stroke="#121212" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="bgr-editor-area checker-bg" id="bgr-editor-area">
+      <canvas id="bgr-canvas"></canvas>
+      <!-- Crop handles layer (absolute, matches canvas) -->
+      <div class="bgr-crop-layer" id="bgr-crop-layer">
+        <div class="bgr-crop-shade" id="bgr-shade-top"></div>
+        <div class="bgr-crop-shade" id="bgr-shade-bot"></div>
+        <div class="bgr-crop-shade" id="bgr-shade-left"></div>
+        <div class="bgr-crop-shade" id="bgr-shade-right"></div>
+        <div class="bgr-crop-rect" id="bgr-crop-rect">
+          <div class="bgr-crop-handle bgr-ch-tl" data-corner="tl"></div>
+          <div class="bgr-crop-handle bgr-ch-tr" data-corner="tr"></div>
+          <div class="bgr-crop-handle bgr-ch-bl" data-corner="bl"></div>
+          <div class="bgr-crop-handle bgr-ch-br" data-corner="br"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bgr-tool-ctrl" id="bgr-tool-ctrl"></div>
+    <div class="bgr-toolbar">
+      <div class="bgr-tool active" id="btool-select" onclick="setBgrTool('select')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style="color:inherit"><path d="M9 3l1.5 12 3-4 4 4.5-2 1.5-3.5-4-2 4.5L9 3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="17" r="4" fill="var(--text-accent)"/><path d="M15.5 17h3M17 15.5v3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="bgr-tool-lbl">Select</span>
+      </div>
+      <div class="bgr-tool" id="btool-erase" onclick="setBgrTool('erase')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14.5 3.5l4 4-9 9-4-4 9-9z" stroke="#121212" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 19h8" stroke="#121212" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="bgr-tool-lbl">Erase</span>
+      </div>
+      <div class="bgr-tool" id="btool-restore" onclick="setBgrTool('restore')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11A7 7 0 0111 4" stroke="#121212" stroke-width="1.7" stroke-linecap="round"/><path d="M4 7v4h4" stroke="#121212" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="15" cy="15" r="5" stroke="#121212" stroke-width="1.7"/><path d="M13 15h4M15 13v4" stroke="#121212" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="bgr-tool-lbl">Restore</span>
+      </div>
+      <div class="bgr-tool" id="btool-crop" onclick="setBgrTool('crop')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M5 3v14h14" stroke="#121212" stroke-width="1.7" stroke-linecap="round"/><path d="M3 7h14v12" stroke="#121212" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="bgr-tool-lbl">Crop</span>
+      </div>
+      <div class="bgr-tool" id="btool-reset" onclick="bgrReset()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11A7 7 0 1111 4H8" stroke="#121212" stroke-width="1.7" stroke-linecap="round"/><path d="M8 4l3 3-3 3" stroke="#121212" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="bgr-tool-lbl">Reset</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #bgr-screen -->
+
+
+<!-- ════════════════ CONVERT UPLOAD TO ════════════════ -->
+<div id="convert-screen">
+  <div class="cvt-topbar">
+    <div class="cvt-back" onclick="closeConvertScreen()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="cvt-title">Convert Upload To</div>
+    <div class="cvt-next" onclick="proceedToImageDetails()">Next</div>
+  </div>
+  <div class="cvt-list">
+    <div class="cvt-option selected" id="cvt-multi" onclick="selectConvertOption('multi')">
+      <div class="cvt-thumb" id="cvt-thumb-multi">
+        <div class="cvt-a-badge">a</div>
+      </div>
+      <div class="cvt-info">
+        <div class="cvt-option-title">Multiple Layers</div>
+        <div class="cvt-option-desc">Creates up to 9 layers, separated by color</div>
+      </div>
+      <div class="cvt-beta">Beta</div>
+    </div>
+    <div class="cvt-option" id="cvt-single" onclick="selectConvertOption('single')">
+      <div class="cvt-thumb" id="cvt-thumb-single"></div>
+      <div class="cvt-info">
+        <div class="cvt-option-title">Single Layer</div>
+        <div class="cvt-option-desc">Creates a simple, one-color image or silhouette</div>
+      </div>
+    </div>
+    <div class="cvt-option" id="cvt-flat" onclick="selectConvertOption('flat')">
+      <div class="cvt-thumb" id="cvt-thumb-flat"></div>
+      <div class="cvt-info">
+        <div class="cvt-option-title">Flat Graphic</div>
+        <div class="cvt-option-desc">Creates a single layer, full-color image (for Print Then Cut projects with a home printer)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ IMAGE DETAILS ════════════════ -->
+<div id="imgdetails-screen">
+  <div class="imgd-topbar">
+    <div class="imgd-back" onclick="closeImgDetails()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="imgd-title">Image Details</div>
+    <div class="imgd-upload-btn off" id="imgd-upload-btn" onclick="finalizeUpload()">Upload</div>
+  </div>
+  <div class="imgd-name-row">
+    <div class="imgd-name-label">Image Name</div>
+    <input class="imgd-name-input" id="imgd-name-input" type="text" placeholder="Required" oninput="onImgNameInput(this.value)" autocomplete="off" autocorrect="off">
+  </div>
+  <div class="imgd-preview" id="imgd-preview"></div>
+</div>
+
+<!-- FILL SHEET -->
+<div id="fill-sheet" onclick="closeFillSheet(event)">
+  <div class="fill-panel">
+    <div class="fill-drag-pill"></div>
+    <div class="fill-header">
+      <div style="width:30px;"></div>
+      <div class="fill-title">Fill</div>
+      <div class="fill-close-btn" onclick="closeFillSheet()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#6e6e6e" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="fill-content" id="fill-content"></div>
+    <div class="fill-tab-bar">
+      <div class="fill-tab active" id="fill-tab-colors" onclick="switchFillTab('colors')">Colors</div>
+      <div class="fill-tab" id="fill-tab-patterns" onclick="switchFillTab('patterns')">Patterns</div>
+      <div class="fill-tab" id="fill-tab-photos" onclick="switchFillTab('photos')">Photos</div>
+    </div>
+  </div>
+</div>
+<input type="file" id="fill-photo-input" accept="image/*" style="display:none" onchange="handleFillPhotoUpload(event)">
 
 
 <!-- ════════════════ MEATBALL SHEET (with sliding sheet panel) ════════════════ -->
@@ -644,6 +1485,12 @@ body {
 
 
 <script>
+// ─────────────────── HOME FILTER CHIPS ───────────────────
+function toggleFilterChip(el) {
+  document.querySelectorAll('#screen-home .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
 // ─────────────────── SHEET DEFINITIONS ───────────────────
 const SHEETS = {
   blank:      { name: 'Blank sticker sheet', desc: '', shortDesc: '' },
@@ -673,6 +1520,20 @@ function showScreen(id) {
 }
 function showCanvas() { showScreen('screen-canvas'); }
 
+// ─────────────────── STICKERS SUBCATEGORY ───────────────────
+function openStickers() {
+  const el = document.getElementById('stickers-overlay');
+  el.classList.remove('hidden');
+  el.classList.add('full-edge');
+}
+function closeStickers(e) {
+  const el = document.getElementById('stickers-overlay');
+  if (!e || e.target === el) {
+    el.classList.add('hidden');
+    el.classList.remove('full-edge');
+  }
+}
+
 // ─────────────────── STEP 1 ───────────────────
 function openStep1() {
   const el = document.getElementById('np-step1-overlay');
@@ -689,33 +1550,65 @@ function closeStep1(e) {
 }
 
 // ─────────────────── STEP 2 ───────────────────
-function openStep2() {
-  const el1 = document.getElementById('np-step1-overlay');
-  el1.classList.add('hidden');
-  el1.classList.remove('full-edge');
+let step2From = 'step1'; // 'step1' | 'stickers'
+
+function openStep2() { openStep2From('step1'); }
+
+function openStep2From(from) {
+  step2From = from;
+  // Close step 1 if open
+  const s1 = document.getElementById('np-step1-overlay');
+  s1.classList.add('hidden'); s1.classList.remove('full-edge');
   // Reset selection
   selectedSheetType = null;
-  document.querySelectorAll('.np-sheet-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.step2-card').forEach(c => c.classList.remove('selected'));
   const btn = document.getElementById('np-start-btn');
-  btn.disabled = true; btn.style.opacity = '0.4'; btn.style.cursor = 'not-allowed';
+  btn.classList.remove('active');
   document.getElementById('np-step2-overlay').classList.remove('hidden');
 }
 function closeStep2(e) {
-  if (!e || e.target === document.getElementById('np-step2-overlay'))
+  if (!e || e.target === document.getElementById('np-step2-overlay')) {
     document.getElementById('np-step2-overlay').classList.add('hidden');
+    hideAllStep2Tooltips();
+  }
 }
-function backToStep1() {
+function backFromStep2() {
   document.getElementById('np-step2-overlay').classList.add('hidden');
-  document.getElementById('np-step1-overlay').classList.remove('hidden');
+  hideAllStep2Tooltips();
+  if (step2From === 'stickers') {
+    openStickers();
+  } else {
+    document.getElementById('np-step1-overlay').classList.remove('hidden');
+  }
 }
 
-function selectSheet(type) {
+function selectStep2Card(el, type) {
   selectedSheetType = type;
-  document.querySelectorAll('.np-sheet-card').forEach(c => {
-    c.classList.toggle('selected', c.dataset.sheet === type);
-  });
-  const btn = document.getElementById('np-start-btn');
-  btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+  document.querySelectorAll('.step2-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('np-start-btn').classList.add('active');
+}
+
+function hideAllStep2Tooltips() {
+  document.querySelectorAll('.step2-tooltip').forEach(t => t.classList.remove('visible'));
+}
+function showStep2Tooltip(e, id) {
+  e.stopPropagation();
+  const already = document.getElementById(id).classList.contains('visible');
+  hideAllStep2Tooltips();
+  if (!already) {
+    document.getElementById(id).classList.add('visible');
+    setTimeout(() => {
+      function outside(ev) {
+        const tip = document.getElementById(id);
+        if (tip && !tip.contains(ev.target)) {
+          tip.classList.remove('visible');
+          document.removeEventListener('click', outside);
+        }
+      }
+      document.addEventListener('click', outside);
+    }, 0);
+  }
 }
 
 function startDesigning() {
@@ -729,9 +1622,13 @@ function startDesigning() {
 // ─────────────────── CANVAS SHEET RENDERING ───────────────────
 function buildSheet(type) {
   const sheet = document.getElementById('sticker-sheet');
-  // 4in × 7in at 72px/in = 288 × 504px
-  const W = 288, H = 504;
-  sheet.style.cssText = `left:50px;top:40px;width:${W}px;height:${H}px;`;
+  const W = 320, H = 472;
+  const L = 17, T = 80; // centered in ~353px scroll area (390 - 22px ruler), padded from top
+  sheet.style.cssText = `left:${L}px;top:${T}px;width:${W}px;height:${H}px;`;
+  const bgBtn = document.getElementById('canvas-bg-btn');
+  if (bgBtn) {
+    bgBtn.style.cssText = `left:${L + Math.round((W - 130) / 2)}px;top:${T + H + 14}px;display:flex;`;
+  }
 
   let html = '';
   if (type === 'blank') {
@@ -777,7 +1674,7 @@ function drawRulers() {
   hc.width = 390 - 22;
   const hCtx = hc.getContext('2d');
   hCtx.fillStyle = '#f5f5f5'; hCtx.fillRect(0, 0, hc.width, 22);
-  hCtx.strokeStyle = '#ccc'; hCtx.lineWidth = 0.5; hCtx.fillStyle = '#999'; hCtx.font = '8px -apple-system';
+  hCtx.strokeStyle = '#ccc'; hCtx.lineWidth = 0.5; hCtx.fillStyle = '#595959'; hCtx.font = '8px -apple-system';
   for (let i = 0; i <= 9; i++) {
     const x = i * 72 + 28;
     if (x > hc.width) continue;
@@ -789,7 +1686,7 @@ function drawRulers() {
   vc.height = 700;
   const vCtx = vc.getContext('2d');
   vCtx.fillStyle = '#f5f5f5'; vCtx.fillRect(0, 0, 22, vc.height);
-  vCtx.strokeStyle = '#ccc'; vCtx.lineWidth = 0.5; vCtx.fillStyle = '#999'; vCtx.font = '8px -apple-system';
+  vCtx.strokeStyle = '#ccc'; vCtx.lineWidth = 0.5; vCtx.fillStyle = '#595959'; vCtx.font = '8px -apple-system';
   for (let i = 0; i <= 10; i++) {
     const y = i * 72 + 18;
     if (y > vc.height) continue;
@@ -808,6 +1705,82 @@ function closeFab() {
   fabOpen = false;
   document.getElementById('c-fab').classList.remove('open');
   document.getElementById('fab-popup').classList.remove('open');
+}
+
+// ─────────────────── UPLOAD PANEL ───────────────────
+// Seed images — uses existing project assets as placeholder "uploaded" photos
+let uploadedImages = [
+  'assets/images/project-pet-stickers.jpg',
+  'assets/images/project-stylized-stickers.jpg',
+  'assets/images/project-polaroid.jpg',
+  'assets/images/project-labels.jpg',
+];
+
+function openUploadPanel() {
+  closeFab();
+  renderUploadGrid();
+  const el = document.getElementById('upload-overlay');
+  el.classList.remove('hidden');
+}
+function closeUploadPanel(e) {
+  if (!e || e.target === document.getElementById('upload-overlay')) {
+    document.getElementById('upload-overlay').classList.add('hidden');
+  }
+}
+function switchUploadTab(btn, tab) {
+  document.querySelectorAll('.upload-seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUploadGrid(tab);
+}
+function renderUploadGrid(tab) {
+  const grid = document.getElementById('upload-grid');
+  const imgs = tab === 'edited' ? [] : uploadedImages; // edited tab empty for now
+  if (imgs.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:#8f8f8f;font-size:14px;font-family:var(--font-body);">No ${tab || 'uploaded'} images yet</div>`;
+    return;
+  }
+  grid.innerHTML = imgs.map((src, i) =>
+    `<div class="upload-thumb" onclick="placeUploadedImage('${src}', this)" data-src="${src}">
+       <img src="${src}" alt="">
+     </div>`
+  ).join('');
+}
+function placeUploadedImage(src, thumbEl) {
+  // Toggle selection highlight, then place on canvas
+  document.querySelectorAll('.upload-thumb').forEach(t => t.classList.remove('selected'));
+  thumbEl.classList.add('selected');
+  setTimeout(() => {
+    closeUploadPanel();
+    const id = `el${elId++}`;
+    const el = { id, isImage: true, imgSrc: src, label: 'Image', x: 50, y: 100, w: 180, h: 180, rot: 0 };
+    elements.push(el);
+    document.getElementById('canvas-world').appendChild(makeElDiv(el));
+    selectEl(id);
+  }, 180);
+}
+
+// Real file upload — opens native file picker
+function triggerFileUpload() {
+  document.getElementById('upload-file-input').click();
+}
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const dataUrl = ev.target.result;
+    uploadedImages.unshift(dataUrl); // add to front of grid
+    renderUploadGrid();
+    // Auto-place on canvas and close panel
+    closeUploadPanel();
+    const id = `el${elId++}`;
+    const el = { id, isImage: true, imgSrc: dataUrl, label: 'Image', x: 50, y: 100, w: 180, h: 180, rot: 0 };
+    elements.push(el);
+    document.getElementById('canvas-world').appendChild(makeElDiv(el));
+    selectEl(id);
+  };
+  reader.readAsDataURL(file);
+  e.target.value = ''; // reset so same file can be re-selected
 }
 
 // ─────────────────── SHAPE DEFINITIONS (inline SVG, viewBox 0 0 100 100) ───────────────────
@@ -960,12 +1933,14 @@ function addText() {
 function makeElDiv(el) {
   const div = document.createElement('div');
   div.id = el.id; div.className = 'el-wrapper';
-  div.style.cssText = `left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;transform:rotate(${el.rot}deg);`;
+  div.style.cssText = `left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;transform:rotate(${el.rot}deg) scaleX(${el.flipH?-1:1});`;
   if (el.isText) {
     div.innerHTML = `<span class="el-content" style="font-size:42px;font-weight:900;font-family:serif;color:${el.color}">Text</span>`;
   } else if (el.shapeKey) {
     // SVG fills the full container — scales perfectly on resize
     div.innerHTML = `<svg class="el-content" viewBox="0 0 100 100" width="100%" height="100%" style="color:${el.color};display:block;" preserveAspectRatio="none">${SHAPE_DEFS[el.shapeKey].svg}</svg>`;
+  } else if (el.isImage) {
+    div.innerHTML = `<img class="el-content" src="${el.imgSrc}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;" draggable="false">`;
   } else {
     div.innerHTML = `<span class="el-content" style="font-size:64px;">${el.icon}</span>`;
   }
@@ -1031,7 +2006,10 @@ function renderTransformUI(el) {
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="#1e1e1e" stroke-width="1.8"/><path d="M6 14H4a2 2 0 01-2-2V4a2 2 0 012-2h8a2 2 0 012 2v2" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/></svg>
       <span class="lbl">Duplicate</span>
     </div>
-    ${!el.isText ? `<div class="el-action-btn">
+    ${el.isImage ? `<div class="el-action-btn" onclick="openFillSheet('${el.id}')">
+      ${_fillThumbHtml(el)}
+      <span class="lbl">Fill</span>
+    </div>` : !el.isText ? `<div class="el-action-btn">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#1e1e1e" stroke-width="1.8"/><path d="M7 11c1-3 7-3 8 0s-7 3-8 0z" stroke="#1e1e1e" stroke-width="1.6"/></svg>
       <span class="lbl">Sticker</span>
     </div>` : ''}
@@ -1046,7 +2024,7 @@ function updateTransformUI(el) {
   if (ui) { ui.style.cssText = `left:${el.x-pad}px;top:${el.y-pad}px;width:${el.w+pad*2}px;height:${el.h+pad*2}px;`; const lbl = ui.querySelector('.t-size-label'); if (lbl) lbl.textContent = `${(el.w/72).toFixed(2)} in × ${(el.h/72).toFixed(2)} in`; }
   if (actions) actions.style.cssText = `top:${el.y+el.h+16}px;left:${el.x+el.w/2}px;transform:translateX(-50%);`;
   const div = document.getElementById(el.id);
-  if (div) { div.style.left=el.x+'px'; div.style.top=el.y+'px'; div.style.width=el.w+'px'; div.style.height=el.h+'px'; div.style.transform=`rotate(${el.rot}deg)`; }
+  if (div) { div.style.left=el.x+'px'; div.style.top=el.y+'px'; div.style.width=el.w+'px'; div.style.height=el.h+'px'; div.style.transform=`rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`; }
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
 }
 
@@ -1086,11 +2064,40 @@ function startRotate(e, id) {
 }
 
 // ─────────────────── EDIT BAR ───────────────────
+function _fillThumbHtml(el) {
+  if (el.fillPatternCss) return `<div style="width:28px;height:28px;border-radius:6px;overflow:hidden;background:${el.fillPatternCss};flex-shrink:0;"></div>`;
+  if (el.fillColor) return `<div style="width:28px;height:28px;border-radius:6px;background:${el.fillColor};border:1px solid rgba(0,0,0,0.1);flex-shrink:0;"></div>`;
+  const src = el.fillImgSrc || el.imgSrc || '';
+  return `<div style="width:28px;height:28px;border-radius:6px;overflow:hidden;border:1px solid var(--gray-200);flex-shrink:0;"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" draggable="false"></div>`;
+}
+
 function renderEditBar(el) {
-  const tools = el.isText
-    ? [{icon:`<div class="color-dot" style="background:${el.color};"></div>`,label:'Color'},{icon:'↔↕',label:'Size'},{icon:'<b style="font-family:serif;font-size:16px;">T</b>',label:'Font'},{icon:'<span style="font-size:13px;font-weight:600;">72</span>',label:'Font Size'},{icon:'Aa',label:'Font Style'}]
-    : [{icon:`<div class="color-dot" style="background:${el.color};"></div>`,label:'Color'},{icon:'↔↕',label:'Size'},{icon:'⧉',label:'Arrange'},{icon:'⬔',label:'Flip'},{icon:'<i>fx</i>',label:'Effects'}];
-  document.getElementById('edit-tools-row').innerHTML = tools.map(t => `<div class="edit-tool"><div class="edit-tool-icon">${t.icon}</div><div class="edit-tool-label">${t.label}</div></div>`).join('');
+  if (el.isText) {
+    document.getElementById('edit-tools-row').innerHTML = [
+      {icon:`<div class="color-dot" style="background:${el.color};"></div>`,label:'Color',fn:''},
+      {icon:'↔↕',label:'Size',fn:''},
+      {icon:'<b style="font-family:serif;font-size:16px;">T</b>',label:'Font',fn:''},
+      {icon:'<span style="font-size:13px;font-weight:600;">72</span>',label:'Font Size',fn:''},
+      {icon:'Aa',label:'Font Style',fn:''},
+    ].map(t=>`<div class="edit-tool"${t.fn?` onclick="${t.fn}"`:''}><div class="edit-tool-icon">${t.icon}</div><div class="edit-tool-label">${t.label}</div></div>`).join('');
+  } else if (el.isImage) {
+    document.getElementById('edit-tools-row').innerHTML = [
+      {icon:`<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="8" width="14" height="9" rx="1.5" stroke="#595959" stroke-width="1.6"/><path d="M7 8V5a1 1 0 011-1h6a1 1 0 011 1v3" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><circle cx="15.5" cy="10.5" r="1.2" fill="#595959"/></svg>`,label:'Operation',fn:''},
+      {icon:_fillThumbHtml(el),label:'Fill',fn:`openFillSheet('${el.id}')`},
+      {icon:`<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 7.5h14M4 14.5h14M7.5 4v14M14.5 4v14" stroke="#595959" stroke-width="1.6" stroke-linecap="round" opacity="0.4"/><rect x="6" y="6" width="10" height="10" rx="1" stroke="#595959" stroke-width="1.6"/></svg>`,label:'Size',fn:''},
+      {icon:'⧉',label:'Arrange',fn:''},
+      {icon:`<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3v16M7 6L4 3 1 6M7 16l-3 3-3-3" stroke="#595959" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0" /><path d="M5 8L2.5 11 5 14M17 8l2.5 3-2.5 3" stroke="#595959" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="11" y1="5" x2="11" y2="17" stroke="#595959" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 3"/></svg>`,label:'Flip',fn:`flipEl('${el.id}')`},
+      {icon:`<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><line x1="6" y1="5" x2="6" y2="17" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><line x1="11" y1="3" x2="11" y2="19" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><line x1="16" y1="7" x2="16" y2="15" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><line x1="4" y1="9" x2="8" y2="9" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><line x1="9" y1="5" x2="13" y2="5" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><line x1="14" y1="11" x2="18" y2="11" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/></svg>`,label:'Filter',fn:''},
+    ].map(t=>`<div class="edit-tool"${t.fn?` onclick="${t.fn}"`:''}><div class="edit-tool-icon">${t.icon}</div><div class="edit-tool-label">${t.label}</div></div>`).join('');
+  } else {
+    document.getElementById('edit-tools-row').innerHTML = [
+      {icon:`<div class="color-dot" style="background:${el.color};"></div>`,label:'Color',fn:''},
+      {icon:'↔↕',label:'Size',fn:''},
+      {icon:'⧉',label:'Arrange',fn:''},
+      {icon:'⬔',label:'Flip',fn:''},
+      {icon:'<i>fx</i>',label:'Effects',fn:''},
+    ].map(t=>`<div class="edit-tool"${t.fn?` onclick="${t.fn}"`:''}><div class="edit-tool-icon">${t.icon}</div><div class="edit-tool-label">${t.label}</div></div>`).join('');
+  }
   document.getElementById('bottom-edit-bar').classList.add('visible');
 }
 
@@ -1105,6 +2112,647 @@ document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
 document.addEventListener('touchmove', e => {
   if (e.target.closest('.t-corner,.t-side-h,.t-side-v,.t-rotate-btn,.el-wrapper')) e.preventDefault();
 }, { passive: false });
+
+// ═══════════════════════════════════════════════════════════════
+// ─────────────────── UPLOAD ACTION SHEET ────────────────────
+// ═══════════════════════════════════════════════════════════════
+function openUploadActionSheet() {
+  document.getElementById('upload-action-sheet').classList.add('visible');
+}
+function closeUploadActionSheet(e) {
+  if (!e || e.target === document.getElementById('upload-action-sheet'))
+    document.getElementById('upload-action-sheet').classList.remove('visible');
+}
+function triggerUploadCamera()  { closeUploadActionSheet(); document.getElementById('as-camera-input').click(); }
+function triggerUploadLibrary() { closeUploadActionSheet(); document.getElementById('as-library-input').click(); }
+function triggerUploadFiles()   { closeUploadActionSheet(); document.getElementById('as-files-input').click(); }
+function openUploadedFromSheet() { closeUploadActionSheet(); /* upload panel stays open, grid already shown */ }
+
+// File selected → open BGr intro
+let _uploadFile = null;
+let _uploadOrigDataUrl = null;
+let _bgrResultCanvas = null; // final edited canvas
+let _bgrHistory = [];
+let _bgrHistIdx = -1;
+let _bgrActiveTool = 'select';
+let _bgrColorTol = 16;
+let _bgrBrushSize = 30;
+let _bgrCropRect = { x: 0, y: 0, w: 0, h: 0 };
+let _origCanvas = null, _origCtx = null;
+let _maskCanvas = null, _maskCtx = null;
+let _convertType = 'multi';
+let _editorInited = false;
+
+function handleUploadFile(e) {
+  const file = e.target.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  e.target.value = '';
+  _uploadFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => { _uploadOrigDataUrl = ev.target.result; showBgrIntro(); };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ─────────────────── BGr SCREEN ─────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+function showBgrIntro() {
+  document.getElementById('upload-overlay').classList.add('hidden');
+  document.getElementById('bgr-screen').classList.add('visible');
+  _showBgrPanel('bgr-intro');
+  document.getElementById('bgr-apply-btn').classList.add('disabled');
+  const preview = document.getElementById('bgr-intro-preview');
+  preview.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = _uploadOrigDataUrl;
+  img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
+  preview.appendChild(img);
+}
+function closeBgrScreen() {
+  document.getElementById('bgr-screen').classList.remove('visible');
+}
+function _showBgrPanel(id) {
+  document.querySelectorAll('.bgr-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startAutoRemoval() {
+  _showBgrPanel('bgr-processing');
+  const procImg = document.getElementById('bgr-proc-img');
+  procImg.src = _uploadOrigDataUrl;
+  document.getElementById('bgr-proc-spinner').style.display = 'flex';
+
+  if (window._removeBackground && _uploadFile) {
+    window._removeBackground(_uploadFile, { model: 'small' })
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        procImg.src = url;
+        document.getElementById('bgr-proc-spinner').style.display = 'none';
+      })
+      .catch(() => {
+        document.getElementById('bgr-proc-spinner').style.display = 'none';
+      });
+  } else {
+    setTimeout(() => { document.getElementById('bgr-proc-spinner').style.display = 'none'; }, 1800);
+  }
+}
+function cancelBgrProcessing() { _showBgrPanel('bgr-intro'); }
+function acceptProcessing()    { initBgrEditor(document.getElementById('bgr-proc-img').src); }
+function startManualEdit()     { initBgrEditor(_uploadOrigDataUrl); }
+
+// ─────────────────── EDITOR INIT ────────────────────────────
+function initBgrEditor(src) {
+  _showBgrPanel('bgr-editor');
+  document.getElementById('bgr-apply-btn').classList.remove('disabled');
+  const canvas = document.getElementById('bgr-canvas');
+  const area   = document.getElementById('bgr-editor-area');
+
+  const img = new Image();
+  img.onload = () => {
+    const maxW = area.clientWidth  || 358;
+    const maxH = area.clientHeight || 420;
+    const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1);
+    const dW = Math.round(img.naturalWidth  * scale);
+    const dH = Math.round(img.naturalHeight * scale);
+
+    canvas.width  = dW;
+    canvas.height = dH;
+
+    // Original offscreen
+    _origCanvas = document.createElement('canvas');
+    _origCanvas.width = dW; _origCanvas.height = dH;
+    _origCtx = _origCanvas.getContext('2d');
+    _origCtx.drawImage(img, 0, 0, dW, dH);
+
+    // Mask: derive from alpha channel (white = opaque, black = transparent)
+    _maskCanvas = document.createElement('canvas');
+    _maskCanvas.width = dW; _maskCanvas.height = dH;
+    _maskCtx = _maskCanvas.getContext('2d');
+    const od = _origCtx.getImageData(0, 0, dW, dH);
+    const md = new ImageData(dW, dH);
+    for (let i = 0; i < od.data.length; i += 4) {
+      const a = od.data[i + 3];
+      md.data[i] = a; md.data[i+1] = a; md.data[i+2] = a; md.data[i+3] = 255;
+    }
+    _maskCtx.putImageData(md, 0, 0);
+
+    _bgrCropRect = { x: 0, y: 0, w: dW, h: dH };
+    _bgrHistory = []; _bgrHistIdx = -1;
+    _pushBgrHistory();
+    _compositeEditor();
+    setBgrTool('select');
+
+    if (!_editorInited) { _setupEditorEvents(); _editorInited = true; }
+  };
+  img.src = src;
+}
+
+function _compositeEditor() {
+  const canvas = document.getElementById('bgr-canvas');
+  if (!canvas || !_origCtx || !_maskCtx) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const od = _origCtx.getImageData(0, 0, w, h);
+  const md = _maskCtx.getImageData(0, 0, w, h);
+  const rd = new ImageData(w, h);
+  for (let i = 0; i < od.data.length; i += 4) {
+    rd.data[i]   = od.data[i];
+    rd.data[i+1] = od.data[i+1];
+    rd.data[i+2] = od.data[i+2];
+    rd.data[i+3] = Math.round(od.data[i+3] * (md.data[i] / 255));
+  }
+  ctx.clearRect(0, 0, w, h);
+  ctx.putImageData(rd, 0, 0);
+  document.getElementById('bgr-undo').classList.toggle('disabled', _bgrHistIdx <= 0);
+  document.getElementById('bgr-redo').classList.toggle('disabled', _bgrHistIdx >= _bgrHistory.length - 1);
+  if (_bgrActiveTool === 'crop') _updateCropOverlay();
+}
+
+function _pushBgrHistory() {
+  _bgrHistory = _bgrHistory.slice(0, _bgrHistIdx + 1);
+  _bgrHistory.push(_maskCtx.getImageData(0, 0, _maskCanvas.width, _maskCanvas.height));
+  _bgrHistIdx = _bgrHistory.length - 1;
+}
+function bgrUndo() {
+  if (_bgrHistIdx <= 0) return;
+  _maskCtx.putImageData(_bgrHistory[--_bgrHistIdx], 0, 0);
+  _compositeEditor();
+}
+function bgrRedo() {
+  if (_bgrHistIdx >= _bgrHistory.length - 1) return;
+  _maskCtx.putImageData(_bgrHistory[++_bgrHistIdx], 0, 0);
+  _compositeEditor();
+}
+function bgrReset() {
+  if (!_origCtx || !_maskCtx) return;
+  const od = _origCtx.getImageData(0, 0, _maskCanvas.width, _maskCanvas.height);
+  const md = new ImageData(_maskCanvas.width, _maskCanvas.height);
+  for (let i = 0; i < od.data.length; i += 4) {
+    const a = od.data[i+3];
+    md.data[i]=a; md.data[i+1]=a; md.data[i+2]=a; md.data[i+3]=255;
+  }
+  _maskCtx.putImageData(md, 0, 0);
+  _pushBgrHistory(); _compositeEditor();
+}
+
+// ─────────────────── TOOLS ──────────────────────────────────
+function setBgrTool(tool) {
+  _bgrActiveTool = tool;
+  ['select','erase','restore','crop'].forEach(t =>
+    document.getElementById(`btool-${t}`)?.classList.toggle('active', t === tool)
+  );
+  const layer = document.getElementById('bgr-crop-layer');
+  layer.classList.toggle('active', tool === 'crop');
+  if (tool === 'crop') _updateCropOverlay();
+
+  const ctrl = document.getElementById('bgr-tool-ctrl');
+  if (tool === 'select') {
+    ctrl.innerHTML = `<span class="bgr-ctrl-label">Color Tolerance</span><input class="bgr-ctrl-slider" type="range" min="1" max="80" value="${_bgrColorTol}" oninput="_bgrColorTol=+this.value;document.getElementById('bgr-tol-val').textContent=this.value;"><span class="bgr-ctrl-val" id="bgr-tol-val">${_bgrColorTol}</span>`;
+  } else if (tool === 'erase' || tool === 'restore') {
+    ctrl.innerHTML = `<span class="bgr-ctrl-label">Brush Size</span><input class="bgr-ctrl-slider" type="range" min="4" max="80" value="${_bgrBrushSize}" oninput="_bgrBrushSize=+this.value;">`;
+  } else if (tool === 'crop') {
+    ctrl.innerHTML = `<span class="bgr-ctrl-label">View As</span><select class="bgr-ctrl-select" onchange=""><option>Original</option><option>Single Layer</option></select>`;
+  } else {
+    ctrl.innerHTML = '';
+  }
+  const canvas = document.getElementById('bgr-canvas');
+  canvas.style.cursor = tool === 'crop' ? 'crosshair' : tool === 'select' ? 'crosshair' : 'cell';
+}
+
+// ─────────────────── CANVAS EVENTS ──────────────────────────
+let _bgrPtrDown = false, _bgrLx = 0, _bgrLy = 0;
+function _setupEditorEvents() {
+  const canvas = document.getElementById('bgr-canvas');
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault(); _bgrPtrDown = true;
+    const {x,y} = _canvasXY(e, canvas); _bgrLx=x; _bgrLy=y;
+    if (_bgrActiveTool === 'select') { _pushBgrHistory(); _magicWand(x,y); _compositeEditor(); }
+    else if (_bgrActiveTool === 'erase')   { _pushBgrHistory(); _paintMask(x,y,0);   _compositeEditor(); }
+    else if (_bgrActiveTool === 'restore') { _pushBgrHistory(); _paintMask(x,y,255); _compositeEditor(); }
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!_bgrPtrDown) return; e.preventDefault();
+    const {x,y} = _canvasXY(e, canvas);
+    if (_bgrActiveTool === 'erase')   { _interpBrush(_bgrLx,_bgrLy,x,y,0);   _compositeEditor(); }
+    if (_bgrActiveTool === 'restore') { _interpBrush(_bgrLx,_bgrLy,x,y,255); _compositeEditor(); }
+    _bgrLx=x; _bgrLy=y;
+  });
+  canvas.addEventListener('pointerup',    () => { _bgrPtrDown=false; });
+  canvas.addEventListener('pointerleave', () => { _bgrPtrDown=false; });
+}
+function _canvasXY(e, canvas) {
+  const r = canvas.getBoundingClientRect();
+  return { x: Math.round((e.clientX-r.left)*(canvas.width/r.width)), y: Math.round((e.clientY-r.top)*(canvas.height/r.height)) };
+}
+function _paintMask(cx,cy,val) {
+  const r = Math.ceil(_bgrBrushSize/2);
+  const w=_maskCanvas.width, h=_maskCanvas.height;
+  const md = _maskCtx.getImageData(0,0,w,h);
+  for (let dy=-r;dy<=r;dy++) for (let dx=-r;dx<=r;dx++) {
+    if (dx*dx+dy*dy>r*r) continue;
+    const px=cx+dx, py=cy+dy;
+    if (px<0||py<0||px>=w||py>=h) continue;
+    const i=(py*w+px)*4;
+    md.data[i]=val; md.data[i+1]=val; md.data[i+2]=val; md.data[i+3]=255;
+  }
+  _maskCtx.putImageData(md,0,0);
+}
+function _interpBrush(x0,y0,x1,y1,val) {
+  const steps = Math.max(1, Math.ceil(Math.hypot(x1-x0,y1-y0)/(_bgrBrushSize/4)));
+  for (let i=1;i<=steps;i++) _paintMask(Math.round(x0+(x1-x0)*i/steps), Math.round(y0+(y1-y0)*i/steps), val);
+}
+function _magicWand(cx,cy) {
+  const w=_origCanvas.width, h=_origCanvas.height;
+  if (cx<0||cy<0||cx>=w||cy>=h) return;
+  const od=_origCtx.getImageData(0,0,w,h), md=_maskCtx.getImageData(0,0,w,h);
+  const ti=(cy*w+cx)*4, tR=od.data[ti], tG=od.data[ti+1], tB=od.data[ti+2];
+  const thr=_bgrColorTol*3.5;
+  const vis=new Uint8Array(w*h);
+  const queue=[cy*w+cx]; vis[cy*w+cx]=1;
+  while (queue.length) {
+    const idx=queue.pop(), x=idx%w, y=(idx/w)|0, i=idx*4;
+    const diff=Math.sqrt((od.data[i]-tR)**2+(od.data[i+1]-tG)**2+(od.data[i+2]-tB)**2);
+    if (diff>thr) continue;
+    md.data[i]=0; md.data[i+1]=0; md.data[i+2]=0; md.data[i+3]=255;
+    if(x>0   &&!vis[idx-1]){vis[idx-1]=1;queue.push(idx-1);}
+    if(x<w-1 &&!vis[idx+1]){vis[idx+1]=1;queue.push(idx+1);}
+    if(y>0   &&!vis[idx-w]){vis[idx-w]=1;queue.push(idx-w);}
+    if(y<h-1 &&!vis[idx+w]){vis[idx+w]=1;queue.push(idx+w);}
+  }
+  _maskCtx.putImageData(md,0,0);
+}
+
+// ─────────────────── CROP OVERLAY ───────────────────────────
+function _updateCropOverlay() {
+  const canvas = document.getElementById('bgr-canvas');
+  const area   = document.getElementById('bgr-editor-area');
+  const layer  = document.getElementById('bgr-crop-layer');
+  const rect   = document.getElementById('bgr-crop-rect');
+  if (!canvas) return;
+  const cr = canvas.getBoundingClientRect();
+  const ar = area.getBoundingClientRect();
+  const offX = cr.left - ar.left, offY = cr.top - ar.top;
+  const scX = cr.width / canvas.width, scY = cr.height / canvas.height;
+  layer.style.left = offX+'px'; layer.style.top = offY+'px'; layer.style.width = cr.width+'px'; layer.style.height = cr.height+'px';
+  const {x,y,w,h} = _bgrCropRect;
+  const rL=x*scX, rT=y*scY, rW=w*scX, rH=h*scY;
+  rect.style.cssText = `left:${rL}px;top:${rT}px;width:${rW}px;height:${rH}px;position:absolute;border:2px solid #fff;`;
+  const setShade = (id,l,t,w2,h2) => { const s=document.getElementById(id); s.style.cssText=`position:absolute;left:${l}px;top:${t}px;width:${w2}px;height:${h2}px;background:rgba(0,0,0,0.5);`; };
+  const cw=cr.width, ch=cr.height;
+  setShade('bgr-shade-top',  0,   0,   cw,  rT);
+  setShade('bgr-shade-bot',  0,   rT+rH, cw, ch-rT-rH);
+  setShade('bgr-shade-left', 0,   rT,    rL, rH);
+  setShade('bgr-shade-right',rL+rW, rT, cw-rL-rW, rH);
+  _setupCropHandles(scX, scY);
+}
+function _setupCropHandles(scX, scY) {
+  document.querySelectorAll('.bgr-crop-handle').forEach(h => {
+    h.onpointerdown = e => {
+      e.preventDefault(); e.stopPropagation();
+      const corner=h.dataset.corner, sx=e.clientX, sy=e.clientY;
+      const ox=_bgrCropRect.x, oy=_bgrCropRect.y, ow=_bgrCropRect.w, oh=_bgrCropRect.h;
+      const onM = e => {
+        const dx=(e.clientX-sx)/scX, dy=(e.clientY-sy)/scY, min=20;
+        if(corner==='br'){_bgrCropRect.w=Math.max(min,ow+dx);_bgrCropRect.h=Math.max(min,oh+dy);}
+        else if(corner==='bl'){const nw=Math.max(min,ow-dx);_bgrCropRect.x=ox+(ow-nw);_bgrCropRect.w=nw;_bgrCropRect.h=Math.max(min,oh+dy);}
+        else if(corner==='tr'){_bgrCropRect.w=Math.max(min,ow+dx);const nh=Math.max(min,oh-dy);_bgrCropRect.y=oy+(oh-nh);_bgrCropRect.h=nh;}
+        else{const nw=Math.max(min,ow-dx),nh=Math.max(min,oh-dy);_bgrCropRect.x=ox+(ow-nw);_bgrCropRect.y=oy+(oh-nh);_bgrCropRect.w=nw;_bgrCropRect.h=nh;}
+        _updateCropOverlay();
+      };
+      const onU = () => { window.removeEventListener('pointermove',onM); window.removeEventListener('pointerup',onU); };
+      window.addEventListener('pointermove',onM); window.addEventListener('pointerup',onU);
+    };
+  });
+}
+
+// Apply → export cropped/edited canvas → Convert screen
+function applyBgr() {
+  if (!_origCanvas) return;
+  const mainCanvas = document.getElementById('bgr-canvas');
+  const cx=Math.max(0,Math.round(_bgrCropRect.x)), cy=Math.max(0,Math.round(_bgrCropRect.y));
+  const cw=Math.min(mainCanvas.width-cx,Math.round(_bgrCropRect.w));
+  const ch=Math.min(mainCanvas.height-cy,Math.round(_bgrCropRect.h));
+  _bgrResultCanvas = document.createElement('canvas');
+  _bgrResultCanvas.width=cw; _bgrResultCanvas.height=ch;
+  _bgrResultCanvas.getContext('2d').drawImage(mainCanvas, cx,cy,cw,ch, 0,0,cw,ch);
+  showConvertScreen();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ─────────────────── CONVERT SCREEN ─────────────────────────
+// ═══════════════════════════════════════════════════════════════
+function showConvertScreen() {
+  document.getElementById('convert-screen').classList.add('visible');
+  if (!_bgrResultCanvas) return;
+  const dataUrl = _bgrResultCanvas.toDataURL();
+
+  // Multi / Flat → show the edited image
+  ['cvt-thumb-multi','cvt-thumb-flat'].forEach(id => {
+    const thumb = document.getElementById(id);
+    let img = thumb.querySelector('img');
+    if (!img) { img=document.createElement('img'); img.style.cssText='width:100%;height:100%;object-fit:contain;'; thumb.appendChild(img); }
+    img.src = dataUrl;
+  });
+
+  // Single Layer → silhouette (black fill)
+  const sl = document.getElementById('cvt-thumb-single');
+  const silC = document.createElement('canvas');
+  silC.width=_bgrResultCanvas.width; silC.height=_bgrResultCanvas.height;
+  const silCtx=silC.getContext('2d');
+  const id2=_bgrResultCanvas.getContext('2d').getImageData(0,0,silC.width,silC.height);
+  for (let i=0;i<id2.data.length;i+=4){id2.data[i]=0;id2.data[i+1]=0;id2.data[i+2]=0;}
+  silCtx.putImageData(id2,0,0);
+  silC.style.cssText='width:100%;height:100%;object-fit:contain;';
+  sl.innerHTML=''; sl.appendChild(silC);
+}
+function closeConvertScreen() { document.getElementById('convert-screen').classList.remove('visible'); }
+function selectConvertOption(type) {
+  _convertType = type;
+  ['multi','single','flat'].forEach(t => document.getElementById(`cvt-${t}`)?.classList.toggle('selected', t===type));
+}
+function proceedToImageDetails() {
+  document.getElementById('imgdetails-screen').classList.add('visible');
+  const prev = document.getElementById('imgd-preview');
+  prev.innerHTML = '';
+  if (_bgrResultCanvas) {
+    const c=document.createElement('canvas');
+    c.width=_bgrResultCanvas.width; c.height=_bgrResultCanvas.height;
+    c.style.cssText='max-width:100%;max-height:100%;object-fit:contain;';
+    c.getContext('2d').drawImage(_bgrResultCanvas,0,0);
+    prev.appendChild(c);
+  }
+  const inp = document.getElementById('imgd-name-input');
+  inp.value = '';
+  document.getElementById('imgd-upload-btn').className='imgd-upload-btn off';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ─────────────────── IMAGE DETAILS ──────────────────────────
+// ═══════════════════════════════════════════════════════════════
+function closeImgDetails() { document.getElementById('imgdetails-screen').classList.remove('visible'); }
+function onImgNameInput(val) {
+  const btn=document.getElementById('imgd-upload-btn');
+  btn.className='imgd-upload-btn '+(val.trim().length>0?'ready':'off');
+}
+function finalizeUpload() {
+  if (!document.getElementById('imgd-name-input').value.trim()) return;
+  const imgSrc = _bgrResultCanvas ? _bgrResultCanvas.toDataURL('image/png') : _uploadOrigDataUrl;
+  uploadedImages.unshift(imgSrc);
+  // Close all screens
+  ['imgdetails-screen','convert-screen','bgr-screen'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  document.getElementById('upload-overlay').classList.add('hidden');
+  // Place on canvas
+  const id=`el${elId++}`;
+  const el={id,isImage:true,imgSrc,label:'Image',x:60,y:80,w:160,h:160,rot:0};
+  elements.push(el);
+  document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  selectEl(id);
+  _showUploadedToast();
+}
+function _showUploadedToast() {
+  let t=document.getElementById('uploaded-toast');
+  if (!t) {
+    t=document.createElement('div'); t.id='uploaded-toast'; t.className='uploaded-toast';
+    t.innerHTML=`<div class="toast-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 5-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Uploaded`;
+    document.getElementById('screen-canvas').appendChild(t);
+  }
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ─────────────────── FILL SHEET ────────────────────
+// ═══════════════════════════════════════════════════════════════
+let _fillElId = null;
+let _fillTab = 'colors';
+let _fillHue = 210;
+let _fillPickerX = 0.7, _fillPickerY = 0.25;
+
+const FILL_SWATCHES = [
+  '#f9b8b8','#e8b8f9','#b8c8f9','#b8d8f9','#b8f0d4','#f9f0b8','#f9d4b8',
+  '#ef4444','#a855f7','#3b82f6','#60a5fa','#22c55e','#eab308','#f97316',
+  '#991b1b','#6b21a8','#1d4ed8','#0ea5e9','#166534','#92400e','#c2410c',
+  '#ffffff','#e5e7eb','#9ca3af','#6b7280','#374151','#111827','#78350f',
+];
+
+const FILL_PATTERNS = [
+  { id:'houndstooth', label:'Houndstooth', css:'repeating-conic-gradient(#b5935a 0 25%,#f5e6c8 25% 50%) 0 0/24px 24px' },
+  { id:'dots',        label:'Polka Dots',  css:'radial-gradient(circle,#1e3a5f 32%,transparent 32%) 0 0/22px 22px,#c9d8e8' },
+  { id:'stripes',     label:'Diagonal Stripes', css:'repeating-linear-gradient(-45deg,#e879a0,#e879a0 6px,#ffd6e8 6px,#ffd6e8 14px)' },
+  { id:'chevron',     label:'Chevron',     css:'repeating-linear-gradient(-45deg,#c2794d 0,#c2794d 8px,transparent 8px,transparent 18px),repeating-linear-gradient(45deg,#5b8a7e 0,#5b8a7e 8px,transparent 8px,transparent 18px),#f5e6c8' },
+  { id:'diamonds',    label:'Argyle',      css:'repeating-linear-gradient(45deg,transparent 0 8px,#2d4b6b 8px 9px),repeating-linear-gradient(135deg,transparent 0 8px,#2d4b6b 8px 9px),#c9d8e8' },
+  { id:'plaid',       label:'Plaid',       css:'repeating-linear-gradient(0deg,transparent 0 8px,rgba(0,128,64,0.4) 8px 10px),repeating-linear-gradient(90deg,transparent 0 8px,rgba(0,128,64,0.4) 8px 10px),#f5e6c8' },
+];
+
+function openFillSheet(elId) {
+  _fillElId = elId;
+  _fillTab = 'colors';
+  ['colors','patterns','photos'].forEach(t => document.getElementById(`fill-tab-${t}`).classList.toggle('active', t === 'colors'));
+  document.getElementById('fill-sheet').classList.add('visible');
+  _renderFillTab();
+}
+
+function closeFillSheet(e) {
+  if (e && e.target !== document.getElementById('fill-sheet')) return;
+  document.getElementById('fill-sheet').classList.remove('visible');
+  _fillElId = null;
+}
+
+function switchFillTab(tab) {
+  _fillTab = tab;
+  ['colors','patterns','photos'].forEach(t => document.getElementById(`fill-tab-${t}`).classList.toggle('active', t === tab));
+  _renderFillTab();
+}
+
+function _renderFillTab() {
+  const el = elements.find(e => e.id === _fillElId);
+  const content = document.getElementById('fill-content');
+  if (!content) return;
+
+  if (_fillTab === 'colors') {
+    content.innerHTML = `
+      <div class="fill-colors-grid" id="fill-swatches-grid">
+        ${FILL_SWATCHES.map(c => `<div class="fill-swatch${el && el.fillColor===c?' selected':''}" data-color="${c}" style="background:${c};" onclick="_applyFillColor('${c}')"></div>`).join('')}
+      </div>
+      <div class="fill-adv-label">Advanced</div>
+      <canvas class="fill-adv-canvas" id="fill-adv-canvas" width="640" height="300"></canvas>
+      <div class="fill-hue-row">
+        <input type="range" class="fill-hue-slider" id="fill-hue-slider" min="0" max="360" value="${_fillHue}">
+      </div>
+      <div class="fill-hex-row">
+        <div class="fill-hex-preview" id="fill-hex-preview" style="background:${_hsvToHex(_fillHue,_fillPickerX,1-_fillPickerY)};"></div>
+        <input type="text" class="fill-hex-input" id="fill-hex-input" placeholder="HEX" maxlength="7" value="${_hsvToHex(_fillHue,_fillPickerX,1-_fillPickerY).toUpperCase()}">
+        <div onclick="_applyFillFromPicker()" style="padding:8px 16px;background:var(--text-accent);color:#fff;border-radius:8px;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;flex-shrink:0;">Apply</div>
+      </div>
+    `;
+    requestAnimationFrame(() => {
+      _drawFillGradient();
+      _setupFillPicker();
+      document.getElementById('fill-hue-slider')?.addEventListener('input', e => {
+        _fillHue = parseInt(e.target.value);
+        _drawFillGradient(); _syncFillHex();
+      });
+      document.getElementById('fill-hex-input')?.addEventListener('change', e => {
+        const v = e.target.value.trim().replace('#','');
+        if (/^[0-9a-fA-F]{6}$/.test(v)) _applyFillColor('#'+v);
+      });
+    });
+
+  } else if (_fillTab === 'patterns') {
+    content.innerHTML = `
+      <div class="fill-patterns-grid">
+        ${FILL_PATTERNS.map(p => `
+          <div class="fill-pattern-tile${el && el.fillPatternId===p.id?' selected':''}" data-id="${p.id}" onclick="_applyFillPattern('${p.id}',this)" title="${p.label}">
+            <div class="fill-pattern-inner" style="background:${p.css};"></div>
+          </div>`).join('')}
+      </div>`;
+
+  } else if (_fillTab === 'photos') {
+    const photos = uploadedImages || [];
+    content.innerHTML = `
+      <div class="fill-photos-grid">
+        ${photos.map(src => `<div class="fill-photo-tile${el && el.fillImgSrc===src?' selected':''}" onclick="_applyFillPhoto('${src}')">
+          <img src="${src}" draggable="false">
+        </div>`).join('')}
+        ${photos.length===0?'<div style="grid-column:1/-1;text-align:center;color:var(--gray-400);font-family:var(--font-body);font-size:14px;padding:32px 0;">No uploaded images yet</div>':''}
+      </div>
+      <div class="fill-upload-photo-btn" onclick="document.getElementById('fill-photo-input').click()">Upload Image</div>
+    `;
+  }
+}
+
+function _drawFillGradient() {
+  const canvas = document.getElementById('fill-adv-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const hueColor = `hsl(${_fillHue},100%,50%)`;
+  const hGrad = ctx.createLinearGradient(0,0,w,0);
+  hGrad.addColorStop(0,'#fff'); hGrad.addColorStop(1,hueColor);
+  ctx.fillStyle = hGrad; ctx.fillRect(0,0,w,h);
+  const vGrad = ctx.createLinearGradient(0,0,0,h);
+  vGrad.addColorStop(0,'transparent'); vGrad.addColorStop(1,'#000');
+  ctx.fillStyle = vGrad; ctx.fillRect(0,0,w,h);
+  // cursor
+  const cx = _fillPickerX*w, cy = _fillPickerY*h;
+  ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2);
+  ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+function _setupFillPicker() {
+  const canvas = document.getElementById('fill-adv-canvas');
+  if (!canvas) return;
+  let dragging = false;
+  const onPick = e => {
+    const rect = canvas.getBoundingClientRect();
+    const px = (e.clientX ?? e.touches?.[0]?.clientX) - rect.left;
+    const py = (e.clientY ?? e.touches?.[0]?.clientY) - rect.top;
+    _fillPickerX = Math.max(0,Math.min(1,px/rect.width));
+    _fillPickerY = Math.max(0,Math.min(1,py/rect.height));
+    _drawFillGradient(); _syncFillHex();
+  };
+  canvas.addEventListener('pointerdown', e => { dragging=true; canvas.setPointerCapture(e.pointerId); onPick(e); });
+  canvas.addEventListener('pointermove', e => { if(dragging) onPick(e); });
+  canvas.addEventListener('pointerup', () => dragging=false);
+}
+
+function _hsvToHex(h,s,v) {
+  const f = n => { const k=(n+h/60)%6; return v-v*s*Math.max(0,Math.min(k,4-k,1)); };
+  const r=Math.round(f(5)*255), g=Math.round(f(3)*255), b=Math.round(f(1)*255);
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+function _syncFillHex() {
+  const hex = _hsvToHex(_fillHue,_fillPickerX,1-_fillPickerY);
+  const prev = document.getElementById('fill-hex-preview');
+  const inp = document.getElementById('fill-hex-input');
+  if (prev) prev.style.background = hex;
+  if (inp) inp.value = hex.toUpperCase();
+}
+
+function _applyFillFromPicker() {
+  _applyFillColor(_hsvToHex(_fillHue,_fillPickerX,1-_fillPickerY));
+}
+
+function _applyFillColor(hex) {
+  const el = elements.find(e => e.id === _fillElId); if (!el) return;
+  el.fillColor = hex; el.fillPatternCss = null; el.fillPatternId = null; el.fillImgSrc = null;
+  _refreshElVisual(el);
+  document.querySelectorAll('.fill-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === hex));
+  // update edit bar fill thumb
+  _refreshEditBarFillThumb(el);
+}
+
+function _applyFillPattern(id, tileEl) {
+  const p = FILL_PATTERNS.find(x=>x.id===id); if (!p) return;
+  const el = elements.find(e => e.id === _fillElId); if (!el) return;
+  el.fillPatternCss = p.css; el.fillPatternId = id; el.fillColor = null; el.fillImgSrc = null;
+  _refreshElVisual(el);
+  document.querySelectorAll('.fill-pattern-tile').forEach(t => t.classList.toggle('selected', t.dataset.id === id));
+  _refreshEditBarFillThumb(el);
+}
+
+function _applyFillPhoto(src) {
+  const el = elements.find(e => e.id === _fillElId); if (!el) return;
+  el.fillImgSrc = src; el.fillColor = null; el.fillPatternCss = null; el.fillPatternId = null;
+  _refreshElVisual(el);
+  document.querySelectorAll('.fill-photo-tile').forEach(t => {
+    const img = t.querySelector('img'); t.classList.toggle('selected', !!img && img.getAttribute('src')===src);
+  });
+  _refreshEditBarFillThumb(el);
+}
+
+function _refreshElVisual(el) {
+  const div = document.getElementById(el.id); if (!div) return;
+  if (el.fillPatternCss) {
+    div.innerHTML = `<div style="width:100%;height:100%;border-radius:4px;background:${el.fillPatternCss};"></div>`;
+  } else if (el.fillColor) {
+    div.innerHTML = `<div style="width:100%;height:100%;border-radius:4px;background:${el.fillColor};"></div>`;
+  } else {
+    const src = el.fillImgSrc || el.imgSrc || '';
+    div.innerHTML = `<img class="el-content" src="${src}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;" draggable="false">`;
+  }
+  // Re-bind drag (event was lost when innerHTML was replaced)
+  div.addEventListener('pointerdown', e => { e.stopPropagation(); selectEl(el.id); startDrag(e, el.id); });
+}
+
+function _refreshEditBarFillThumb(el) {
+  // Update the Fill tool icon in the bottom edit bar without full re-render
+  const row = document.getElementById('edit-tools-row');
+  if (!row) return;
+  const fillTool = [...row.querySelectorAll('.edit-tool')].find(t => t.querySelector('.edit-tool-label')?.textContent === 'Fill');
+  if (fillTool) fillTool.querySelector('.edit-tool-icon').innerHTML = _fillThumbHtml(el);
+}
+
+function handleFillPhotoUpload(e) {
+  const file = e.target.files?.[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const src = ev.target.result;
+    uploadedImages.unshift(src);
+    _applyFillPhoto(src);
+    if (_fillTab === 'photos') _renderFillTab();
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function flipEl(id) {
+  const el = elements.find(e => e.id === id); if (!el) return;
+  el.flipH = !el.flipH;
+  const div = document.getElementById(id); if (!div) return;
+  div.style.transform = `rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`;
+}
+</script>
+<script type="module">
+  try {
+    const { removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.1/dist/browser.esm.js');
+    window._removeBackground = removeBackground;
+  } catch(e) {
+    // Library unavailable (offline) — editor will still work without auto-removal
+  }
 </script>
 </body>
 </html>
