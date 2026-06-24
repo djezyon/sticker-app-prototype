@@ -264,6 +264,8 @@ body {
 .fc-back-chevron { display:flex; align-items:center; }
 .fc-sep { display:flex; align-items:center; opacity:0.35; }
 .fc-current { font-family:var(--font-body); font-size:13px; font-weight:600; color:#121212; }
+.fc-exit-btn { margin-left:auto; margin-right:12px; font-family:var(--font-body); font-size:13px; font-weight:600; color:var(--text-accent); cursor:pointer; padding:4px 0; }
+.fc-exit-btn:active { opacity:0.6; }
 
 .ruler-row { display: flex; flex-shrink: 0; background: var(--gray-50); }
 .ruler-corner { width: 22px; height: 22px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
@@ -314,7 +316,7 @@ body {
 .fab-popup-icon { width: 24px; text-align: center; flex-shrink: 0; }
 
 /* ── TRANSFORM UI ── */
-.el-wrapper { position: absolute; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; }
+.el-wrapper { position: absolute; z-index: 4; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; }
 .el-wrapper:active { cursor: grabbing; }
 .el-content { pointer-events: none; user-select: none; }
 .transform-ui { position: absolute; pointer-events: none; z-index: 55; }
@@ -1303,6 +1305,7 @@ body {
     <div class="fc-back" onclick="exitFocusMode()">Sheet</div>
     <span class="fc-sep"><svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#595959" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     <span class="fc-current" id="fc-current-label">Shape</span>
+    <div class="fc-exit-btn" onclick="exitFocusMode()">Exit Focus</div>
   </div>
   <div class="ruler-row">
     <div class="ruler-corner"></div>
@@ -1879,6 +1882,7 @@ let canvasReady = false;
 let containers = [], selectedContainerId = null;
 let focusContainerId = null, _focusScale = 1;
 let _lastDoubleTapId = null, _lastDoubleTapTime = 0;
+let _lastBgTapTime = 0;
 
 // ─────────────────── NAVIGATION ───────────────────
 function showScreen(id) {
@@ -2165,6 +2169,38 @@ function deselectContainer(resetZoom = true) {
   deselectSheet();
 }
 
+function _updateStaticUI(scale) {
+  const btn = document.getElementById('canvas-bg-btn');
+  if (btn) {
+    btn.style.transformOrigin = 'left top';
+    btn.style.transform = scale > 1 ? `scale(${1 / scale})` : '';
+  }
+}
+
+function zoomToFit(animate) {
+  const world = document.getElementById('canvas-world');
+  const scroll = document.getElementById('canvas-scroll');
+  if (!world || !scroll) return;
+  const vpW = scroll.clientWidth || 368;
+  const vpH = scroll.clientHeight || 520;
+  const scale = Math.min((vpW - 40) / SHEET_W, (vpH - 40) / SHEET_H, 1.0);
+  if (animate !== false) {
+    world.style.transition = 'transform 0.45s cubic-bezier(0.25,0.1,0.25,1), width 0.45s cubic-bezier(0.25,0.1,0.25,1), height 0.45s cubic-bezier(0.25,0.1,0.25,1)';
+    setTimeout(() => { world.style.transition = ''; }, 500);
+  }
+  _sizeWorldForZoom(scale);
+  world.style.transformOrigin = '0 0';
+  world.style.transform = `scale(${scale})`;
+  _updateStaticUI(scale);
+  const sheetCX = SHEET_L + SHEET_W / 2;
+  const sheetCY = SHEET_T + SHEET_H / 2;
+  scroll.scrollTo({
+    left: Math.max(0, sheetCX * scale - vpW / 2),
+    top: Math.max(0, sheetCY * scale - vpH / 2),
+    behavior: animate !== false ? 'smooth' : 'auto'
+  });
+}
+
 const _WORLD_W = 680, _WORLD_H = 960;
 function _sizeWorldForZoom(scale) {
   const world = document.getElementById('canvas-world');
@@ -2202,6 +2238,7 @@ function zoomToContainer(cont) {
   _sizeWorldForZoom(targetScale);
   world.style.transformOrigin = '0 0';
   world.style.transform = `scale(${targetScale})`;
+  _updateStaticUI(targetScale);
 
   scroll.scrollTo({
     left: worldContCX * targetScale - vpW / 2,
@@ -2258,9 +2295,17 @@ function enterFocusMode(contId) {
   const outerNode = focSvg?.querySelector('circle, rect');
   if (outerNode) outerNode.setAttribute('stroke-width', (1.25 / scale).toFixed(3));
 
-  // 5% vignette + focus-active z-index for focused container
+  _updateStaticUI(scale);
+
+  // 5% vignette with circular cutout around focused container
   const vignette = document.getElementById('focus-vignette');
-  if (vignette) vignette.style.display = 'block';
+  if (vignette) {
+    const cx = cont.x + cont.w / 2, cy = cont.y + cont.h / 2, r = cont.w / 2;
+    const mask = `radial-gradient(circle ${r}px at ${cx}px ${cy}px, transparent ${r - 1}px, black ${r + 1}px)`;
+    vignette.style.maskImage = mask;
+    vignette.style.webkitMaskImage = mask;
+    vignette.style.display = 'block';
+  }
   containers.forEach(c => {
     const el = document.getElementById(c.id);
     if (!el) return;
@@ -2292,7 +2337,7 @@ function exitFocusMode() {
     const el = document.getElementById(c.id);
     if (el) { el.classList.remove('focus-active'); el.classList.remove('focus-dimmed'); }
   });
-  if (cont) zoomToContainer(cont);
+  zoomToFit(true);
 }
 
 // ─────────────────── CONTAINER BAR ───────────────────
@@ -3668,8 +3713,18 @@ function duplicateEl(id) { const el=elements.find(e=>e.id===id); if(!el) return;
 
 // ─────────────────── DESELECT ON CANVAS TAP ───────────────────
 document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
-  const isBg = [document.getElementById('canvas-scroll'), document.getElementById('canvas-world')].includes(e.target) || e.target.classList.contains('canvas-grid-overlay');
-  if (isBg) { deselectAll(); deselectContainer(); deselectSheet(); closeFab(); }
+  const isBg = [document.getElementById('canvas-scroll'), document.getElementById('canvas-world'), document.getElementById('sticker-sheet')].includes(e.target)
+    || e.target.classList.contains('canvas-grid-overlay')
+    || e.target.id === 'focus-vignette';
+  if (!isBg) return;
+  // Double-tap anywhere outside the focused container exits focus mode
+  if (focusContainerId) {
+    const now = Date.now();
+    if (now - _lastBgTapTime < 350) { _lastBgTapTime = 0; exitFocusMode(); return; }
+    _lastBgTapTime = now;
+    return;
+  }
+  deselectAll(); deselectContainer(); deselectSheet(); closeFab();
 });
 
 // Sticker sheet tap: select the sheet itself
@@ -3714,6 +3769,7 @@ document.addEventListener('touchmove', e => {
     _sizeWorldForZoom(newScale);
     world.style.transformOrigin = '0 0';
     world.style.transform = `scale(${newScale})`;
+    _updateStaticUI(newScale);
     // Keep same world point under midpoint
     scroll.scrollLeft = wx * newScale - mx;
     scroll.scrollTop  = wy * newScale - my;
