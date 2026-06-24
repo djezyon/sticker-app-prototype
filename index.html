@@ -677,7 +677,7 @@ body {
 .toast-dot { width: 20px; height: 20px; background: var(--text-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
 /* ── STICKER CONTAINERS ── */
-.sticker-container { position:absolute; cursor:pointer; transition:opacity 0.22s; }
+.sticker-container { position:absolute; z-index:1; cursor:pointer; transition:opacity 0.22s; }
 .sticker-container.dimmed { opacity:0.18; pointer-events:none; }
 .sticker-container.focus-dimmed { opacity:0.5; pointer-events:none; }
 .snap-guide { position:absolute; pointer-events:none; z-index:200; display:none; }
@@ -783,8 +783,10 @@ body {
 .effects-undo-btn span { font-family:var(--font-body); font-size:15px; color:#e05c3a; font-weight:500; }
 
 /* ── SHEET SELECTION ── */
-#sticker-sheet.sheet-selected { outline:2px solid var(--text-accent); outline-offset:0px; }
+#sticker-sheet.sheet-selected { /* no visible outline */ }
 .sticker-container.cont-selected { outline:2px solid var(--text-accent); border-radius:4px; }
+#focus-vignette { position:absolute; inset:0; background:rgba(0,0,0,0.05); z-index:2; pointer-events:none; display:none; }
+.sticker-container.focus-active { z-index:3; }
 
 /* ── FILL SHEET ── */
 #fill-sheet { position: absolute; inset: 0; z-index: 400; display: none; flex-direction: column; justify-content: flex-end; background: rgba(0,0,0,0.3); }
@@ -1298,10 +1300,7 @@ body {
     <button class="tbar-make" id="make-btn">Make</button>
   </div>
   <div id="focus-breadcrumb">
-    <div class="fc-back" onclick="exitFocusMode()">
-      <span class="fc-back-chevron"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M6 1L1 6l5 5" stroke="var(--text-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      Sheet
-    </div>
+    <div class="fc-back" onclick="exitFocusMode()">Sheet</div>
     <span class="fc-sep"><svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#595959" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     <span class="fc-current" id="fc-current-label">Shape</span>
   </div>
@@ -2068,7 +2067,7 @@ function buildSheet(type) {
     }
   }
 
-  let html = '';
+  let html = '<div id="focus-vignette"></div>';
   slotList.forEach((slot, i) => {
     const id = 'cont_' + i;
     containers.push({ id, x: slot.x, y: slot.y, w: slot.w, h: slot.h, shape: slot.shape, containment: 'clipped', childElId: null, bgColor: null });
@@ -2249,14 +2248,24 @@ function enterFocusMode(contId) {
   world.style.transform = `scale(${scale})`;
   scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
 
+  deselectSheet();
+
   // Keep rings visually thin at constant screen weight for all containers
   containers.forEach(c => _syncRingScale(c, scale));
 
-  // Dim all other containers at 50%
+  // Make focused container's outer cut ring 1.25px visual when zoomed
+  const focSvg = document.getElementById(contId)?.querySelector('.sticker-container-ring');
+  const outerNode = focSvg?.querySelector('circle, rect');
+  if (outerNode) outerNode.setAttribute('stroke-width', (1.25 / scale).toFixed(3));
+
+  // 5% vignette + focus-active z-index for focused container
+  const vignette = document.getElementById('focus-vignette');
+  if (vignette) vignette.style.display = 'block';
   containers.forEach(c => {
     const el = document.getElementById(c.id);
     if (!el) return;
     el.classList.toggle('focus-dimmed', c.id !== contId);
+    el.classList.toggle('focus-active', c.id === contId);
   });
 
   // Breadcrumb label: capitalize shape name + slot index
@@ -2277,6 +2286,12 @@ function exitFocusMode() {
     if (el) el.classList.remove('focus-dimmed');
   });
   containers.forEach(c => _syncRingScale(c, 1));
+  const vignette = document.getElementById('focus-vignette');
+  if (vignette) vignette.style.display = 'none';
+  containers.forEach(c => {
+    const el = document.getElementById(c.id);
+    if (el) { el.classList.remove('focus-active'); el.classList.remove('focus-dimmed'); }
+  });
   if (cont) zoomToContainer(cont);
 }
 
@@ -2952,6 +2967,29 @@ function renderTransformUI(el) {
     </div>` : ''}
   `;
   world.appendChild(actions);
+  _scaleUI();
+}
+
+function _scaleUI() {
+  const s = _getWorldScale();
+  if (s <= 1) return;
+  const inv = 1 / s;
+  const ui = document.getElementById('__transform_ui');
+  if (ui) {
+    ui.querySelectorAll('.t-corner,.t-side-h,.t-side-v').forEach(h => {
+      const base = h.style.transform.replace(/\s*scale\([^)]*\)/g, '');
+      h.style.transform = `${base} scale(${inv})`;
+    });
+    const label = ui.querySelector('.t-size-label');
+    if (label) label.style.transform = `translateX(-50%) scale(${inv})`;
+    const rot = ui.querySelector('.t-rotate-btn');
+    if (rot) rot.style.transform = `translateX(-50%) scale(${inv})`;
+  }
+  const actions = document.getElementById('__el_actions');
+  if (actions) {
+    actions.style.transformOrigin = 'center top';
+    actions.style.transform = `translateX(-50%) scale(${inv})`;
+  }
 }
 
 function updateTransformUI(el) {
@@ -2963,6 +3001,7 @@ function updateTransformUI(el) {
   const div = document.getElementById(el.id);
   if (div) { div.style.left=el.x+'px'; div.style.top=el.y+'px'; div.style.width=el.w+'px'; div.style.height=el.h+'px'; div.style.transform=`rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`; }
   _syncEmojiSize(el);
+  _scaleUI();
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
 }
 
@@ -3028,8 +3067,9 @@ function startDrag(e, id) {
   const el = elements.find(e => e.id === id); if (!el) return;
   const sx = e.clientX, sy = e.clientY, ox = el.x, oy = el.y;
   const onMove = e => {
-    el.x = ox + (e.clientX - sx);
-    el.y = oy + (e.clientY - sy);
+    const s = _getWorldScale();
+    el.x = ox + (e.clientX - sx) / s;
+    el.y = oy + (e.clientY - sy) / s;
     const snaps = _computeSnaps(el);
     if (snaps.bestX) el.x += snaps.bestX.adj;
     if (snaps.bestY) el.y += snaps.bestY.adj;
@@ -3044,7 +3084,8 @@ function startResize(e, id, corner) {
   const el = elements.find(e => e.id === id); if (!el) return;
   const sx = e.clientX, sy = e.clientY, ox=el.x, oy=el.y, ow=el.w, oh=el.h, min=40;
   const onMove = e => {
-    const dx=e.clientX-sx, dy=e.clientY-sy;
+    const s = _getWorldScale();
+    const dx=(e.clientX-sx)/s, dy=(e.clientY-sy)/s;
     if (corner==='br') { el.w=Math.max(min,ow+dx); el.h=Math.max(min,oh+dy); }
     else if (corner==='bl') { const nw=Math.max(min,ow-dx); el.x=ox+(ow-nw); el.w=nw; el.h=Math.max(min,oh+dy); }
     else if (corner==='tr') { el.w=Math.max(min,ow+dx); const nh=Math.max(min,oh-dy); el.y=oy+(oh-nh); el.h=nh; }
@@ -3643,6 +3684,42 @@ document.getElementById('sticker-sheet')?.addEventListener('pointerdown', e => {
 document.addEventListener('touchmove', e => {
   if (e.target.closest('.t-corner,.t-side-h,.t-side-v,.t-rotate-btn,.el-wrapper')) e.preventDefault();
 }, { passive: false });
+
+// ─────────────────── PINCH ZOOM ───────────────────
+(function() {
+  const scroll = document.getElementById('canvas-scroll');
+  if (!scroll) return;
+  let p0 = null, s0 = 1;
+  scroll.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      p0 = e.touches;
+      s0 = _getWorldScale();
+    }
+  }, { passive: false });
+  scroll.addEventListener('touchmove', e => {
+    if (e.touches.length !== 2 || !p0) return;
+    e.preventDefault();
+    const d0 = Math.hypot(p0[1].clientX - p0[0].clientX, p0[1].clientY - p0[0].clientY);
+    const d1 = Math.hypot(e.touches[1].clientX - e.touches[0].clientX, e.touches[1].clientY - e.touches[0].clientY);
+    const newScale = Math.min(Math.max(s0 * d1 / d0, 0.5), 4);
+    const world = document.getElementById('canvas-world');
+    // Pinch midpoint in scroll-viewport coords
+    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - scroll.getBoundingClientRect().left;
+    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2 - scroll.getBoundingClientRect().top;
+    // World point under midpoint (at current scale)
+    const curScale = _getWorldScale();
+    const wx = (scroll.scrollLeft + mx) / curScale;
+    const wy = (scroll.scrollTop  + my) / curScale;
+    _sizeWorldForZoom(newScale);
+    world.style.transformOrigin = '0 0';
+    world.style.transform = `scale(${newScale})`;
+    // Keep same world point under midpoint
+    scroll.scrollLeft = wx * newScale - mx;
+    scroll.scrollTop  = wy * newScale - my;
+  }, { passive: false });
+  scroll.addEventListener('touchend', e => { if (e.touches.length < 2) p0 = null; }, { passive: true });
+})();
 
 // ═══════════════════════════════════════════════════════════════
 // ─────────────────── UPLOAD ACTION SHEET ────────────────────
