@@ -266,6 +266,9 @@ body {
 .fc-current { font-family:var(--font-body); font-size:13px; font-weight:600; color:#121212; }
 .fc-exit-btn { margin-left:auto; margin-right:12px; font-family:var(--font-body); font-size:13px; font-weight:600; color:var(--text-accent); cursor:pointer; padding:4px 0; }
 .fc-exit-btn:active { opacity:0.6; }
+.lasso-rect { position:absolute; border:1.5px dashed #4a7fc1; background:rgba(74,127,193,0.06); pointer-events:none; z-index:100; box-sizing:border-box; }
+.el-wrapper.multi-sel { outline:2px solid #4a7fc1; outline-offset:2px; border-radius:2px; }
+.el-wrapper.focus-dimmed { opacity:0.5; pointer-events:none; }
 
 .ruler-row { display: flex; flex-shrink: 0; background: var(--gray-50); }
 .ruler-corner { width: 22px; height: 22px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
@@ -1302,10 +1305,7 @@ body {
     <button class="tbar-make" id="make-btn">Make</button>
   </div>
   <div id="focus-breadcrumb">
-    <div class="fc-back" onclick="exitFocusMode()">Sheet</div>
-    <span class="fc-sep"><svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#595959" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <span class="fc-current" id="fc-current-label">Shape</span>
-    <div class="fc-exit-btn" onclick="exitFocusMode()">Exit Focus</div>
+    <!-- rendered by _renderBreadcrumb() -->
   </div>
   <div class="ruler-row">
     <div class="ruler-corner"></div>
@@ -1880,7 +1880,10 @@ let selectedSheetType = null; // 'blank' | 'circles' | 'rectangles' | 'squares'
 let elements = [], elId = 0, selectedId = null, fabOpen = false;
 let canvasReady = false;
 let containers = [], selectedContainerId = null;
-let focusContainerId = null, _focusScale = 1;
+let _focusMode = null, _focusScale = 1; // _focusMode: { type:'container'|'group'|'element', id, label, parent:null|{type,id,label} }
+let groups = [], _groupCounter = 0;
+let _selectedGroupId = null;
+let _multiSelectedIds = [];
 let _lastDoubleTapId = null, _lastDoubleTapTime = 0;
 let _lastBgTapTime = 0;
 
@@ -2265,7 +2268,10 @@ function _syncRingScale(cont, scale) {
 
 function enterFocusMode(contId) {
   const cont = containers.find(c => c.id === contId); if (!cont) return;
-  focusContainerId = contId;
+
+  const idx = containers.indexOf(cont) + 1;
+  const shapeName = (cont.shape || 'shape').replace(/^\w/, c => c.toUpperCase());
+  _focusMode = { type: 'container', id: contId, label: `${shapeName} ${idx}`, parent: null };
 
   const scroll = document.getElementById('canvas-scroll');
   const world  = document.getElementById('canvas-world');
@@ -2279,25 +2285,20 @@ function enterFocusMode(contId) {
   const worldCX = SHEET_L + cont.x + cont.w / 2;
   const worldCY = SHEET_T + cont.y + cont.h / 2;
 
-  // Expand canvas-world so scroll range accommodates full scaled content, then center
   _sizeWorldForZoom(scale);
   world.style.transformOrigin = '0 0';
   world.style.transform = `scale(${scale})`;
   scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
 
   deselectSheet();
-
-  // Keep rings visually thin at constant screen weight for all containers
   containers.forEach(c => _syncRingScale(c, scale));
 
-  // Make focused container's outer cut ring 1.25px visual when zoomed
   const focSvg = document.getElementById(contId)?.querySelector('.sticker-container-ring');
   const outerNode = focSvg?.querySelector('circle, rect');
   if (outerNode) outerNode.setAttribute('stroke-width', (1.25 / scale).toFixed(3));
 
   _updateStaticUI(scale);
 
-  // 5% vignette with circular cutout around focused container
   const vignette = document.getElementById('focus-vignette');
   if (vignette) {
     const cx = cont.x + cont.w / 2, cy = cont.y + cont.h / 2, r = cont.w / 2;
@@ -2307,37 +2308,330 @@ function enterFocusMode(contId) {
     vignette.style.display = 'block';
   }
   containers.forEach(c => {
-    const el = document.getElementById(c.id);
-    if (!el) return;
+    const el = document.getElementById(c.id); if (!el) return;
     el.classList.toggle('focus-dimmed', c.id !== contId);
     el.classList.toggle('focus-active', c.id === contId);
   });
 
-  // Breadcrumb label: capitalize shape name + slot index
-  const idx = containers.indexOf(cont) + 1;
-  const shapeName = (cont.shape || 'shape').replace(/^\w/, c => c.toUpperCase());
-  document.getElementById('fc-current-label').textContent = `${shapeName} ${idx}`;
-  document.getElementById('focus-breadcrumb').classList.add('visible');
+  _renderBreadcrumb();
 }
 
-function exitFocusMode() {
-  const cont = containers.find(c => c.id === focusContainerId);
-  focusContainerId = null;
-  _focusScale = 1;
-  document.getElementById('focus-breadcrumb').classList.remove('visible');
-  // Clear focus dimming
+// ─────────────────── BREADCRUMB ───────────────────
+function _renderBreadcrumb() {
+  const crumb = document.getElementById('focus-breadcrumb');
+  if (!_focusMode) { crumb.classList.remove('visible'); return; }
+  const sep = `<span class="fc-sep"><svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#595959" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+  let html = `<div class="fc-back" onclick="exitAllFocus()">Sheet</div>`;
+  if (_focusMode.parent) {
+    const p = _focusMode.parent;
+    html += sep;
+    const fn = p.type === 'group' ? `enterGroupFocus('${p.id}')` : `enterFocusMode('${p.id}')`;
+    html += `<div class="fc-back" onclick="${fn}">${p.label}</div>`;
+  }
+  html += sep;
+  html += `<span class="fc-current">${_focusMode.label}</span>`;
+  html += `<div class="fc-exit-btn" onclick="exitAllFocus()">Exit Focus</div>`;
+  crumb.innerHTML = html;
+  crumb.classList.add('visible');
+}
+
+// ─────────────────── FOCUS EXIT ───────────────────
+function _clearAllFocusDimming() {
+  elements.forEach(el => {
+    const div = document.getElementById(el.id);
+    if (div) div.classList.remove('focus-dimmed');
+  });
   containers.forEach(c => {
     const el = document.getElementById(c.id);
-    if (el) el.classList.remove('focus-dimmed');
+    if (el) { el.classList.remove('focus-dimmed'); el.classList.remove('focus-active'); }
   });
+}
+
+function exitAllFocus() {
+  _focusMode = null;
+  _focusScale = 1;
+  _clearAllFocusDimming();
   containers.forEach(c => _syncRingScale(c, 1));
   const vignette = document.getElementById('focus-vignette');
   if (vignette) vignette.style.display = 'none';
+  document.getElementById('focus-breadcrumb').classList.remove('visible');
+  zoomToFit(true);
+}
+
+function exitCurrentFocus() {
+  if (!_focusMode) return;
+  const parent = _focusMode.parent;
+  _focusMode = null;
+  _focusScale = 1;
+  _clearAllFocusDimming();
+  containers.forEach(c => _syncRingScale(c, 1));
+  const vignette = document.getElementById('focus-vignette');
+  if (vignette) vignette.style.display = 'none';
+  if (parent) {
+    if (parent.type === 'group') enterGroupFocus(parent.id);
+    else enterFocusMode(parent.id);
+  } else {
+    document.getElementById('focus-breadcrumb').classList.remove('visible');
+    zoomToFit(true);
+  }
+}
+
+function exitFocusMode() { exitAllFocus(); }
+
+// ─────────────────── GROUP FOCUS ───────────────────
+function _groupBoundingBox(group) {
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  group.childIds.forEach(id => {
+    const el = elements.find(e => e.id === id); if (!el) return;
+    minX=Math.min(minX,el.x); minY=Math.min(minY,el.y);
+    maxX=Math.max(maxX,el.x+el.w); maxY=Math.max(maxY,el.y+el.h);
+  });
+  return minX===Infinity ? null : {x:minX,y:minY,w:maxX-minX,h:maxY-minY};
+}
+
+function enterGroupFocus(groupId) {
+  const group = groups.find(g => g.id === groupId); if (!group) return;
+  _focusMode = { type: 'group', id: groupId, label: group.label, parent: null };
+
+  const scroll = document.getElementById('canvas-scroll');
+  const world  = document.getElementById('canvas-world');
+  const vpW = scroll.clientWidth || 368;
+  const vpH = scroll.clientHeight || 520;
+
+  const bbox = _groupBoundingBox(group);
+  if (!bbox) { _renderBreadcrumb(); return; }
+  const pad = 40;
+  const scale = Math.min((vpW - pad) / bbox.w, (vpH - pad) / bbox.h, 4);
+  _focusScale = scale;
+
+  // el.x/y are canvas-world coords (SHEET_L offset already included)
+  const worldCX = bbox.x + bbox.w / 2;
+  const worldCY = bbox.y + bbox.h / 2;
+  _sizeWorldForZoom(scale);
+  world.style.transformOrigin = '0 0';
+  world.style.transform = `scale(${scale})`;
+  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
+
+  _updateStaticUI(scale);
+  containers.forEach(c => _syncRingScale(c, scale));
+
+  // Dim elements not in group and all containers
+  elements.forEach(el => {
+    const div = document.getElementById(el.id);
+    if (div) div.classList.toggle('focus-dimmed', !group.childIds.includes(el.id));
+  });
   containers.forEach(c => {
     const el = document.getElementById(c.id);
-    if (el) { el.classList.remove('focus-active'); el.classList.remove('focus-dimmed'); }
+    if (el) { el.classList.add('focus-dimmed'); el.classList.remove('focus-active'); }
   });
-  zoomToFit(true);
+
+  deselectAll();
+  deselectGroup();
+  _renderBreadcrumb();
+}
+
+// ─────────────────── ELEMENT FOCUS ───────────────────
+function _elementLabel(el) {
+  const idx = elements.indexOf(el) + 1;
+  if (el.isText) return `Text ${idx}`;
+  if (el.shapeKey) return el.shapeKey.replace(/_/g,' ').replace(/^\w/,c=>c.toUpperCase()) + ` ${idx}`;
+  if (el.isImage) return `Image ${idx}`;
+  return `Sticker ${idx}`;
+}
+
+function enterElementFocus(elId) {
+  const el = elements.find(e => e.id === elId); if (!el) return;
+  const label = _elementLabel(el);
+  const parent = (_focusMode?.type === 'group') ? { type: 'group', id: _focusMode.id, label: _focusMode.label } : null;
+  _focusMode = { type: 'element', id: elId, label, parent };
+
+  const scroll = document.getElementById('canvas-scroll');
+  const world  = document.getElementById('canvas-world');
+  const vpW = scroll.clientWidth || 368;
+  const vpH = scroll.clientHeight || 520;
+
+  const pad = 80;
+  const scale = Math.min((vpW - pad) / el.w, (vpH - pad) / el.h, 4);
+  _focusScale = scale;
+
+  // el.x/y are canvas-world coords (SHEET_L/T offset already included)
+  const worldCX = el.x + el.w / 2;
+  const worldCY = el.y + el.h / 2;
+  _sizeWorldForZoom(scale);
+  world.style.transformOrigin = '0 0';
+  world.style.transform = `scale(${scale})`;
+  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
+
+  _updateStaticUI(scale);
+  containers.forEach(c => _syncRingScale(c, scale));
+
+  // Dim all other elements and containers
+  elements.forEach(e => {
+    const div = document.getElementById(e.id);
+    if (div) div.classList.toggle('focus-dimmed', e.id !== elId);
+  });
+  containers.forEach(c => {
+    const div = document.getElementById(c.id);
+    if (div) { div.classList.add('focus-dimmed'); div.classList.remove('focus-active'); }
+  });
+
+  _renderBreadcrumb();
+  deselectAll();
+  selectEl(elId);
+}
+
+// ─────────────────── GROUP CRUD ───────────────────
+function _renderGroupSelectionUI(group) {
+  document.getElementById('__group_ui')?.remove();
+  const bbox = _groupBoundingBox(group); if (!bbox) return;
+  const pad = 6;
+  const ui = document.createElement('div');
+  ui.id = '__group_ui';
+  ui.style.cssText = `position:absolute;left:${bbox.x-pad}px;top:${bbox.y-pad}px;width:${bbox.w+pad*2}px;height:${bbox.h+pad*2}px;border:1.5px dashed var(--text-accent);border-radius:6px;pointer-events:none;z-index:55;box-sizing:border-box;`;
+  document.getElementById('canvas-world').appendChild(ui);
+}
+
+function _renderGroupEditBar(group) {
+  const bar = document.getElementById('edit-tools-row'); if (!bar) return;
+  bar.innerHTML = `
+    <div class="edit-tool" onclick="enterGroupFocus('${group.id}')">
+      <div class="edit-tool-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="3" stroke="#595959" stroke-width="1.4" stroke-dasharray="3,2"/><path d="M8 11h6M11 8v6" stroke="#595959" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="edit-tool-label">Edit Group</div>
+    </div>
+    <div class="edit-tool" onclick="ungroup('${group.id}')">
+      <div class="edit-tool-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.4"/><rect x="12" y="2" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.4"/><rect x="2" y="12" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.4"/><rect x="12" y="12" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.4"/></svg></div>
+      <div class="edit-tool-label">Ungroup</div>
+    </div>
+  `;
+  document.getElementById('bottom-edit-bar').classList.add('visible');
+}
+
+function selectGroup(groupId) {
+  deselectAll();
+  _selectedGroupId = groupId;
+  const group = groups.find(g => g.id === groupId); if (!group) return;
+  _renderGroupSelectionUI(group);
+  _renderGroupEditBar(group);
+}
+
+function deselectGroup() {
+  if (!_selectedGroupId) return;
+  _selectedGroupId = null;
+  document.getElementById('__group_ui')?.remove();
+}
+
+function createGroup() {
+  if (_multiSelectedIds.length < 2) return;
+  _groupCounter++;
+  const g = { id: 'group_' + _groupCounter, label: 'Group ' + _groupCounter, childIds: [..._multiSelectedIds] };
+  groups.push(g);
+  _multiSelectedIds.forEach(id => { const el = elements.find(e => e.id === id); if (el) el.groupId = g.id; });
+  _clearMultiSelect();
+  document.getElementById('bottom-edit-bar').classList.remove('visible');
+  selectGroup(g.id);
+}
+
+function ungroup(groupId) {
+  const group = groups.find(g => g.id === groupId); if (!group) return;
+  group.childIds.forEach(id => { const el = elements.find(e => e.id === id); if (el) delete el.groupId; });
+  groups = groups.filter(g => g.id !== groupId);
+  deselectGroup();
+  document.getElementById('bottom-edit-bar').classList.remove('visible');
+}
+
+function startGroupDrag(e, groupId) {
+  e.preventDefault();
+  const group = groups.find(g => g.id === groupId); if (!group) return;
+  const sx = e.clientX, sy = e.clientY;
+  const origPos = group.childIds.map(id => {
+    const el = elements.find(e => e.id === id);
+    return el ? { id, x: el.x, y: el.y } : null;
+  }).filter(Boolean);
+  const onMove = ev => {
+    const s = _getWorldScale();
+    const dx = (ev.clientX - sx) / s, dy = (ev.clientY - sy) / s;
+    origPos.forEach(({ id, x, y }) => {
+      const el = elements.find(e => e.id === id); if (!el) return;
+      el.x = x + dx; el.y = y + dy;
+      const div = document.getElementById(id);
+      if (div) { div.style.left = el.x + 'px'; div.style.top = el.y + 'px'; }
+    });
+    _renderGroupSelectionUI(group);
+  };
+  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onEnd);
+}
+
+// ─────────────────── MULTI-SELECT / LASSO ───────────────────
+function _clearMultiSelect() {
+  _multiSelectedIds.forEach(id => { const div = document.getElementById(id); if (div) div.classList.remove('multi-sel'); });
+  _multiSelectedIds = [];
+}
+
+function _setMultiSelect(ids) {
+  _clearMultiSelect();
+  _multiSelectedIds = ids;
+  ids.forEach(id => { const div = document.getElementById(id); if (div) div.classList.add('multi-sel'); });
+  const bar = document.getElementById('edit-tools-row'); if (!bar) return;
+  bar.innerHTML = `
+    <div class="edit-tool" onclick="createGroup()">
+      <div class="edit-tool-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="12" y="2" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="2" y="12" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="12" y="12" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="1" y="1" width="20" height="20" rx="4" stroke="#4a7fc1" stroke-width="1.2" stroke-dasharray="3,2"/></svg></div>
+      <div class="edit-tool-label" style="color:#4a7fc1;font-weight:600;">${ids.length} selected · Group</div>
+    </div>
+  `;
+  document.getElementById('bottom-edit-bar').classList.add('visible');
+}
+
+function _startLasso(e) {
+  const scroll = document.getElementById('canvas-scroll');
+  const s = _getWorldScale();
+  const rect = scroll.getBoundingClientRect();
+  const wx0 = (e.clientX - rect.left + scroll.scrollLeft) / s;
+  const wy0 = (e.clientY - rect.top + scroll.scrollTop) / s;
+  let lassoActive = false;
+
+  const onMove = ev => {
+    const s2 = _getWorldScale();
+    const r2 = scroll.getBoundingClientRect();
+    const wx1 = (ev.clientX - r2.left + scroll.scrollLeft) / s2;
+    const wy1 = (ev.clientY - r2.top + scroll.scrollTop) / s2;
+    if (!lassoActive && (Math.abs(wx1-wx0) > 5 || Math.abs(wy1-wy0) > 5)) {
+      lassoActive = true;
+      const box = document.createElement('div');
+      box.id = '__lasso'; box.className = 'lasso-rect';
+      document.getElementById('canvas-world').appendChild(box);
+    }
+    if (lassoActive) {
+      const box = document.getElementById('__lasso');
+      if (box) {
+        box.style.left   = Math.min(wx0, wx1) + 'px';
+        box.style.top    = Math.min(wy0, wy1) + 'px';
+        box.style.width  = Math.abs(wx1 - wx0) + 'px';
+        box.style.height = Math.abs(wy1 - wy0) + 'px';
+      }
+    }
+  };
+
+  const onUp = ev => {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    document.getElementById('__lasso')?.remove();
+    if (!lassoActive) return;
+    const s2 = _getWorldScale();
+    const r2 = scroll.getBoundingClientRect();
+    const wx1 = (ev.clientX - r2.left + scroll.scrollLeft) / s2;
+    const wy1 = (ev.clientY - r2.top + scroll.scrollTop) / s2;
+    const lx0=Math.min(wx0,wx1), ly0=Math.min(wy0,wy1), lx1=Math.max(wx0,wx1), ly1=Math.max(wy0,wy1);
+    // Only select free elements (not in containers or already grouped)
+    const sel = elements.filter(el => !el.groupId && !el.containerId &&
+      el.x < lx1 && el.x + el.w > lx0 && el.y < ly1 && el.y + el.h > ly0);
+    if (sel.length >= 2) _setMultiSelect(sel.map(e => e.id));
+    else if (sel.length === 1) selectEl(sel[0].id);
+  };
+
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
 }
 
 // ─────────────────── CONTAINER BAR ───────────────────
@@ -2931,29 +3225,44 @@ function makeElDiv(el) {
   div.addEventListener('pointerdown', e => {
     e.stopPropagation();
     const now = Date.now();
-    const tapId = el.containerId || el.id;
+    const inGroupFocus = _focusMode?.type === 'group' && _focusMode.id === el.groupId;
+    const inElFocus    = _focusMode?.type === 'element' && _focusMode.id === el.id;
+    // tapId shared by container members or group members (for double-tap detection)
+    const tapId = el.containerId || (el.groupId && !inGroupFocus ? el.groupId : el.id);
 
-    // Double-tap → focus mode (takes priority over cycling)
+    // Double-tap → focus mode (takes priority over everything)
     if (_lastDoubleTapId === tapId && now - _lastDoubleTapTime < 320) {
       _lastDoubleTapId = null;
       if (el.containerId) { enterFocusMode(el.containerId); return; }
+      if (el.groupId && !inGroupFocus) { enterGroupFocus(el.groupId); return; }
+      if (el.groupId && inGroupFocus)  { enterElementFocus(el.id);    return; }
+      enterElementFocus(el.id); // standalone element
+      return;
     }
     _lastDoubleTapId = tapId; _lastDoubleTapTime = now;
 
-    // Tap cycling: re-tapping an already-selected element cycles to the next
-    // overlapping element underneath it (bounding-box hit test, ignores rotation)
+    // In element focus for this element — allow drag directly
+    if (inElFocus) { startDrag(e, el.id); return; }
+
+    // Grouped element tapped outside group focus → select or drag group
+    if (el.groupId && !inGroupFocus) {
+      if (_selectedGroupId === el.groupId) startGroupDrag(e, el.groupId);
+      else selectGroup(el.groupId);
+      return;
+    }
+
+    // Tap cycling: re-tapping an already-selected element cycles to next overlapping
     if (selectedId === el.id) {
       const s = _getWorldScale();
       const scroll = document.getElementById('canvas-scroll');
       const rect = scroll.getBoundingClientRect();
       const wx = (e.clientX - rect.left + scroll.scrollLeft) / s;
       const wy = (e.clientY - rect.top + scroll.scrollTop) / s;
-      const stack = _elementsAtWorldPoint(wx, wy); // bottom → top order
+      const stack = _elementsAtWorldPoint(wx, wy);
       if (stack.length > 1) {
         const cur = stack.findIndex(it => it.id === el.id);
-        const next = stack[(cur + 1) % stack.length];
-        selectEl(next.id);
-        return; // skip drag on a cycle tap
+        selectEl(stack[(cur + 1) % stack.length].id);
+        return;
       }
     }
 
@@ -2973,11 +3282,12 @@ function selectEl(id) {
 }
 function deselectAll() {
   selectedId = null;
+  _clearMultiSelect();
+  deselectGroup();
   document.getElementById('__transform_ui')?.remove();
   document.getElementById('__el_actions')?.remove();
   document.getElementById('bottom-edit-bar').classList.remove('visible');
   closeInlinePanel();
-  // Close any open action sheets
   ['arrange-sheet','flip-sheet','effects-sheet'].forEach(id => document.getElementById(id)?.classList.remove('visible'));
 }
 
@@ -3743,14 +4053,15 @@ document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
     || e.target.classList.contains('canvas-grid-overlay')
     || e.target.id === 'focus-vignette';
   if (!isBg) return;
-  // Double-tap anywhere outside the focused container exits focus mode
-  if (focusContainerId) {
+  // Double-tap outside when in focus mode → exit one level up
+  if (_focusMode) {
     const now = Date.now();
-    if (now - _lastBgTapTime < 350) { _lastBgTapTime = 0; exitFocusMode(); return; }
+    if (now - _lastBgTapTime < 350) { _lastBgTapTime = 0; exitCurrentFocus(); return; }
     _lastBgTapTime = now;
     return;
   }
   deselectAll(); deselectContainer(); deselectSheet(); closeFab();
+  _startLasso(e);
 });
 
 // Sticker sheet tap: select the sheet itself
