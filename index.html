@@ -2932,11 +2932,31 @@ function makeElDiv(el) {
     e.stopPropagation();
     const now = Date.now();
     const tapId = el.containerId || el.id;
+
+    // Double-tap → focus mode (takes priority over cycling)
     if (_lastDoubleTapId === tapId && now - _lastDoubleTapTime < 320) {
       _lastDoubleTapId = null;
       if (el.containerId) { enterFocusMode(el.containerId); return; }
     }
     _lastDoubleTapId = tapId; _lastDoubleTapTime = now;
+
+    // Tap cycling: re-tapping an already-selected element cycles to the next
+    // overlapping element underneath it (bounding-box hit test, ignores rotation)
+    if (selectedId === el.id) {
+      const s = _getWorldScale();
+      const scroll = document.getElementById('canvas-scroll');
+      const rect = scroll.getBoundingClientRect();
+      const wx = (e.clientX - rect.left + scroll.scrollLeft) / s;
+      const wy = (e.clientY - rect.top + scroll.scrollTop) / s;
+      const stack = _elementsAtWorldPoint(wx, wy); // bottom → top order
+      if (stack.length > 1) {
+        const cur = stack.findIndex(it => it.id === el.id);
+        const next = stack[(cur + 1) % stack.length];
+        selectEl(next.id);
+        return; // skip drag on a cycle tap
+      }
+    }
+
     selectEl(el.id); startDrag(e, el.id);
   });
   return div;
@@ -3048,6 +3068,12 @@ function updateTransformUI(el) {
   _syncEmojiSize(el);
   _scaleUI();
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
+}
+
+// ─────────────────── HIT TEST ───────────────────
+// Returns elements whose axis-aligned bounding box contains (wx,wy), bottom→top order
+function _elementsAtWorldPoint(wx, wy) {
+  return elements.filter(el => wx >= el.x && wx <= el.x + el.w && wy >= el.y && wy <= el.y + el.h);
 }
 
 // ─────────────────── SNAP GUIDES ───────────────────
