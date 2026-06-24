@@ -679,6 +679,7 @@ body {
 /* ── STICKER CONTAINERS ── */
 .sticker-container { position:absolute; cursor:pointer; transition:opacity 0.22s; }
 .sticker-container.dimmed { opacity:0.18; pointer-events:none; }
+.sticker-container.focus-dimmed { opacity:0.5; pointer-events:none; }
 .sticker-container-ring { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:visible; }
 .sticker-container-content { position:absolute; inset:0; z-index:1; pointer-events:none; }
 
@@ -2227,12 +2228,21 @@ function enterFocusMode(contId) {
   const worldCX = SHEET_L + cont.x + cont.w / 2;
   const worldCY = SHEET_T + cont.y + cont.h / 2;
 
+  // transform-origin pins the container center in layout space —
+  // scrolling to (worldCX - vpW/2, worldCY - vpH/2) puts it at the viewport center
   world.style.transformOrigin = `${worldCX}px ${worldCY}px`;
   world.style.transform = `scale(${scale})`;
-  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
+  scroll.scrollTo({ left: worldCX - vpW / 2, top: worldCY - vpH / 2, behavior: 'smooth' });
 
   // Keep ring visually thin at 1px
   _syncRingScale(cont, scale);
+
+  // Dim all other containers at 50%
+  containers.forEach(c => {
+    const el = document.getElementById(c.id);
+    if (!el) return;
+    el.classList.toggle('focus-dimmed', c.id !== contId);
+  });
 
   // Breadcrumb label: capitalize shape name + slot index
   const idx = containers.indexOf(cont) + 1;
@@ -2246,9 +2256,14 @@ function exitFocusMode() {
   focusContainerId = null;
   _focusScale = 1;
   document.getElementById('focus-breadcrumb').classList.remove('visible');
+  // Clear focus dimming
+  containers.forEach(c => {
+    const el = document.getElementById(c.id);
+    if (el) el.classList.remove('focus-dimmed');
+  });
   if (cont) {
-    _syncRingScale(cont, 1);   // restore original stroke
-    zoomToContainer(cont);     // zoom back to container selection view
+    _syncRingScale(cont, 1);
+    zoomToContainer(cont);
   }
 }
 
