@@ -680,6 +680,9 @@ body {
 .sticker-container { position:absolute; cursor:pointer; transition:opacity 0.22s; }
 .sticker-container.dimmed { opacity:0.18; pointer-events:none; }
 .sticker-container.focus-dimmed { opacity:0.5; pointer-events:none; }
+.snap-guide { position:absolute; pointer-events:none; z-index:200; display:none; }
+.snap-guide-v { top:0; width:0; height:960px; border-left:1.5px dashed #FF3399; }
+.snap-guide-h { left:0; height:0; width:680px; border-top:1.5px dashed #FF3399; }
 .sticker-container-ring { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:visible; }
 .sticker-container-content { position:absolute; inset:0; z-index:1; pointer-events:none; }
 
@@ -2953,13 +2956,72 @@ function updateTransformUI(el) {
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
 }
 
+// ─────────────────── SNAP GUIDES ───────────────────
+function _getWorldScale() {
+  const m = document.getElementById('canvas-world').style.transform.match(/scale\(([\d.]+)\)/);
+  return m ? parseFloat(m[1]) : 1;
+}
+function _computeSnaps(el) {
+  const thresh = 8 / _getWorldScale();
+  const snapXTargets = [SHEET_L, SHEET_L + SHEET_W / 2, SHEET_L + SHEET_W];
+  const snapYTargets = [SHEET_T, SHEET_T + SHEET_H / 2, SHEET_T + SHEET_H];
+  const elL = el.x, elCX = el.x + el.w / 2, elR = el.x + el.w;
+  const elT = el.y, elCY = el.y + el.h / 2, elB = el.y + el.h;
+  let bestX = null, dX = thresh + 1;
+  for (const t of snapXTargets) {
+    for (const src of [elL, elCX, elR]) {
+      const d = Math.abs(src - t);
+      if (d < dX) { dX = d; bestX = { line: t, adj: t - src }; }
+    }
+  }
+  let bestY = null, dY = thresh + 1;
+  for (const t of snapYTargets) {
+    for (const src of [elT, elCY, elB]) {
+      const d = Math.abs(src - t);
+      if (d < dY) { dY = d; bestY = { line: t, adj: t - src }; }
+    }
+  }
+  return { bestX: dX <= thresh ? bestX : null, bestY: dY <= thresh ? bestY : null };
+}
+function _ensureSnapGuides() {
+  if (document.getElementById('snap-guide-v')) return;
+  const world = document.getElementById('canvas-world');
+  const v = document.createElement('div');
+  v.id = 'snap-guide-v'; v.className = 'snap-guide snap-guide-v';
+  world.appendChild(v);
+  const h = document.createElement('div');
+  h.id = 'snap-guide-h'; h.className = 'snap-guide snap-guide-h';
+  world.appendChild(h);
+}
+function _updateSnapGuides(snaps) {
+  _ensureSnapGuides();
+  const v = document.getElementById('snap-guide-v');
+  const h = document.getElementById('snap-guide-h');
+  if (snaps.bestX) { v.style.left = snaps.bestX.line + 'px'; v.style.display = 'block'; } else { v.style.display = 'none'; }
+  if (snaps.bestY) { h.style.top = snaps.bestY.line + 'px'; h.style.display = 'block'; } else { h.style.display = 'none'; }
+}
+function _hideSnapGuides() {
+  const v = document.getElementById('snap-guide-v');
+  const h = document.getElementById('snap-guide-h');
+  if (v) v.style.display = 'none';
+  if (h) h.style.display = 'none';
+}
+
 // ─────────────────── DRAG / RESIZE / ROTATE ───────────────────
 function startDrag(e, id) {
   e.preventDefault();
   const el = elements.find(e => e.id === id); if (!el) return;
   const sx = e.clientX, sy = e.clientY, ox = el.x, oy = el.y;
-  const onMove = e => { el.x = ox+(e.clientX-sx); el.y = oy+(e.clientY-sy); updateTransformUI(el); };
-  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  const onMove = e => {
+    el.x = ox + (e.clientX - sx);
+    el.y = oy + (e.clientY - sy);
+    const snaps = _computeSnaps(el);
+    if (snaps.bestX) el.x += snaps.bestX.adj;
+    if (snaps.bestY) el.y += snaps.bestY.adj;
+    _updateSnapGuides(snaps);
+    updateTransformUI(el);
+  };
+  const onEnd = () => { _hideSnapGuides(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
 }
 function startResize(e, id, corner) {
