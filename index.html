@@ -2166,14 +2166,27 @@ function deselectContainer(resetZoom = true) {
   deselectSheet();
 }
 
+const _WORLD_W = 680, _WORLD_H = 960;
+function _sizeWorldForZoom(scale) {
+  const world = document.getElementById('canvas-world');
+  if (scale > 1) {
+    world.style.width  = Math.ceil(_WORLD_W * scale) + 'px';
+    world.style.height = Math.ceil(_WORLD_H * scale) + 'px';
+  } else {
+    world.style.width  = '';
+    world.style.height = '';
+  }
+}
+
 function zoomToContainer(cont) {
   const world = document.getElementById('canvas-world');
   const scroll = document.getElementById('canvas-scroll');
   if (!world || !scroll) return;
 
   if (!cont) {
-    world.style.transform = 'scale(1)';
+    _sizeWorldForZoom(1);
     world.style.transformOrigin = '0 0';
+    world.style.transform = 'scale(1)';
     return;
   }
 
@@ -2186,15 +2199,14 @@ function zoomToContainer(cont) {
   const worldContCX = SHEET_L + cont.x + cont.w / 2;
   const worldContCY = SHEET_T + cont.y + cont.h / 2;
 
-  world.style.transformOrigin = `${worldContCX}px ${worldContCY}px`;
+  // Expand canvas-world layout box so scroll range accommodates full scaled content
+  _sizeWorldForZoom(targetScale);
+  world.style.transformOrigin = '0 0';
   world.style.transform = `scale(${targetScale})`;
 
-  // Scroll so the scaled container center is at viewport center
-  const scaledCX = worldContCX * targetScale;
-  const scaledCY = worldContCY * targetScale;
   scroll.scrollTo({
-    left: scaledCX - vpW / 2,
-    top: scaledCY - vpH / 2,
+    left: worldContCX * targetScale - vpW / 2,
+    top: worldContCY * targetScale - vpH / 2,
     behavior: 'smooth'
   });
 }
@@ -2231,14 +2243,14 @@ function enterFocusMode(contId) {
   const worldCX = SHEET_L + cont.x + cont.w / 2;
   const worldCY = SHEET_T + cont.y + cont.h / 2;
 
-  // transform-origin pins the container center in layout space —
-  // scrolling to (worldCX - vpW/2, worldCY - vpH/2) puts it at the viewport center
-  world.style.transformOrigin = `${worldCX}px ${worldCY}px`;
+  // Expand canvas-world so scroll range accommodates full scaled content, then center
+  _sizeWorldForZoom(scale);
+  world.style.transformOrigin = '0 0';
   world.style.transform = `scale(${scale})`;
-  scroll.scrollTo({ left: worldCX - vpW / 2, top: worldCY - vpH / 2, behavior: 'smooth' });
+  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
 
-  // Keep ring visually thin at 1px
-  _syncRingScale(cont, scale);
+  // Keep rings visually thin at constant screen weight for all containers
+  containers.forEach(c => _syncRingScale(c, scale));
 
   // Dim all other containers at 50%
   containers.forEach(c => {
@@ -2264,10 +2276,8 @@ function exitFocusMode() {
     const el = document.getElementById(c.id);
     if (el) el.classList.remove('focus-dimmed');
   });
-  if (cont) {
-    _syncRingScale(cont, 1);
-    zoomToContainer(cont);
-  }
+  containers.forEach(c => _syncRingScale(c, 1));
+  if (cont) zoomToContainer(cont);
 }
 
 // ─────────────────── CONTAINER BAR ───────────────────
@@ -2965,6 +2975,11 @@ function _computeSnaps(el) {
   const thresh = 8 / _getWorldScale();
   const snapXTargets = [SHEET_L, SHEET_L + SHEET_W / 2, SHEET_L + SHEET_W];
   const snapYTargets = [SHEET_T, SHEET_T + SHEET_H / 2, SHEET_T + SHEET_H];
+  // Add each container's center as a snap target
+  containers.forEach(c => {
+    snapXTargets.push(SHEET_L + c.x + c.w / 2);
+    snapYTargets.push(SHEET_T + c.y + c.h / 2);
+  });
   const elL = el.x, elCX = el.x + el.w / 2, elR = el.x + el.w;
   const elT = el.y, elCY = el.y + el.h / 2, elB = el.y + el.h;
   let bestX = null, dX = thresh + 1;
