@@ -618,6 +618,7 @@ body {
 .bgr-undo-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 8px; }
 .bgr-undo-btn:active { background: var(--gray-100); }
 .bgr-undo-btn.disabled { opacity: 0.3; pointer-events: none; }
+.tbar-btn.undo-disabled { opacity: 0.3; pointer-events: none; }
 .bgr-editor-area { flex: 1; min-height: 0; overflow: hidden; position: relative; background: #e8e8e8; display: flex; align-items: center; justify-content: center; }
 .checker-bg { background-image: linear-gradient(45deg,#bbb 25%,transparent 25%),linear-gradient(-45deg,#bbb 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#bbb 75%),linear-gradient(-45deg,transparent 75%,#bbb 75%); background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0; background-color: #fff; }
 #bgr-canvas { display: block; max-width: 100%; max-height: 100%; touch-action: none; cursor: crosshair; }
@@ -1289,10 +1290,10 @@ body {
     <!-- center spacer -->
     <div style="flex:1;"></div>
     <!-- center: undo, redo -->
-    <div class="tbar-btn">
+    <div class="tbar-btn undo-disabled" id="tbar-undo" onclick="undo()">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 8H14a4 4 0 010 8H8" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8L7 5M4 8l3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg>
     </div>
-    <div class="tbar-btn">
+    <div class="tbar-btn undo-disabled" id="tbar-redo" onclick="redo()">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16 8H6a4 4 0 000 8h6" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/><path d="M16 8l-3-3M16 8l-3 3" stroke="#595959" stroke-width="1.8" stroke-linecap="round"/></svg>
     </div>
     <!-- right spacer -->
@@ -1887,6 +1888,79 @@ let _multiSelectedIds = [];
 let _lastDoubleTapId = null, _lastDoubleTapTime = 0;
 let _lastBgTapTime = 0;
 
+// ─────────────────── UNDO / REDO ───────────────────
+let _undoHistory = [], _undoIdx = -1, _undoDebTimer = null;
+
+function _captureState() {
+  return {
+    elements: elements.map(e => ({...e})),
+    groups:   groups.map(g => ({...g, childIds: [...g.childIds]})),
+    conts:    containers.map(c => ({ childElId: c.childElId, bgColor: c.bgColor })),
+    elId, _groupCounter
+  };
+}
+
+function _pushUndoState() {
+  clearTimeout(_undoDebTimer);
+  _undoHistory.splice(_undoIdx + 1);
+  _undoHistory.push(_captureState());
+  _undoIdx = _undoHistory.length - 1;
+  if (_undoHistory.length > 60) { _undoHistory.shift(); _undoIdx--; } // cap history
+  _syncUndoBtns();
+}
+
+function _pushUndoDebounced() {
+  clearTimeout(_undoDebTimer);
+  _undoDebTimer = setTimeout(_pushUndoState, 400);
+}
+
+function _syncUndoBtns() {
+  document.getElementById('tbar-undo')?.classList.toggle('undo-disabled', _undoIdx <= 0);
+  document.getElementById('tbar-redo')?.classList.toggle('undo-disabled', _undoIdx >= _undoHistory.length - 1);
+}
+
+function undo() {
+  if (_undoIdx <= 0) return;
+  _undoIdx--;
+  _applyUndoState(_undoHistory[_undoIdx]);
+  _syncUndoBtns();
+}
+
+function redo() {
+  if (_undoIdx >= _undoHistory.length - 1) return;
+  _undoIdx++;
+  _applyUndoState(_undoHistory[_undoIdx]);
+  _syncUndoBtns();
+}
+
+function _applyUndoState(snap) {
+  // Exit focus mode instantly (no animation)
+  if (_focusMode) {
+    _focusMode = null; _focusScale = 1;
+    _clearAllFocusDimming();
+    containers.forEach(c => _syncRingScale(c, 1));
+    const v = document.getElementById('focus-vignette');
+    if (v) v.style.display = 'none';
+    document.getElementById('focus-breadcrumb')?.classList.remove('visible');
+    zoomToFit(false);
+  }
+  // Restore data
+  elements       = snap.elements.map(e => ({...e}));
+  groups         = snap.groups.map(g => ({...g, childIds: [...g.childIds]}));
+  elId           = snap.elId;
+  _groupCounter  = snap._groupCounter;
+  containers.forEach((c, i) => {
+    c.childElId = snap.conts[i]?.childElId ?? null;
+    c.bgColor   = snap.conts[i]?.bgColor   ?? null;
+  });
+  // Rebuild element DOM
+  document.querySelectorAll('#canvas-world .el-wrapper').forEach(d => d.remove());
+  const world = document.getElementById('canvas-world');
+  elements.forEach(el => world.appendChild(makeElDiv(el)));
+  deselectAll(); deselectContainer(false); deselectSheet();
+  document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
+}
+
 // ─────────────────── NAVIGATION ───────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2081,6 +2155,8 @@ function buildSheet(type) {
     html += _containerHtml(id, slot);
   });
   sheet.innerHTML = html;
+  // Initialize undo history for this sheet session
+  _undoHistory = [_captureState()]; _undoIdx = 0; _syncUndoBtns();
 
   // Attach click handlers
   containers.forEach(cont => {
@@ -2522,6 +2598,7 @@ function deselectGroup() {
 
 function createGroup() {
   if (_multiSelectedIds.length < 2) return;
+  _pushUndoState();
   _groupCounter++;
   const g = { id: 'group_' + _groupCounter, label: 'Group ' + _groupCounter, childIds: [..._multiSelectedIds] };
   groups.push(g);
@@ -2533,6 +2610,7 @@ function createGroup() {
 
 function ungroup(groupId) {
   const group = groups.find(g => g.id === groupId); if (!group) return;
+  _pushUndoState();
   group.childIds.forEach(id => { const el = elements.find(e => e.id === id); if (el) delete el.groupId; });
   groups = groups.filter(g => g.id !== groupId);
   deselectGroup();
@@ -2558,7 +2636,7 @@ function startGroupDrag(e, groupId) {
     });
     _renderGroupSelectionUI(group);
   };
-  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  const onEnd = () => { _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove);
   window.addEventListener('pointerup', onEnd);
 }
@@ -2672,6 +2750,7 @@ function renderContainerBar(cont) {
 function pasteToContainer(contId) {
   if (!window._clipboard) return;
   const cont = containers.find(c => c.id === contId); if (!cont) return;
+  _pushUndoState();
   const src = window._clipboard;
   elId++;
   const newEl = { ...src, id: `el${elId}`,
@@ -2766,6 +2845,7 @@ function copyContainerChild(contId) {
 function duplicateToAll(sourceContId) {
   const source = containers.find(c => c.id === sourceContId);
   if (!source || !source.childElId) return;
+  _pushUndoState();
   const srcEl = elements.find(e => e.id === source.childElId);
   if (!srcEl) return;
 
@@ -2920,6 +3000,7 @@ function placeUploadedImage(src, thumbEl) {
     elements.push(el);
     document.getElementById('canvas-world').appendChild(makeElDiv(el));
     _placeElInContainer(el);
+    _pushUndoState();
     selectEl(id);
     if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
   }, 180);
@@ -2946,6 +3027,7 @@ function handleFileSelect(e) {
     elements.push(el);
     document.getElementById('canvas-world').appendChild(makeElDiv(el));
     _placeElInContainer(el);
+    _pushUndoState();
     selectEl(id);
     if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
   };
@@ -3177,6 +3259,7 @@ function addShapeToCanvas(shapeKey) {
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
   _placeElInContainer(el);
+  _pushUndoState();
   selectEl(id);
   if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
 }
@@ -3189,6 +3272,7 @@ function addShapeFromSheet(icon, label) {
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
   _placeElInContainer(el);
+  _pushUndoState();
   selectEl(id);
 }
 function addText() {
@@ -3199,6 +3283,7 @@ function addText() {
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
   _placeElInContainer(el);
+  _pushUndoState();
   selectEl(id);
   if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
 }
@@ -3457,7 +3542,7 @@ function startDrag(e, id) {
     _updateSnapGuides(snaps);
     updateTransformUI(el);
   };
-  const onEnd = () => { _hideSnapGuides(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  const onEnd = () => { _hideSnapGuides(); _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
 }
 function startResize(e, id, corner) {
@@ -3473,7 +3558,7 @@ function startResize(e, id, corner) {
     else if (corner==='tl') { const nw=Math.max(min,ow-dx),nh=Math.max(min,oh-dy); el.x=ox+(ow-nw); el.y=oy+(oh-nh); el.w=nw; el.h=nh; }
     updateTransformUI(el);
   };
-  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  const onEnd = () => { _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
 }
 function startRotate(e, id) {
@@ -3483,7 +3568,7 @@ function startRotate(e, id) {
   const angle = (ex,ey) => Math.atan2(ey-cy, ex-cx)*180/Math.PI;
   const sa=angle(e.clientX,e.clientY), sr=el.rot;
   const onMove = e => { el.rot=sr+(angle(e.clientX,e.clientY)-sa); document.getElementById(el.id).style.transform=`rotate(${el.rot}deg)`; };
-  const onEnd = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  const onEnd = () => { _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
 }
 
@@ -4035,17 +4120,22 @@ function copyAllContainers() {
 
 // ─────────────────── DELETE / DUPLICATE ───────────────────
 function deleteEl(id) {
+  _pushUndoState();
   document.getElementById(id)?.remove();
   const el = elements.find(e => e.id === id);
   if (el && el.containerId) {
     const cont = containers.find(c => c.id === el.containerId);
     if (cont) { cont.childElId = null; renderContainerBar(cont); }
   }
+  if (el?.groupId) {
+    const g = groups.find(g => g.id === el.groupId);
+    if (g) { g.childIds = g.childIds.filter(i => i !== id); if (!g.childIds.length) groups = groups.filter(x => x.id !== g.id); }
+  }
   elements = elements.filter(e => e.id !== id);
   deselectAll();
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
 }
-function duplicateEl(id) { const el=elements.find(e=>e.id===id); if(!el) return; const nid=`el${elId++}`; const nel={...el,id:nid,x:el.x+20,y:el.y+20}; elements.push(nel); document.getElementById('canvas-world').appendChild(makeElDiv(nel)); selectEl(nid); }
+function duplicateEl(id) { const el=elements.find(e=>e.id===id); if(!el) return; const nid=`el${elId++}`; const nel={...el,id:nid,x:el.x+20,y:el.y+20,groupId:undefined}; elements.push(nel); document.getElementById('canvas-world').appendChild(makeElDiv(nel)); _pushUndoState(); selectEl(nid); }
 
 // ─────────────────── DESELECT ON CANVAS TAP ───────────────────
 document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
@@ -4507,6 +4597,7 @@ function finalizeUpload() {
   const el={id,isImage:true,imgSrc,label:'Image',x:60,y:80,w:160,h:160,rot:0};
   elements.push(el);
   document.getElementById('canvas-world').appendChild(makeElDiv(el));
+  _pushUndoState();
   selectEl(id);
   _showUploadedToast();
 }
@@ -4682,8 +4773,8 @@ function _applyFillColor(hex) {
   el.fillColor = hex; el.fillPatternCss = null; el.fillPatternId = null; el.fillImgSrc = null;
   _refreshElVisual(el);
   document.querySelectorAll('.fill-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === hex));
-  // update edit bar fill thumb
   _refreshEditBarFillThumb(el);
+  _pushUndoDebounced();
 }
 
 function _applyFillPattern(id, tileEl) {
@@ -4693,6 +4784,7 @@ function _applyFillPattern(id, tileEl) {
   _refreshElVisual(el);
   document.querySelectorAll('.fill-pattern-tile').forEach(t => t.classList.toggle('selected', t.dataset.id === id));
   _refreshEditBarFillThumb(el);
+  _pushUndoState();
 }
 
 function _applyFillPhoto(src) {
@@ -4703,6 +4795,7 @@ function _applyFillPhoto(src) {
     const img = t.querySelector('img'); t.classList.toggle('selected', !!img && img.getAttribute('src')===src);
   });
   _refreshEditBarFillThumb(el);
+  _pushUndoState();
 }
 
 function _refreshElVisual(el) {
@@ -4742,6 +4835,7 @@ function handleFillPhotoUpload(e) {
 
 function flipEl(id) {
   const el = elements.find(e => e.id === id); if (!el) return;
+  _pushUndoState();
   el.flipH = !el.flipH;
   const div = document.getElementById(id); if (!div) return;
   div.style.transform = `rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`;
