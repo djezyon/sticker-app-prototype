@@ -323,12 +323,12 @@ body {
 .el-wrapper:active { cursor: grabbing; }
 .el-content { pointer-events: none; user-select: none; }
 .transform-ui { position: absolute; pointer-events: none; z-index: 55; }
-.t-border { position: absolute; border: 2px solid var(--green); pointer-events: none; }
-.t-size-label { position: absolute; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 100px; white-space: nowrap; pointer-events: none; }
-.t-rotate-btn { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1.5px solid var(--gray-300); box-shadow: 0 2px 10px rgba(0,0,0,0.14); display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: all; touch-action: none; }
-.t-corner { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid var(--green); pointer-events: all; touch-action: none; cursor: pointer; }
-.t-side-h { position: absolute; width: 40px; height: 16px; border-radius: 100px; background: #fff; border: 2px solid var(--green); pointer-events: all; touch-action: none; cursor: ns-resize; }
-.t-side-v { position: absolute; width: 16px; height: 40px; border-radius: 100px; background: #fff; border: 2px solid var(--green); pointer-events: all; touch-action: none; cursor: ew-resize; }
+.t-border { position: absolute; border: 2px solid #31c498; pointer-events: none; }
+.t-size-label { position: absolute; background: #00a977; color: #fff; font-size: 12px; font-weight: 600; line-height: 16px; padding: 4px 12px; border-radius: 4px; white-space: nowrap; pointer-events: none; }
+.t-rotate-btn { position: absolute; width: 32px; height: 32px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(18,18,18,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: all; touch-action: none; z-index: 75; }
+.t-corner { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid #31c498; box-shadow: 0 0 24px rgba(18,18,18,0.16); pointer-events: all; touch-action: none; cursor: pointer; }
+.t-side-h { position: absolute; width: 32px; height: 16px; border-radius: 100px; background: #fff; border: 2px solid #31c498; box-shadow: 0 0 2px rgba(0,0,0,0.25); pointer-events: all; touch-action: none; cursor: ns-resize; }
+.t-side-v { position: absolute; width: 16px; height: 32px; border-radius: 100px; background: #fff; border: 2px solid #31c498; box-shadow: 0 0 2px rgba(0,0,0,0.25); pointer-events: all; touch-action: none; cursor: ew-resize; }
 .el-actions { position: absolute; z-index: 70; background: #fff; border-radius: 16px; padding: 12px 14px; display: flex; gap: 6px; box-shadow: 0 4px 24px rgba(0,0,0,0.16); pointer-events: all; }
 .el-action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 12px; cursor: pointer; border-radius: 10px; min-width: 56px; }
 .el-action-btn:active { background: var(--gray-50); }
@@ -448,6 +448,12 @@ body {
 .toggle.off { background: var(--gray-300); }
 .toggle.off::after { right: auto; left: 2px; }
 .settings-value { color: var(--green); font-weight: 500; }
+.settings-row-label { display: flex; align-items: center; gap: 6px; }
+.settings-info-btn { width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.settings-info-btn:active { background: rgba(0,0,0,0.12); }
+.cut-guide-tip { position: absolute; left: 20px; right: 20px; background: white; border-radius: 8px; padding: 10px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.18); z-index: 20; border: 1px solid var(--gray-100); display: none; }
+.cut-guide-tip.visible { display: block; }
+.cut-guide-tip-text { font-family: var(--font-body); font-size: 13px; color: var(--gray-700); line-height: 18px; }
 
 /* ── STEP 2 v2 — PAPER TYPE SELECTION ── */
 .step2-pull-tab { display: flex; align-items: center; justify-content: center; padding: 12px 20px 0; flex-shrink: 0; }
@@ -687,10 +693,20 @@ body {
 .sticker-container.dimmed { opacity:0.18; pointer-events:none; }
 .sticker-container.focus-dimmed { opacity:0.5; pointer-events:none; }
 .snap-guide { position:absolute; pointer-events:none; z-index:200; display:none; }
-.snap-guide-v { top:0; width:0; height:960px; border-left:1.5px dashed #FF3399; }
-.snap-guide-h { left:0; height:0; width:680px; border-top:1.5px dashed #FF3399; }
+.snap-guide-v { top:0; width:0; height:960px; border-left-style:dashed; border-left-color:#FF3399; }
+.snap-guide-h { left:0; height:0; width:680px; border-top-style:dashed; border-top-color:#FF3399; }
 .sticker-container-ring { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:visible; }
-.sticker-container-content { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.cut-guide-off .sticker-container-ring circle:last-of-type,
+.cut-guide-off .sticker-container-ring rect:last-of-type { display:none; }
+.sticker-container-content { position:absolute; inset:0; z-index:1; pointer-events:none; transition:background 0.12s; }
+
+/* Drag drop-target highlight — outer grey ring → blue-400 1.75px; dashed line unchanged */
+.sticker-container.cont-drop-hover .sticker-container-ring circle:first-of-type,
+.sticker-container.cont-drop-hover .sticker-container-ring rect:first-of-type { stroke: #0C80E4; stroke-width: 1.75; }
+/* Interior floods with transparent blue — border-radius clips to shape (no gap) */
+.sticker-container.cont-drop-hover .sticker-container-content { background: rgba(12,128,228,0.14); }
+/* Sheet-level hover — blue-400 1.75px border + transparent blue fill */
+#sticker-sheet.sheet-drop-hover { background: rgba(12,128,228,0.09) !important; outline: 1.75px solid #0C80E4; outline-offset: -1px; }
 
 /* ── SHAPES OVERLAY (bottom sheet, matches images sheet) ── */
 .phone.shapes-sheet-open .screen.active { transform:scale(0.92) translateY(-8px); border-radius:20px; overflow:hidden; }
@@ -729,8 +745,8 @@ body {
 /* Edit tool disabled state */
 .edit-tool.disabled { opacity:0.35; pointer-events:none; }
 
-/* Canvas world zoom transition */
-#canvas-world { transform-origin:0 0; transition:transform 0.28s cubic-bezier(.32,.72,0,1); }
+/* Canvas world zoom transition — set programmatically so pinch stays snappy */
+#canvas-world { transform-origin:0 0; }
 
 /* ── ACTIVE TOOL + INLINE PANEL ── */
 .edit-tool.active { background:rgba(0,133,93,0.07); border-radius:10px; }
@@ -1841,6 +1857,18 @@ body {
       <span class="settings-heading">Canvas Settings</span>
     </div>
     <div class="settings-row"><span>Grid</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+    <div class="settings-row" style="position:relative;flex-wrap:wrap;gap:0;">
+      <div class="settings-row-label">
+        <span>Cut Guide</span>
+        <div class="settings-info-btn" onclick="toggleCutGuideTip(event)">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="#595959" stroke-width="1"/><rect x="6" y="5.5" width="1" height="4.5" rx="0.5" fill="#595959"/><circle cx="6.5" cy="3.8" r="0.65" fill="#595959"/></svg>
+        </div>
+      </div>
+      <div class="toggle" id="cut-guide-toggle" onclick="toggleCutGuide()"></div>
+      <div class="cut-guide-tip" id="cut-guide-tip" style="top:54px;">
+        <div class="cut-guide-tip-text">Blue dashed line marking the safe image area — keep important content inside it to ensure it's fully included within the cut line.</div>
+      </div>
+    </div>
     <div class="settings-row"><span>Light Mode</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
     <div class="settings-row"><span>Operation Types</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
     <div class="settings-row"><span>Snap to Align</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
@@ -1881,6 +1909,7 @@ let selectedSheetType = null; // 'blank' | 'circles' | 'rectangles' | 'squares'
 let elements = [], elId = 0, selectedId = null, fabOpen = false;
 let canvasReady = false;
 let containers = [], selectedContainerId = null;
+let _cutGuideEnabled = true;
 let _focusMode = null, _focusScale = 1; // _focusMode: { type:'container'|'group'|'element', id, label, parent:null|{type,id,label} }
 let groups = [], _groupCounter = 0;
 let _selectedGroupId = null;
@@ -2209,38 +2238,32 @@ function _containerHtml(id, slot) {
 // ─────────────────── CONTAINER SELECTION ───────────────────
 function selectContainer(id) {
   if (selectedContainerId === id) return;
-  deselectContainer(false);
+  deselectAll();            // clear any active element selection first
+  deselectContainer(false); // clear previous container selection
   selectedContainerId = id;
   const cont = containers.find(c => c.id === id);
   if (!cont) return;
 
-  // Dim all other containers
-  containers.forEach(c => {
-    const el = document.getElementById(c.id);
-    if (el) el.classList.toggle('dimmed', c.id !== id);
-  });
-
-  // Zoom to this container
-  zoomToContainer(cont);
-
-  // Show the container action bar
-  renderContainerBar(cont);
-
-  // If there's a child element, select it
   if (cont.childElId) {
+    // Container has a child — select the element directly, no container selection indicator
     selectedId = cont.childElId;
-    renderEditBar(elements.find(e => e.id === cont.childElId));
+    const el = elements.find(e => e.id === cont.childElId);
+    if (el) {
+      renderTransformUI(el);
+      renderEditBar(el);
+    }
+  } else {
+    // Empty container — show cut-line selection for placement targeting
+    _renderContSelUI(cont);
+    renderContainerBar(cont);
   }
 }
 
 function deselectContainer(resetZoom = true) {
   if (!selectedContainerId) return;
   selectedContainerId = null;
-  containers.forEach(c => {
-    const el = document.getElementById(c.id);
-    if (el) { el.classList.remove('dimmed'); el.classList.remove('cont-selected'); }
-  });
-  if (resetZoom) zoomToContainer(null);
+  document.getElementById('__cont_sel_ui')?.remove();
+  // Never auto-zoom on deselect — user controls zoom via pinch or double-tap
   const bar = document.getElementById('edit-tools-row');
   if (bar) bar.innerHTML = '';
   document.getElementById('bottom-edit-bar').classList.remove('visible');
@@ -2248,12 +2271,43 @@ function deselectContainer(resetZoom = true) {
   deselectSheet();
 }
 
+// Scale-invariant selection indicator for cut containers
+function _renderContSelUI(cont) {
+  document.getElementById('__cont_sel_ui')?.remove();
+  if (!cont) return;
+  const world = document.getElementById('canvas-world');
+  const s = _getWorldScale();
+  const inv = 1 / s;
+  const sW = (cont.w / 72).toFixed(1);
+  const sH = (cont.h / 72).toFixed(1);
+  const ui = document.createElement('div');
+  ui.id = '__cont_sel_ui';
+  ui.style.cssText = `position:absolute;left:${SHEET_L + cont.x}px;top:${SHEET_T + cont.y}px;width:${cont.w}px;height:${cont.h}px;pointer-events:none;z-index:10;box-shadow:0 0 0 ${2*inv}px #31c498;border-radius:2px;`;
+  const lbl = document.createElement('div');
+  lbl.id = '__cont_sel_lbl';
+  lbl.textContent = `${sW} in × ${sH} in`;
+  lbl.style.cssText = `position:absolute;bottom:calc(100% + ${8*inv}px);left:50%;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;background:#00a977;color:#fff;font-size:12px;font-weight:600;line-height:16px;padding:4px 12px;border-radius:4px;white-space:nowrap;`;
+  ui.appendChild(lbl);
+  world.appendChild(ui);
+}
+
 function _updateStaticUI(scale) {
+  const inv = scale > 1 ? `scale(${1 / scale})` : '';
   const btn = document.getElementById('canvas-bg-btn');
-  if (btn) {
-    btn.style.transformOrigin = 'left top';
-    btn.style.transform = scale > 1 ? `scale(${1 / scale})` : '';
+  if (btn) { btn.style.transformOrigin = 'left top'; btn.style.transform = inv; }
+  // Keep container selection overlay scale-invariant
+  const contSel = document.getElementById('__cont_sel_ui');
+  if (contSel) {
+    const inv = 1 / scale;
+    contSel.style.boxShadow = `0 0 0 ${2 * inv}px #31c498`;
+    const lbl = document.getElementById('__cont_sel_lbl');
+    if (lbl) {
+      lbl.style.bottom = `calc(100% + ${8 * inv}px)`;
+      lbl.style.transform = `translateX(-50%) scale(${inv})`;
+    }
   }
+  // Keep transform handles scale-invariant during pinch zoom
+  _scaleUI();
 }
 
 function zoomToFit(animate) {
@@ -2264,8 +2318,8 @@ function zoomToFit(animate) {
   const vpH = scroll.clientHeight || 520;
   const scale = Math.min((vpW - 40) / SHEET_W, (vpH - 40) / SHEET_H, 1.0);
   if (animate !== false) {
-    world.style.transition = 'transform 0.45s cubic-bezier(0.25,0.1,0.25,1), width 0.45s cubic-bezier(0.25,0.1,0.25,1), height 0.45s cubic-bezier(0.25,0.1,0.25,1)';
-    setTimeout(() => { world.style.transition = ''; }, 500);
+    world.style.transition = 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), width 0.55s cubic-bezier(0.4, 0, 0.2, 1), height 0.55s cubic-bezier(0.4, 0, 0.2, 1)';
+    setTimeout(() => { world.style.transition = ''; }, 600);
   }
   _sizeWorldForZoom(scale);
   world.style.transformOrigin = '0 0';
@@ -2292,6 +2346,33 @@ function _sizeWorldForZoom(scale) {
   }
 }
 
+// Smooth animated zoom — ease-in-out used by all focus enter/exit
+function _animateZoom(scale, worldCX, worldCY) {
+  const world  = document.getElementById('canvas-world');
+  const scroll = document.getElementById('canvas-scroll');
+  const vpW = scroll.clientWidth  || 368;
+  const vpH = scroll.clientHeight || 520;
+  const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
+
+  // Expand layout dimensions INSTANTLY (no transition) so the scroll container
+  // knows the full extent before scrollTo — avoids scroll clamping mid-animation.
+  _sizeWorldForZoom(scale);
+  void scroll.scrollHeight; // force reflow so scroll extent is updated now
+
+  // Animate only the visual transform, not the layout box
+  world.style.transition = `transform 0.55s ${ease}`;
+  world.style.transformOrigin = '0 0';
+  world.style.transform = `scale(${scale})`;
+  _updateStaticUI(scale);
+
+  scroll.scrollTo({
+    left: Math.max(0, worldCX * scale - vpW / 2),
+    top:  Math.max(0, worldCY * scale - vpH / 2),
+    behavior: 'smooth'
+  });
+  setTimeout(() => { world.style.transition = ''; }, 600);
+}
+
 function zoomToContainer(cont) {
   const world = document.getElementById('canvas-world');
   const scroll = document.getElementById('canvas-scroll');
@@ -2304,24 +2385,25 @@ function zoomToContainer(cont) {
     return;
   }
 
-  // Target: container fills 72% of viewport height
+  // Target: container fills 80% of whichever viewport axis is tighter
   const vpH = scroll.clientHeight || 520;
-  const vpW = scroll.clientWidth || 390;
-  const targetScale = Math.min((vpH * 0.72) / cont.h, (vpW * 0.85) / cont.w, 2.5);
+  const vpW = scroll.clientWidth  || 390;
+  const targetScale = Math.min((vpW * 0.80) / cont.w, (vpH * 0.80) / cont.h, 2.5);
 
   // Container center in world coords
   const worldContCX = SHEET_L + cont.x + cont.w / 2;
   const worldContCY = SHEET_T + cont.y + cont.h / 2;
 
-  // Expand canvas-world layout box so scroll range accommodates full scaled content
+  // Expand layout instantly so scrollTo can reach the full extent immediately
   _sizeWorldForZoom(targetScale);
+  void scroll.scrollHeight;
   world.style.transformOrigin = '0 0';
   world.style.transform = `scale(${targetScale})`;
   _updateStaticUI(targetScale);
 
   scroll.scrollTo({
-    left: worldContCX * targetScale - vpW / 2,
-    top: worldContCY * targetScale - vpH / 2,
+    left: Math.max(0, worldContCX * targetScale - vpW / 2),
+    top:  Math.max(0, worldContCY * targetScale - vpH / 2),
     behavior: 'smooth'
   });
 }
@@ -2354,17 +2436,14 @@ function enterFocusMode(contId) {
   const vpW = scroll.clientWidth  || 368;
   const vpH = scroll.clientHeight || 520;
 
-  // Scale: container fills 80% of viewport width
-  const scale = Math.min((vpW * 0.80) / cont.w, (vpH * 0.82) / cont.h, 4);
+  // Scale: container fills 80% of whichever viewport axis is the tighter constraint
+  const scale = Math.min((vpW * 0.80) / cont.w, (vpH * 0.80) / cont.h, 4);
   _focusScale = scale;
 
   const worldCX = SHEET_L + cont.x + cont.w / 2;
   const worldCY = SHEET_T + cont.y + cont.h / 2;
 
-  _sizeWorldForZoom(scale);
-  world.style.transformOrigin = '0 0';
-  world.style.transform = `scale(${scale})`;
-  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
+  _animateZoom(scale, worldCX, worldCY);
 
   deselectSheet();
   containers.forEach(c => _syncRingScale(c, scale));
@@ -2372,8 +2451,6 @@ function enterFocusMode(contId) {
   const focSvg = document.getElementById(contId)?.querySelector('.sticker-container-ring');
   const outerNode = focSvg?.querySelector('circle, rect');
   if (outerNode) outerNode.setAttribute('stroke-width', (1.25 / scale).toFixed(3));
-
-  _updateStaticUI(scale);
 
   const vignette = document.getElementById('focus-vignette');
   if (vignette) {
@@ -2383,6 +2460,26 @@ function enterFocusMode(contId) {
     vignette.style.webkitMaskImage = mask;
     vignette.style.display = 'block';
   }
+
+  // Canvas-grey ring mask: sits at z-index 0 behind all containers, covers the
+  // sheet-white gap (outerInset strip) outside the cut line only in focus mode.
+  const sheet = document.getElementById('sticker-sheet');
+  let fMask = document.getElementById('_focus_ring_mask');
+  if (!fMask) {
+    fMask = document.createElement('div');
+    fMask.id = '_focus_ring_mask';
+    fMask.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0;background:#e9eaed;';
+    sheet.appendChild(fMask);
+  }
+  const outerInset = 3;
+  const fCx = cont.x + cont.w / 2, fCy = cont.y + cont.h / 2;
+  const ro = cont.shape === 'circle' ? cont.w / 2 - outerInset : 0;
+  const fMaskVal = cont.shape === 'circle'
+    ? `radial-gradient(circle at ${fCx}px ${fCy}px, transparent ${ro - 0.5}px, black ${ro + 0.5}px)`
+    : `inset(${cont.y + outerInset}px ${SHEET_W - cont.x - cont.w + outerInset}px ${SHEET_H - cont.y - cont.h + outerInset}px ${cont.x + outerInset}px round ${cont.shape === 'rect' ? 8 : 10}px)`;
+  fMask.style.maskImage = fMaskVal;
+  fMask.style.webkitMaskImage = fMaskVal;
+
   containers.forEach(c => {
     const el = document.getElementById(c.id); if (!el) return;
     el.classList.toggle('focus-dimmed', c.id !== contId);
@@ -2430,6 +2527,7 @@ function exitAllFocus() {
   containers.forEach(c => _syncRingScale(c, 1));
   const vignette = document.getElementById('focus-vignette');
   if (vignette) vignette.style.display = 'none';
+  document.getElementById('_focus_ring_mask')?.remove();
   document.getElementById('focus-breadcrumb').classList.remove('visible');
   zoomToFit(true);
 }
@@ -2443,6 +2541,7 @@ function exitCurrentFocus() {
   containers.forEach(c => _syncRingScale(c, 1));
   const vignette = document.getElementById('focus-vignette');
   if (vignette) vignette.style.display = 'none';
+  document.getElementById('_focus_ring_mask')?.remove();
   if (parent) {
     if (parent.type === 'group') enterGroupFocus(parent.id);
     else enterFocusMode(parent.id);
@@ -2483,12 +2582,7 @@ function enterGroupFocus(groupId) {
   // el.x/y are canvas-world coords (SHEET_L offset already included)
   const worldCX = bbox.x + bbox.w / 2;
   const worldCY = bbox.y + bbox.h / 2;
-  _sizeWorldForZoom(scale);
-  world.style.transformOrigin = '0 0';
-  world.style.transform = `scale(${scale})`;
-  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
-
-  _updateStaticUI(scale);
+  _animateZoom(scale, worldCX, worldCY);
   containers.forEach(c => _syncRingScale(c, scale));
 
   // Dim elements not in group and all containers
@@ -2533,12 +2627,7 @@ function enterElementFocus(elId) {
   // el.x/y are canvas-world coords (SHEET_L/T offset already included)
   const worldCX = el.x + el.w / 2;
   const worldCY = el.y + el.h / 2;
-  _sizeWorldForZoom(scale);
-  world.style.transformOrigin = '0 0';
-  world.style.transform = `scale(${scale})`;
-  scroll.scrollTo({ left: worldCX * scale - vpW / 2, top: worldCY * scale - vpH / 2, behavior: 'smooth' });
-
-  _updateStaticUI(scale);
+  _animateZoom(scale, worldCX, worldCY);
   containers.forEach(c => _syncRingScale(c, scale));
 
   // Dim all other elements and containers
@@ -2761,7 +2850,7 @@ function pasteToContainer(contId) {
   if (!cont.childElId) cont.childElId = newEl.id;
   elements.push(newEl);
   document.getElementById('canvas-world').appendChild(makeElDiv(newEl));
-  renderContainerBar(cont);
+  selectEl(newEl.id);
 }
 
 function openContainerColorPicker(contId) {
@@ -2812,8 +2901,12 @@ function _applyContainmentStyle(el, cont) {
   const domEl = document.getElementById('el_' + el.id);
   if (!domEl) return;
   if (cont.containment === 'clipped') {
+    // Clip center must be the container's center in the element's local coord space,
+    // not a fixed (cont.w/2, cont.h/2) which assumes el origin == container origin.
+    const clipCX = SHEET_L + cont.x + cont.w / 2 - el.x;
+    const clipCY = SHEET_T + cont.y + cont.h / 2 - el.y;
     const clipVal = cont.shape === 'circle'
-      ? `circle(${(cont.w / 2 - 9)}px at ${cont.w/2}px ${cont.h/2}px)`
+      ? `circle(${cont.w / 2 - 9}px at ${clipCX}px ${clipCY}px)`
       : `inset(0 round ${cont.shape === 'rect' ? 8 : 10}px)`;
     domEl.style.clipPath = clipVal;
     domEl.style.overflow = 'hidden';
@@ -3002,7 +3095,6 @@ function placeUploadedImage(src, thumbEl) {
     _placeElInContainer(el);
     _pushUndoState();
     selectEl(id);
-    if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
   }, 180);
 }
 
@@ -3029,7 +3121,6 @@ function handleFileSelect(e) {
     _placeElInContainer(el);
     _pushUndoState();
     selectEl(id);
-    if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
   };
   reader.readAsDataURL(file);
   e.target.value = ''; // reset so same file can be re-selected
@@ -3261,7 +3352,6 @@ function addShapeToCanvas(shapeKey) {
   _placeElInContainer(el);
   _pushUndoState();
   selectEl(id);
-  if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
 }
 function addShapeFromSheet(icon, label) {
   closeContentSheet();
@@ -3285,7 +3375,6 @@ function addText() {
   _placeElInContainer(el);
   _pushUndoState();
   selectEl(id);
-  if (el.containerId) renderContainerBar(containers.find(c => c.id === el.containerId));
 }
 function addElToCanvas(el) {
   elements.push(el);
@@ -3318,7 +3407,15 @@ function makeElDiv(el) {
     // Double-tap → focus mode (takes priority over everything)
     if (_lastDoubleTapId === tapId && now - _lastDoubleTapTime < 320) {
       _lastDoubleTapId = null;
-      if (el.containerId) { enterFocusMode(el.containerId); return; }
+      if (el.containerId) {
+        // Already focused on this container → drill into element focus
+        if (_focusMode?.type === 'container' && _focusMode.id === el.containerId) {
+          enterElementFocus(el.id);
+        } else {
+          enterFocusMode(el.containerId);
+        }
+        return;
+      }
       if (el.groupId && !inGroupFocus) { enterGroupFocus(el.groupId); return; }
       if (el.groupId && inGroupFocus)  { enterElementFocus(el.id);    return; }
       enterElementFocus(el.id); // standalone element
@@ -3359,6 +3456,12 @@ function makeElDiv(el) {
 // ─────────────────── SELECT / DESELECT ───────────────────
 function selectEl(id) {
   deselectAll();
+  // Clear container selection indicator — only one thing selected at a time.
+  // Does NOT call deselectContainer() to avoid exiting focus mode.
+  if (selectedContainerId) {
+    selectedContainerId = null;
+    document.getElementById('__cont_sel_ui')?.remove();
+  }
   selectedId = id;
   const el = elements.find(e => e.id === id);
   if (!el) return;
@@ -3371,6 +3474,7 @@ function deselectAll() {
   deselectGroup();
   document.getElementById('__transform_ui')?.remove();
   document.getElementById('__el_actions')?.remove();
+  document.getElementById('__rotate_btn')?.remove();
   document.getElementById('bottom-edit-bar').classList.remove('visible');
   closeInlinePanel();
   ['arrange-sheet','flip-sheet','effects-sheet'].forEach(id => document.getElementById(id)?.classList.remove('visible'));
@@ -3380,6 +3484,7 @@ function deselectAll() {
 function renderTransformUI(el) {
   document.getElementById('__transform_ui')?.remove();
   document.getElementById('__el_actions')?.remove();
+  document.getElementById('__rotate_btn')?.remove();
   const world = document.getElementById('canvas-world');
   const pad = 2;
   const sW = (el.w/72).toFixed(2), sH = (el.h/72).toFixed(2);
@@ -3389,10 +3494,7 @@ function renderTransformUI(el) {
   ui.style.cssText = `left:${el.x-pad}px;top:${el.y-pad}px;width:${el.w+pad*2}px;height:${el.h+pad*2}px;`;
   ui.innerHTML = `
     <div class="t-border" style="inset:0;"></div>
-    <div class="t-size-label" style="top:-78px;left:50%;transform:translateX(-50%);">${sW} in × ${sH} in</div>
-    <div class="t-rotate-btn" id="rotate-handle" style="top:-48px;left:50%;transform:translateX(-50%);">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 102 8" stroke="#595959" stroke-width="1.6" stroke-linecap="round"/><path d="M13 4v4h-4" stroke="#595959" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
+    <div class="t-size-label" style="left:50%;transform:translateX(-50%);">${sW} in × ${sH} in</div>
     <div class="t-corner" style="top:0;left:0;transform:translate(-50%,-50%);cursor:nw-resize;" data-h="tl"></div>
     <div class="t-corner" style="top:0;right:0;left:auto;transform:translate(50%,-50%);cursor:ne-resize;" data-h="tr"></div>
     <div class="t-corner" style="bottom:0;top:auto;left:0;transform:translate(-50%,50%);cursor:sw-resize;" data-h="bl"></div>
@@ -3403,11 +3505,11 @@ function renderTransformUI(el) {
     <div class="t-side-v" style="right:0;left:auto;top:50%;transform:translate(50%,-50%);"></div>
   `;
   world.appendChild(ui);
-  document.getElementById('rotate-handle')?.addEventListener('pointerdown', e => { e.stopPropagation(); startRotate(e, el.id); });
   ui.querySelectorAll('.t-corner').forEach(h => h.addEventListener('pointerdown', e => { e.stopPropagation(); startResize(e, el.id, h.dataset.h); }));
 
   const actions = document.createElement('div');
   actions.id = '__el_actions'; actions.className = 'el-actions';
+  actions.dataset.elId = el.id;
   actions.style.cssText = `top:${el.y+el.h+16}px;left:${el.x+el.w/2}px;transform:translateX(-50%);`;
   actions.innerHTML = `
     <div class="el-action-btn" onclick="deleteEl('${el.id}')">
@@ -3427,26 +3529,128 @@ function renderTransformUI(el) {
     </div>` : ''}
   `;
   world.appendChild(actions);
+  _renderRotateBtn(el);
   _scaleUI();
+}
+
+// ─────────────────── ROTATE BUTTON ───────────────────
+// Default: top-center, 16px screen above selection top.
+// When batman belt (__el_actions) is visible: ONLY above-selection positions
+// so the rotate handle never overlaps the popup below.
+function _rotatePos(el) {
+  const scroll = document.getElementById('canvas-scroll');
+  const s = _getWorldScale();
+  const inv = 1 / s;
+  const vpW = scroll.clientWidth || 360;
+  const vpH = scroll.clientHeight || 520;
+  const beltClear = 72;
+  const hasActions = !!document.getElementById('__el_actions');
+
+  // Viewport-bounds check only (no getBoundingClientRect — unreliable before _scaleUI)
+  function inViewport(cx, cy) {
+    const sx = cx * s - scroll.scrollLeft;
+    const sy = cy * s - scroll.scrollTop;
+    return sx - 16 >= 4 && sx + 16 <= vpW - 4 &&
+           sy - 16 >= 4 && sy + 16 <= vpH - beltClear - 4;
+  }
+
+  const midX = el.x + el.w / 2;
+  // Constant 16px screen gap: cy*S ± 16 = el.y*S ∓ 16 → cy = el.y ∓ 32*inv
+  const tcY = el.y - 32 * inv;          // top-center
+  const bcY = el.y + el.h + 32 * inv;   // bottom-center
+  const C   = 32 * inv;
+
+  if (hasActions) {
+    // Batman belt is below the selection — keep rotate strictly above
+    if (inViewport(midX, tcY)) return { cx: midX, cy: tcY };
+    // Top corners as fallback
+    const topCorners = [
+      { cx: el.x + el.w + C, cy: el.y - C },
+      { cx: el.x - C,        cy: el.y - C },
+    ];
+    for (const c of topCorners) if (inViewport(c.cx, c.cy)) return c;
+    // Force top-center even if clipped — still better than overlapping batman belt
+    return { cx: midX, cy: tcY };
+  }
+
+  // No actions popup — prefer top, fall back to bottom, then corners
+  if (inViewport(midX, tcY)) return { cx: midX, cy: tcY };
+  if (inViewport(midX, bcY)) return { cx: midX, cy: bcY };
+  const corners = [
+    { cx: el.x + el.w + C, cy: el.y + el.h + C },
+    { cx: el.x - C,        cy: el.y + el.h + C },
+    { cx: el.x + el.w + C, cy: el.y - C },
+    { cx: el.x - C,        cy: el.y - C },
+  ];
+  for (const c of corners) if (inViewport(c.cx, c.cy)) return c;
+  return { cx: midX, cy: tcY }; // final fallback: top-center
+}
+
+function _renderRotateBtn(el) {
+  document.getElementById('__rotate_btn')?.remove();
+  const world = document.getElementById('canvas-world');
+  if (!world) return;
+  const s = _getWorldScale();
+  const inv = 1 / s;
+  const { cx, cy } = _rotatePos(el);
+  const btn = document.createElement('div');
+  btn.id = '__rotate_btn';
+  btn.dataset.elId = el.id;
+  btn.dataset.above = cy < el.y ? '1' : '0';
+  btn.className = 't-rotate-btn';
+  btn.style.cssText = `left:${cx - 16}px;top:${cy - 16}px;transform-origin:center center;transform:scale(${inv});`;
+  btn.innerHTML = `<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.31734 5.74716H0.625V1.42755" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.30579 4.92397C2.01099 3.39351 3.2159 2.1501 4.72133 1.39942C6.22676 0.648737 7.94257 0.435858 9.58515 0.795592C11.2277 1.15533 12.6987 2.06633 13.7549 3.37804C14.462 4.25607 14.9548 5.27841 15.2048 6.3641" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.2911 10.4785H15.3937V15.0038" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.7136 11.0941C14.0083 12.6245 12.8034 13.8679 11.298 14.6186C9.79258 15.3693 8.07677 15.5826 6.43419 15.2228C4.79162 14.8631 3.32063 13.9521 2.26439 12.6404C1.55742 11.7624 1.0646 10.74 0.814575 9.6543" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  btn.addEventListener('pointerdown', e => { e.stopPropagation(); startRotate(e, el.id); });
+  world.appendChild(btn);
 }
 
 function _scaleUI() {
   const s = _getWorldScale();
-  if (s <= 1) return;
   const inv = 1 / s;
+
+  // Update rotate button first so dataset.above is current before label uses it
+  const rotBtn = document.getElementById('__rotate_btn');
+  if (rotBtn) {
+    rotBtn.style.transform = `scale(${inv})`;
+    const rotEl = elements.find(e => e.id === rotBtn.dataset.elId);
+    if (rotEl) {
+      const { cx, cy } = _rotatePos(rotEl);
+      rotBtn.style.left = `${cx - 16}px`;
+      rotBtn.style.top  = `${cy - 16}px`;
+      rotBtn.dataset.above = cy < rotEl.y ? '1' : '0';
+    }
+  }
+
   const ui = document.getElementById('__transform_ui');
   if (ui) {
-    ui.querySelectorAll('.t-corner,.t-side-h,.t-side-v').forEach(h => {
-      const base = h.style.transform.replace(/\s*scale\([^)]*\)/g, '');
-      h.style.transform = `${base} scale(${inv})`;
-    });
+    if (s > 1) {
+      ui.querySelectorAll('.t-corner,.t-side-h,.t-side-v').forEach(h => {
+        const base = h.style.transform.replace(/\s*scale\([^)]*\)/g, '');
+        h.style.transform = `${base} scale(${inv})`;
+      });
+    }
     const label = ui.querySelector('.t-size-label');
-    if (label) label.style.transform = `translateX(-50%) scale(${inv})`;
-    const rot = ui.querySelector('.t-rotate-btn');
-    if (rot) rot.style.transform = `translateX(-50%) scale(${inv})`;
+    if (label) {
+      const above = rotBtn?.dataset.above === '1';
+      // above: 16px screen gap between label bottom and rotate top
+      //   cy = el.y - 32*inv  → rotate top screen = el.y*S - 48
+      //   label bottom screen = el.y*S - 64  → T = -(22 + 64*inv)
+      // below/corner: 16px screen gap above selection top
+      //   T = -(22 + 16*inv)
+      label.style.top = above ? `${-(22 + 64 * inv)}px` : `${-(22 + 16 * inv)}px`;
+      label.style.transformOrigin = 'center bottom';
+      label.style.transform = `translateX(-50%) scale(${inv})`;
+    }
   }
+
   const actions = document.getElementById('__el_actions');
   if (actions) {
+    const actEl = elements.find(e => e.id === actions.dataset.elId);
+    if (actEl) {
+      // 16px screen gap below selection bottom at any zoom
+      actions.style.top = `${actEl.y + actEl.h + 16 * inv}px`;
+      actions.style.left = `${actEl.x + actEl.w / 2}px`;
+    }
     actions.style.transformOrigin = 'center top';
     actions.style.transform = `translateX(-50%) scale(${inv})`;
   }
@@ -3457,7 +3661,15 @@ function updateTransformUI(el) {
   const actions = document.getElementById('__el_actions');
   const pad = 2;
   if (ui) { ui.style.cssText = `left:${el.x-pad}px;top:${el.y-pad}px;width:${el.w+pad*2}px;height:${el.h+pad*2}px;`; const lbl = ui.querySelector('.t-size-label'); if (lbl) lbl.textContent = `${(el.w/72).toFixed(2)} in × ${(el.h/72).toFixed(2)} in`; }
-  if (actions) actions.style.cssText = `top:${el.y+el.h+16}px;left:${el.x+el.w/2}px;transform:translateX(-50%);`;
+  if (actions) { const s2 = _getWorldScale(); actions.style.top = `${el.y+el.h+16/s2}px`; actions.style.left = `${el.x+el.w/2}px`; }
+  // Reposition rotate button as element moves/resizes
+  const rotBtn = document.getElementById('__rotate_btn');
+  if (rotBtn) {
+    const { cx, cy } = _rotatePos(el);
+    rotBtn.style.left = `${cx - 16}px`;
+    rotBtn.style.top  = `${cy - 16}px`;
+    rotBtn.dataset.above = cy < el.y ? '1' : '0';
+  }
   const div = document.getElementById(el.id);
   if (div) { div.style.left=el.x+'px'; div.style.top=el.y+'px'; div.style.width=el.w+'px'; div.style.height=el.h+'px'; div.style.transform=`rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`; }
   _syncEmojiSize(el);
@@ -3478,12 +3690,18 @@ function _getWorldScale() {
 }
 function _computeSnaps(el) {
   const thresh = 8 / _getWorldScale();
+  // Artboard center + edges
   const snapXTargets = [SHEET_L, SHEET_L + SHEET_W / 2, SHEET_L + SHEET_W];
   const snapYTargets = [SHEET_T, SHEET_T + SHEET_H / 2, SHEET_T + SHEET_H];
-  // Add each container's center as a snap target
+  // Cut circle: center, side edges, top/bottom edges
   containers.forEach(c => {
-    snapXTargets.push(SHEET_L + c.x + c.w / 2);
-    snapYTargets.push(SHEET_T + c.y + c.h / 2);
+    const cx = SHEET_L + c.x + c.w / 2, cy = SHEET_T + c.y + c.h / 2;
+    snapXTargets.push(cx);                   // horizontal center
+    snapXTargets.push(SHEET_L + c.x);        // left edge
+    snapXTargets.push(SHEET_L + c.x + c.w); // right edge
+    snapYTargets.push(cy);                   // vertical center
+    snapYTargets.push(SHEET_T + c.y);        // top edge
+    snapYTargets.push(SHEET_T + c.y + c.h); // bottom edge
   });
   const elL = el.x, elCX = el.x + el.w / 2, elR = el.x + el.w;
   const elT = el.y, elCY = el.y + el.h / 2, elB = el.y + el.h;
@@ -3515,8 +3733,11 @@ function _ensureSnapGuides() {
 }
 function _updateSnapGuides(snaps) {
   _ensureSnapGuides();
+  const bw = (1 / _getWorldScale()).toFixed(3);
   const v = document.getElementById('snap-guide-v');
   const h = document.getElementById('snap-guide-h');
+  v.style.borderLeftWidth = bw + 'px';
+  h.style.borderTopWidth = bw + 'px';
   if (snaps.bestX) { v.style.left = snaps.bestX.line + 'px'; v.style.display = 'block'; } else { v.style.display = 'none'; }
   if (snaps.bestY) { h.style.top = snaps.bestY.line + 'px'; h.style.display = 'block'; } else { h.style.display = 'none'; }
 }
@@ -3526,6 +3747,78 @@ function _hideSnapGuides() {
   if (v) v.style.display = 'none';
   if (h) h.style.display = 'none';
 }
+function toggleCutGuide() {
+  _cutGuideEnabled = !_cutGuideEnabled;
+  const toggle = document.getElementById('cut-guide-toggle');
+  if (toggle) toggle.classList.toggle('off', !_cutGuideEnabled);
+  const sheet = document.getElementById('sticker-sheet');
+  if (sheet) sheet.classList.toggle('cut-guide-off', !_cutGuideEnabled);
+}
+function toggleCutGuideTip(e) {
+  e.stopPropagation();
+  const tip = document.getElementById('cut-guide-tip');
+  if (!tip) return;
+  const isVisible = tip.classList.contains('visible');
+  tip.classList.toggle('visible', !isVisible);
+  if (!isVisible) {
+    const dismiss = () => { tip.classList.remove('visible'); document.removeEventListener('click', dismiss); };
+    setTimeout(() => document.addEventListener('click', dismiss), 0);
+  }
+}
+
+// ─────────────────── DRAG DROP-TARGET HOVER ───────────────────
+let _dragHoverContId = null;
+
+function _dragHitTestContainer(el) {
+  const cx = el.x + el.w / 2;
+  const cy = el.y + el.h / 2;
+  for (const cont of containers) {
+    const ccx = SHEET_L + cont.x + cont.w / 2;
+    const ccy = SHEET_T + cont.y + cont.h / 2;
+    if (cont.shape === 'circle') {
+      const dx = cx - ccx, dy = cy - ccy;
+      if (Math.sqrt(dx * dx + dy * dy) <= cont.w / 2) return cont.id;
+    } else {
+      if (cx >= SHEET_L + cont.x && cx <= SHEET_L + cont.x + cont.w &&
+          cy >= SHEET_T + cont.y && cy <= SHEET_T + cont.y + cont.h) return cont.id;
+    }
+  }
+  // Over the sheet but outside all containers
+  if (cx >= SHEET_L && cx <= SHEET_L + SHEET_W && cy >= SHEET_T && cy <= SHEET_T + SHEET_H) {
+    return '__sheet__';
+  }
+  return null;
+}
+
+function _setDragDropHover(contId) {
+  if (_dragHoverContId === contId) return;
+  // Clear previous
+  if (_dragHoverContId === '__sheet__') {
+    document.getElementById('sticker-sheet')?.classList.remove('sheet-drop-hover');
+  } else if (_dragHoverContId) {
+    document.getElementById(_dragHoverContId)?.classList.remove('cont-drop-hover');
+    const content = document.getElementById(_dragHoverContId + '_content');
+    if (content) content.style.borderRadius = '';
+  }
+  _dragHoverContId = contId;
+  // Apply new
+  if (contId === '__sheet__') {
+    document.getElementById('sticker-sheet')?.classList.add('sheet-drop-hover');
+  } else if (contId) {
+    const cont = containers.find(c => c.id === contId);
+    if (!cont) return;
+    document.getElementById(contId)?.classList.add('cont-drop-hover');
+    // Use border-radius to clip fill flush with the container shape (no white gap)
+    const content = document.getElementById(contId + '_content');
+    if (content) {
+      content.style.borderRadius = cont.shape === 'circle'
+        ? '50%'
+        : `${cont.shape === 'rect' ? 8 : 10}px`;
+    }
+  }
+}
+
+function _clearDragDropHover() { _setDragDropHover(null); }
 
 // ─────────────────── DRAG / RESIZE / ROTATE ───────────────────
 function startDrag(e, id) {
@@ -3541,8 +3834,9 @@ function startDrag(e, id) {
     if (snaps.bestY) el.y += snaps.bestY.adj;
     _updateSnapGuides(snaps);
     updateTransformUI(el);
+    _setDragDropHover(_dragHitTestContainer(el));
   };
-  const onEnd = () => { _hideSnapGuides(); _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
+  const onEnd = () => { _hideSnapGuides(); _clearDragDropHover(); _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
 }
 function startResize(e, id, corner) {
@@ -3564,10 +3858,20 @@ function startResize(e, id, corner) {
 function startRotate(e, id) {
   e.preventDefault();
   const el = elements.find(e => e.id === id); if (!el) return;
-  const cx=el.x+el.w/2, cy=el.y+el.h/2;
-  const angle = (ex,ey) => Math.atan2(ey-cy, ex-cx)*180/Math.PI;
-  const sa=angle(e.clientX,e.clientY), sr=el.rot;
-  const onMove = e => { el.rot=sr+(angle(e.clientX,e.clientY)-sa); document.getElementById(el.id).style.transform=`rotate(${el.rot}deg)`; };
+  // Convert element center from world coords → client (screen) coords
+  const scroll = document.getElementById('canvas-scroll');
+  const s = _getWorldScale();
+  const rect = scroll.getBoundingClientRect();
+  const screenCX = (el.x + el.w / 2) * s - scroll.scrollLeft + rect.left;
+  const screenCY = (el.y + el.h / 2) * s - scroll.scrollTop  + rect.top;
+  const angle = (ex, ey) => Math.atan2(ey - screenCY, ex - screenCX) * 180 / Math.PI;
+  const sa = angle(e.clientX, e.clientY), sr = el.rot;
+  const onMove = ev => {
+    el.rot = sr + (angle(ev.clientX, ev.clientY) - sa);
+    const div = document.getElementById(el.id);
+    if (div) div.style.transform = `rotate(${el.rot}deg) scaleX(${el.flipH ? -1 : 1})`;
+    updateTransformUI(el);
+  };
   const onEnd = () => { _pushUndoState(); window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); };
   window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd);
 }
@@ -4177,6 +4481,8 @@ document.addEventListener('touchmove', e => {
       e.preventDefault();
       p0 = e.touches;
       s0 = _getWorldScale();
+      // Disable transition during pinch for frame-perfect tracking
+      document.getElementById('canvas-world').style.transition = 'none';
     }
   }, { passive: false });
   scroll.addEventListener('touchmove', e => {
@@ -4201,7 +4507,12 @@ document.addEventListener('touchmove', e => {
     scroll.scrollLeft = wx * newScale - mx;
     scroll.scrollTop  = wy * newScale - my;
   }, { passive: false });
-  scroll.addEventListener('touchend', e => { if (e.touches.length < 2) p0 = null; }, { passive: true });
+  scroll.addEventListener('touchend', e => {
+    if (e.touches.length < 2) {
+      p0 = null;
+      document.getElementById('canvas-world').style.transition = '';
+    }
+  }, { passive: true });
 })();
 
 // ═══════════════════════════════════════════════════════════════
