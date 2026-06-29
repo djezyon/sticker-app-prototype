@@ -269,6 +269,7 @@ body {
 .lasso-rect { position:absolute; border:1.5px dashed #4a7fc1; background:rgba(74,127,193,0.06); pointer-events:none; z-index:100; box-sizing:border-box; }
 .el-wrapper.multi-sel { outline:2px solid #4a7fc1; outline-offset:2px; border-radius:2px; }
 .el-wrapper.focus-dimmed { opacity:0.5; pointer-events:none; }
+.el-wrapper.oob { opacity:0.5; }
 
 .ruler-row { display: flex; flex-shrink: 0; background: var(--gray-50); }
 .ruler-corner { width: 22px; height: 22px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
@@ -3396,6 +3397,7 @@ function makeElDiv(el) {
   } else {
     div.innerHTML = `<span class="el-content" style="font-size:${Math.round(Math.min(el.w, el.h) * 0.6)}px;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">${el.icon}</span>`;
   }
+  { const _oob = el.x < SHEET_L || el.x + el.w > SHEET_L + SHEET_W || el.y < SHEET_T || el.y + el.h > SHEET_T + SHEET_H; if (_oob) div.classList.add('oob'); }
   div.addEventListener('pointerdown', e => {
     e.stopPropagation();
     const now = Date.now();
@@ -3672,9 +3674,18 @@ function updateTransformUI(el) {
   }
   const div = document.getElementById(el.id);
   if (div) { div.style.left=el.x+'px'; div.style.top=el.y+'px'; div.style.width=el.w+'px'; div.style.height=el.h+'px'; div.style.transform=`rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`; }
+  _updateOobClass(el);
   _syncEmojiSize(el);
   _scaleUI();
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
+}
+
+function _updateOobClass(el) {
+  const div = document.getElementById(el.id);
+  if (!div) return;
+  const oob = el.x < SHEET_L || el.x + el.w > SHEET_L + SHEET_W ||
+              el.y < SHEET_T || el.y + el.h > SHEET_T + SHEET_H;
+  div.classList.toggle('oob', oob);
 }
 
 // ─────────────────── HIT TEST ───────────────────
