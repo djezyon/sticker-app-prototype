@@ -3535,13 +3535,6 @@ function renderTransformUI(el) {
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="#1e1e1e" stroke-width="1.8"/><path d="M6 14H4a2 2 0 01-2-2V4a2 2 0 012-2h8a2 2 0 012 2v2" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/></svg>
       <span class="lbl">Duplicate</span>
     </div>
-    ${el.isImage ? `<div class="el-action-btn" onclick="openFillSheet('${el.id}')">
-      ${_fillThumbHtml(el)}
-      <span class="lbl">Fill</span>
-    </div>` : !el.isText ? `<div class="el-action-btn">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#1e1e1e" stroke-width="1.8"/><path d="M7 11c1-3 7-3 8 0s-7 3-8 0z" stroke="#1e1e1e" stroke-width="1.6"/></svg>
-      <span class="lbl">Sticker</span>
-    </div>` : ''}
   `;
   world.appendChild(actions);
   _renderRotateBtn(el);
@@ -5273,6 +5266,19 @@ document.addEventListener('keydown', e => {
   if (e.key === 'c' && selectedId) { e.preventDefault(); copyEl(selectedId); }
   if (e.key === 'v' && window._clipboard) { e.preventDefault(); pasteEl(); }
 });
+
+// Lift FAB 12px above the bottom edit bar whenever it appears/disappears
+function _updateFabBottom() {
+  const bar = document.getElementById('bottom-edit-bar');
+  const fab = document.querySelector('.canvas-fab-wrap');
+  if (!fab) return;
+  const h = (bar && bar.classList.contains('visible')) ? bar.offsetHeight : 0;
+  fab.style.bottom = h > 0 ? (h + 12) + 'px' : '32px';
+}
+new MutationObserver(() => requestAnimationFrame(_updateFabBottom)).observe(
+  document.getElementById('bottom-edit-bar'),
+  { attributes: true, attributeFilter: ['class'] }
+);
 </script>
 <script type="module">
   try {
