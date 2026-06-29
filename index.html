@@ -310,9 +310,6 @@ body {
 .upload-btn-primary { background: var(--text-accent); color: #fff; }
 .upload-btn-secondary { background: #fff; color: #121212; border: 1.5px solid #e0e0e0; }
 /* ── CANVAS BACKGROUND BUTTON ── */
-.canvas-bg-btn { position: absolute; display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 8px; padding: 8px 14px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-.canvas-bg-swatch { width: 18px; height: 18px; border-radius: 4px; background: #fff; border: 1px solid #e6e6e6; flex-shrink: 0; }
-.canvas-bg-label { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: #121212; }
 .fab-popup { position: absolute; bottom: 68px; right: 0; background: #fff; border-radius: 16px; padding: 6px 0; min-width: 164px; box-shadow: 0 4px 28px rgba(0,0,0,0.18); opacity: 0; pointer-events: none; transform: scale(0.92) translateY(10px); transform-origin: bottom right; transition: opacity 0.18s, transform 0.18s; }
 .fab-popup.open { opacity: 1; pointer-events: all; transform: scale(1) translateY(0); }
 .fab-popup-item { display: flex; align-items: center; gap: 14px; padding: 13px 20px; cursor: pointer; font-size: 16px; font-weight: 500; }
@@ -1335,10 +1332,6 @@ body {
       <div class="canvas-world" id="canvas-world">
         <div class="canvas-grid-overlay"></div>
         <div class="sticker-sheet" id="sticker-sheet"></div>
-        <div class="canvas-bg-btn" id="canvas-bg-btn" style="display:none;">
-          <div class="canvas-bg-swatch"></div>
-          <span class="canvas-bg-label">Background</span>
-        </div>
       </div>
     </div>
   </div>
@@ -2147,11 +2140,6 @@ function startDesigning() {
 function buildSheet(type) {
   const sheet = document.getElementById('sticker-sheet');
   sheet.style.cssText = `left:${SHEET_L}px;top:${SHEET_T}px;width:${SHEET_W}px;height:${SHEET_H}px;`;
-  const bgBtn = document.getElementById('canvas-bg-btn');
-  if (bgBtn) {
-    bgBtn.style.cssText = `left:${SHEET_L + Math.round((SHEET_W - 130) / 2)}px;top:${SHEET_T + SHEET_H + 14}px;display:flex;`;
-  }
-
   containers = [];
   let slotList = [];
 
@@ -2293,16 +2281,39 @@ function _renderContSelUI(cont) {
   world.appendChild(ui);
 }
 
+function _renderSheetSelUI() {
+  document.getElementById('__sheet_sel_ui')?.remove();
+  const world = document.getElementById('canvas-world');
+  const inv = 1 / _getWorldScale();
+  const sW = (SHEET_W / 72).toFixed(1), sH = (SHEET_H / 72).toFixed(1);
+  const ui = document.createElement('div');
+  ui.id = '__sheet_sel_ui';
+  ui.style.cssText = `position:absolute;left:${SHEET_L}px;top:${SHEET_T}px;width:${SHEET_W}px;height:${SHEET_H}px;pointer-events:none;z-index:10;box-shadow:0 0 0 ${2*inv}px #31c498;`;
+  const lbl = document.createElement('div');
+  lbl.id = '__sheet_sel_lbl';
+  lbl.textContent = `${sW} in × ${sH} in`;
+  lbl.style.cssText = `position:absolute;bottom:calc(100% + ${8*inv}px);left:50%;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;background:#00a977;color:#fff;font-size:12px;font-weight:600;line-height:16px;padding:4px 12px;border-radius:4px;white-space:nowrap;`;
+  ui.appendChild(lbl);
+  world.appendChild(ui);
+}
+
 function _updateStaticUI(scale) {
-  const inv = scale > 1 ? `scale(${1 / scale})` : '';
-  const btn = document.getElementById('canvas-bg-btn');
-  if (btn) { btn.style.transformOrigin = 'left top'; btn.style.transform = inv; }
+  const inv = 1 / scale;
   // Keep container selection overlay scale-invariant
   const contSel = document.getElementById('__cont_sel_ui');
   if (contSel) {
-    const inv = 1 / scale;
     contSel.style.boxShadow = `0 0 0 ${2 * inv}px #31c498`;
     const lbl = document.getElementById('__cont_sel_lbl');
+    if (lbl) {
+      lbl.style.bottom = `calc(100% + ${8 * inv}px)`;
+      lbl.style.transform = `translateX(-50%) scale(${inv})`;
+    }
+  }
+  // Keep sheet selection overlay scale-invariant
+  const sheetSel = document.getElementById('__sheet_sel_ui');
+  if (sheetSel) {
+    sheetSel.style.boxShadow = `0 0 0 ${2 * inv}px #31c498`;
+    const lbl = document.getElementById('__sheet_sel_lbl');
     if (lbl) {
       lbl.style.bottom = `calc(100% + ${8 * inv}px)`;
       lbl.style.transform = `translateX(-50%) scale(${inv})`;
@@ -4447,6 +4458,7 @@ function selectSheet() {
   deselectContainer(true);
   _sheetSelected = true;
   document.getElementById('sticker-sheet').classList.add('sheet-selected');
+  _renderSheetSelUI();
   _renderSheetBar();
   document.getElementById('bottom-edit-bar').classList.add('visible');
 }
@@ -4454,6 +4466,7 @@ function selectSheet() {
 function deselectSheet() {
   _sheetSelected = false;
   document.getElementById('sticker-sheet').classList.remove('sheet-selected');
+  document.getElementById('__sheet_sel_ui')?.remove();
   document.getElementById('bottom-edit-bar').classList.remove('visible');
   const p = document.getElementById('inline-panel');
   if (p) p.style.display = 'none';
