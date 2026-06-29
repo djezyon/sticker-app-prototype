@@ -269,7 +269,7 @@ body {
 .lasso-rect { position:absolute; border:1.5px dashed #4a7fc1; background:rgba(74,127,193,0.06); pointer-events:none; z-index:100; box-sizing:border-box; }
 .el-wrapper.multi-sel { outline:2px solid #4a7fc1; outline-offset:2px; border-radius:2px; }
 .el-wrapper.focus-dimmed { opacity:0.5; pointer-events:none; }
-.el-wrapper.oob { opacity:0.5; }
+.oob-ghost { opacity:0.5; pointer-events:none; }
 
 .ruler-row { display: flex; flex-shrink: 0; background: var(--gray-50); }
 .ruler-corner { width: 22px; height: 22px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
@@ -1987,6 +1987,7 @@ function _applyUndoState(snap) {
   document.querySelectorAll('#canvas-world .el-wrapper').forEach(d => d.remove());
   const world = document.getElementById('canvas-world');
   elements.forEach(el => world.appendChild(makeElDiv(el)));
+  elements.forEach(el => _updateOobClass(el));
   deselectAll(); deselectContainer(false); deselectSheet();
   document.getElementById('make-btn')?.classList.toggle('active', elements.length > 0);
 }
@@ -3397,7 +3398,7 @@ function makeElDiv(el) {
   } else {
     div.innerHTML = `<span class="el-content" style="font-size:${Math.round(Math.min(el.w, el.h) * 0.6)}px;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;">${el.icon}</span>`;
   }
-  { const _oob = el.x < SHEET_L || el.x + el.w > SHEET_L + SHEET_W || el.y < SHEET_T || el.y + el.h > SHEET_T + SHEET_H; if (_oob) div.classList.add('oob'); }
+  { const _l=Math.max(0,SHEET_L-el.x),_t=Math.max(0,SHEET_T-el.y),_r=Math.max(0,el.x+el.w-(SHEET_L+SHEET_W)),_b=Math.max(0,el.y+el.h-(SHEET_T+SHEET_H)); if(_l||_t||_r||_b){div.classList.add('oob');div.style.clipPath=`inset(${_t}px ${_r}px ${_b}px ${_l}px)`;} }
   div.addEventListener('pointerdown', e => {
     e.stopPropagation();
     const now = Date.now();
@@ -3683,9 +3684,38 @@ function updateTransformUI(el) {
 function _updateOobClass(el) {
   const div = document.getElementById(el.id);
   if (!div) return;
-  const oob = el.x < SHEET_L || el.x + el.w > SHEET_L + SHEET_W ||
-              el.y < SHEET_T || el.y + el.h > SHEET_T + SHEET_H;
-  div.classList.toggle('oob', oob);
+  const ix_l = Math.max(0, SHEET_L - el.x);
+  const ix_t = Math.max(0, SHEET_T - el.y);
+  const ix_r = Math.max(0, el.x + el.w - (SHEET_L + SHEET_W));
+  const ix_b = Math.max(0, el.y + el.h - (SHEET_T + SHEET_H));
+  const oob = ix_l > 0 || ix_t > 0 || ix_r > 0 || ix_b > 0;
+  const ghostId = el.id + '__g';
+  let ghost = document.getElementById(ghostId);
+  if (!oob) {
+    div.style.clipPath = '';
+    div.classList.remove('oob');
+    if (ghost) ghost.remove();
+    return;
+  }
+  // Ghost: full element at 50% opacity, sits behind main div
+  if (!ghost && div.parentNode) {
+    ghost = document.createElement('div');
+    ghost.id = ghostId;
+    ghost.className = 'el-wrapper oob-ghost';
+    ghost.innerHTML = div.innerHTML;
+    div.parentNode.insertBefore(ghost, div);
+  }
+  if (ghost) {
+    ghost.style.left = div.style.left;
+    ghost.style.top = div.style.top;
+    ghost.style.width = div.style.width;
+    ghost.style.height = div.style.height;
+    ghost.style.transform = div.style.transform;
+    ghost.style.clipPath = '';
+  }
+  // Main div: clipped to artboard intersection at 100% opacity
+  div.style.clipPath = `inset(${ix_t}px ${ix_r}px ${ix_b}px ${ix_l}px)`;
+  div.classList.add('oob');
 }
 
 // ─────────────────── HIT TEST ───────────────────
@@ -4436,6 +4466,7 @@ function copyAllContainers() {
 // ─────────────────── DELETE / DUPLICATE ───────────────────
 function deleteEl(id) {
   _pushUndoState();
+  document.getElementById(id + '__g')?.remove();
   document.getElementById(id)?.remove();
   const el = elements.find(e => e.id === id);
   if (el && el.containerId) {
