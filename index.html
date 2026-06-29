@@ -3486,6 +3486,7 @@ function deselectAll() {
   selectedId = null;
   _clearMultiSelect();
   deselectGroup();
+  deselectSheet();
   document.getElementById('__transform_ui')?.remove();
   document.getElementById('__el_actions')?.remove();
   document.getElementById('__rotate_btn')?.remove();
