@@ -4392,6 +4392,53 @@ function copyEl(elId) {
   }
 }
 
+function pasteEl() {
+  if (!window._clipboard) return;
+  const src = window._clipboard;
+  const scroll = document.getElementById('canvas-scroll');
+  const s = _getWorldScale();
+  const vpW = scroll.clientWidth  || 368;
+  const vpH = scroll.clientHeight || 520;
+  elId++;
+  let newEl, zoomFn;
+
+  if (selectedContainerId) {
+    // State 1: Cutting space selected — center in container, zoom to it
+    const cont = containers.find(c => c.id === selectedContainerId);
+    if (!cont) return;
+    newEl = { ...src, id: `el${elId}`, groupId: undefined, containerId: cont.id,
+      x: SHEET_L + cont.x + cont.w/2 - src.w/2,
+      y: SHEET_T + cont.y + cont.h/2 - src.h/2 };
+    if (!cont.childElId) cont.childElId = newEl.id;
+    zoomFn = () => zoomToContainer(cont);
+
+  } else if (_sheetSelected) {
+    // State 2: Artboard selected — center on artboard, zoom to fit sheet
+    newEl = { ...src, id: `el${elId}`, groupId: undefined, containerId: undefined,
+      x: SHEET_L + SHEET_W/2 - src.w/2,
+      y: SHEET_T + SHEET_H/2 - src.h/2 };
+    zoomFn = () => zoomToFit(true);
+
+  } else {
+    // State 3: Nothing selected — paste at viewport center, zoom to fit element
+    const vpCX = (scroll.scrollLeft + vpW/2) / s;
+    const vpCY = (scroll.scrollTop  + vpH/2) / s;
+    newEl = { ...src, id: `el${elId}`, groupId: undefined, containerId: undefined,
+      x: vpCX - src.w/2,
+      y: vpCY - src.h/2 };
+    const targetScale = Math.min((vpW * 0.8) / newEl.w, (vpH * 0.8) / newEl.h, 4);
+    const wCX = newEl.x + newEl.w/2, wCY = newEl.y + newEl.h/2;
+    zoomFn = () => _animateZoom(targetScale, wCX, wCY);
+  }
+
+  elements.push(newEl);
+  document.getElementById('canvas-world').appendChild(makeElDiv(newEl));
+  _updateOobClass(newEl);
+  _pushUndoState();
+  selectEl(newEl.id);
+  zoomFn();
+}
+
 // ─────────────────── SHEET SELECTION ───────────────────
 let _sheetSelected = false;
 
@@ -5205,6 +5252,13 @@ function _updateStatusTime() {
 }
 _updateStatusTime();
 setInterval(_updateStatusTime, 30000);
+
+document.addEventListener('keydown', e => {
+  const mod = e.metaKey || e.ctrlKey;
+  if (!mod) return;
+  if (e.key === 'c' && selectedId) { e.preventDefault(); copyEl(selectedId); }
+  if (e.key === 'v' && window._clipboard) { e.preventDefault(); pasteEl(); }
+});
 </script>
 <script type="module">
   try {
