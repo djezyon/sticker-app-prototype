@@ -4954,12 +4954,28 @@ document.getElementById('canvas-scroll')?.addEventListener('pointerdown', e => {
 
 // Sticker sheet tap: select the sheet itself
 document.getElementById('sticker-sheet')?.addEventListener('pointerdown', e => {
-  // Only if tap is directly on the sheet (not a container child)
-  if (e.target === document.getElementById('sticker-sheet')) {
-    e.stopPropagation();
-    selectSheet();
-    closeFab();
-  }
+  if (e.target !== document.getElementById('sticker-sheet')) return;
+  e.stopPropagation();
+  // Tap → select sheet. Drag → lasso multiselect inside artboard.
+  const x0 = e.clientX, y0 = e.clientY;
+  let dragging = false;
+  const onMove = ev => {
+    if (dragging) return;
+    if (Math.abs(ev.clientX - x0) > 5 || Math.abs(ev.clientY - y0) > 5) {
+      dragging = true;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      deselectAll(); deselectContainer(); deselectSheet(); closeFab();
+      _startLasso(e);
+    }
+  };
+  const onUp = () => {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    if (!dragging) { selectSheet(); closeFab(); }
+  };
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
 });
 document.addEventListener('touchmove', e => {
   if (e.target.closest('.t-corner,.t-side-h,.t-side-v,.t-rotate-btn,.el-wrapper')) e.preventDefault();
