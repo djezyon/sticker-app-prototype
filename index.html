@@ -2684,7 +2684,7 @@ function _renderGroupTransformUI(group) {
 
   const lbl = document.createElement('div');
   lbl.className = 't-size-label';
-  lbl.style.cssText = `left:50%;top:${-(22+16*inv)}px;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;`;
+  lbl.style.cssText = `left:50%;top:${-(22+64*inv)}px;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;`;
   lbl.textContent = `${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`;
   ui.appendChild(lbl);
 
@@ -2733,6 +2733,7 @@ function _renderGroupTransformUI(group) {
   world.appendChild(rotBtn);
 
   _renderGroupBottomBar();
+  _scaleUI();
 }
 
 function _updateGroupTransformUI(group) {
@@ -2743,7 +2744,7 @@ function _updateGroupTransformUI(group) {
     ui.style.left=`${bbox.x-pad}px`; ui.style.top=`${bbox.y-pad}px`;
     ui.style.width=`${bbox.w+pad*2}px`; ui.style.height=`${bbox.h+pad*2}px`;
     const lbl = ui.querySelector('.t-size-label');
-    if (lbl) { lbl.textContent=`${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`; lbl.style.top=`${-(22+16*inv)}px`; }
+    if (lbl) { lbl.textContent=`${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`; lbl.style.top=`${-(22+64*inv)}px`; }
   }
   const actions = document.getElementById('__group_actions');
   if (actions) { actions.style.top=`${bbox.y+bbox.h+16*inv}px`; actions.style.left=`${bbox.x+bbox.w/2}px`; }
@@ -2949,7 +2950,7 @@ function _renderMultiTransformUI() {
 
   const lbl = document.createElement('div');
   lbl.className = 't-size-label';
-  lbl.style.cssText = `left:50%;top:${-(22+16*inv)}px;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;`;
+  lbl.style.cssText = `left:50%;top:${-(22+64*inv)}px;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;`;
   lbl.textContent = `${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`;
   ui.appendChild(lbl);
 
@@ -2998,6 +2999,7 @@ function _renderMultiTransformUI() {
   world.appendChild(rotBtn);
 
   _renderMultiEditBar();
+  _scaleUI();
 }
 
 function _updateMultiTransformUI() {
@@ -3008,7 +3010,7 @@ function _updateMultiTransformUI() {
     ui.style.left=`${bbox.x-pad}px`; ui.style.top=`${bbox.y-pad}px`;
     ui.style.width=`${bbox.w+pad*2}px`; ui.style.height=`${bbox.h+pad*2}px`;
     const lbl = ui.querySelector('.t-size-label');
-    if (lbl) { lbl.textContent=`${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`; lbl.style.top=`${-(22+16*inv)}px`; }
+    if (lbl) { lbl.textContent=`${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`; lbl.style.top=`${-(22+64*inv)}px`; }
   }
   const actions = document.getElementById('__multi_actions');
   if (actions) { actions.style.top=`${bbox.y+bbox.h+16*inv}px`; actions.style.left=`${bbox.x+bbox.w/2}px`; }
@@ -4012,7 +4014,7 @@ function _scaleUI() {
         h.style.transform = `${base} scale(${inv})`;
       });
       const mlbl = multiUi.querySelector('.t-size-label');
-      if (mlbl) { mlbl.style.top=`${-(22+16*inv)}px`; mlbl.style.transform=`translateX(-50%) scale(${inv})`; }
+      if (mlbl) { mlbl.style.top=`${-(22+64*inv)}px`; mlbl.style.transform=`translateX(-50%) scale(${inv})`; }
     }
   }
   const multiActions = document.getElementById('__multi_actions');
@@ -4038,7 +4040,7 @@ function _scaleUI() {
           h.style.transform = `${base} scale(${inv})`;
         });
         const glbl = groupUi.querySelector('.t-size-label');
-        if (glbl) { glbl.style.top=`${-(22+16*inv)}px`; glbl.style.transform=`translateX(-50%) scale(${inv})`; }
+        if (glbl) { glbl.style.top=`${-(22+64*inv)}px`; glbl.style.transform=`translateX(-50%) scale(${inv})`; }
       }
     }
   }
