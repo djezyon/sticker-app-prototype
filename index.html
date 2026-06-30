@@ -267,7 +267,7 @@ body {
 .fc-exit-btn { margin-left:auto; margin-right:12px; font-family:var(--font-body); font-size:13px; font-weight:600; color:var(--text-accent); cursor:pointer; padding:4px 0; }
 .fc-exit-btn:active { opacity:0.6; }
 .lasso-rect { position:absolute; border:1.5px dashed #4a7fc1; background:rgba(74,127,193,0.06); pointer-events:none; z-index:100; box-sizing:border-box; }
-.el-wrapper.multi-sel { outline:2px solid #4a7fc1; outline-offset:2px; border-radius:2px; }
+.el-wrapper.multi-sel { /* selection shown via unified green bounding box */ }
 .el-wrapper.focus-dimmed { opacity:0.5; pointer-events:none; }
 .oob-ghost { opacity:0.5; pointer-events:none; }
 
@@ -2747,19 +2747,207 @@ function startGroupDrag(e, groupId) {
 function _clearMultiSelect() {
   _multiSelectedIds.forEach(id => { const div = document.getElementById(id); if (div) div.classList.remove('multi-sel'); });
   _multiSelectedIds = [];
+  _clearMultiTransformUI();
 }
 
 function _setMultiSelect(ids) {
   _clearMultiSelect();
   _multiSelectedIds = ids;
   ids.forEach(id => { const div = document.getElementById(id); if (div) div.classList.add('multi-sel'); });
-  const bar = document.getElementById('edit-tools-row'); if (!bar) return;
-  bar.innerHTML = `
-    <div class="edit-tool" onclick="createGroup()">
-      <div class="edit-tool-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="12" y="2" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="2" y="12" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="12" y="12" width="8" height="8" rx="2" stroke="#595959" stroke-width="1.5"/><rect x="1" y="1" width="20" height="20" rx="4" stroke="#4a7fc1" stroke-width="1.2" stroke-dasharray="3,2"/></svg></div>
-      <div class="edit-tool-label" style="color:#4a7fc1;font-weight:600;">${ids.length} selected · Group</div>
+  _renderMultiTransformUI();
+}
+
+// ─────────────────── MULTI-SELECT TRANSFORM UI ───────────────────
+function _multiSelBBox() {
+  const els = _multiSelectedIds.map(id => elements.find(e => e.id === id)).filter(Boolean);
+  if (!els.length) return null;
+  const minX = Math.min(...els.map(e => e.x));
+  const minY = Math.min(...els.map(e => e.y));
+  const maxX = Math.max(...els.map(e => e.x + e.w));
+  const maxY = Math.max(...els.map(e => e.y + e.h));
+  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+}
+
+function _clearMultiTransformUI() {
+  document.getElementById('__multi_ui')?.remove();
+  document.getElementById('__multi_actions')?.remove();
+  document.getElementById('__multi_rotate')?.remove();
+  document.getElementById('bottom-edit-bar').classList.remove('visible');
+}
+
+function _renderMultiTransformUI() {
+  _clearMultiTransformUI();
+  if (_multiSelectedIds.length < 2) return;
+  const bbox = _multiSelBBox(); if (!bbox) return;
+  const world = document.getElementById('canvas-world');
+  const s = _getWorldScale(); const inv = 1 / s; const pad = 2;
+
+  const ui = document.createElement('div');
+  ui.id = '__multi_ui'; ui.className = 'transform-ui';
+  ui.style.cssText = `left:${bbox.x-pad}px;top:${bbox.y-pad}px;width:${bbox.w+pad*2}px;height:${bbox.h+pad*2}px;`;
+
+  const border = document.createElement('div');
+  border.className = 't-border'; border.style.inset = '0';
+  border.style.pointerEvents = 'all'; border.style.cursor = 'grab';
+  border.addEventListener('pointerdown', e => { e.stopPropagation(); _startMultiDrag(e); });
+  ui.appendChild(border);
+
+  const lbl = document.createElement('div');
+  lbl.className = 't-size-label';
+  lbl.style.cssText = `left:50%;top:${-(22+16*inv)}px;transform:translateX(-50%) scale(${inv});transform-origin:center bottom;`;
+  lbl.textContent = `${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`;
+  ui.appendChild(lbl);
+
+  [['tl','top:0;left:0;transform:translate(-50%,-50%)'],['tr','top:0;right:0;left:auto;transform:translate(50%,-50%)'],
+   ['br','bottom:0;top:auto;right:0;left:auto;transform:translate(50%,50%)'],['bl','bottom:0;top:auto;left:0;transform:translate(-50%,50%)']
+  ].forEach(([h, style]) => {
+    const c = document.createElement('div'); c.className = 't-corner';
+    c.style.cssText = style + ` scale(${inv});`;
+    c.addEventListener('pointerdown', e => { e.stopPropagation(); _startMultiResize(e, h); });
+    ui.appendChild(c);
+  });
+  [['t','t-side-h',`top:0;left:50%;transform:translate(-50%,-50%) scale(${inv});cursor:ns-resize;`],
+   ['b','t-side-h',`bottom:0;top:auto;left:50%;transform:translate(-50%,50%) scale(${inv});cursor:ns-resize;`],
+   ['l','t-side-v',`top:50%;left:0;transform:translate(-50%,-50%) scale(${inv});cursor:ew-resize;`],
+   ['r','t-side-v',`top:50%;right:0;left:auto;transform:translate(50%,-50%) scale(${inv});cursor:ew-resize;`]
+  ].forEach(([dir, cls, style]) => {
+    const c = document.createElement('div'); c.className = cls; c.style.cssText = style;
+    c.addEventListener('pointerdown', e => { e.stopPropagation(); _startMultiResize(e, dir); });
+    ui.appendChild(c);
+  });
+  world.appendChild(ui);
+
+  const actions = document.createElement('div');
+  actions.id = '__multi_actions'; actions.className = 'el-actions';
+  actions.style.cssText = `top:${bbox.y+bbox.h+16*inv}px;left:${bbox.x+bbox.w/2}px;transform:translateX(-50%) scale(${inv});transform-origin:center top;`;
+  actions.innerHTML = `
+    <div class="el-action-btn" onclick="_deleteMultiSelected()">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polyline points="3,6 19,6" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/><path d="M8 6V4h6v2" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/><rect x="5" y="6" width="12" height="13" rx="2" stroke="#1e1e1e" stroke-width="1.8"/></svg>
+      <span class="lbl">Delete</span>
     </div>
-  `;
+    <div class="el-action-btn" onclick="_duplicateMultiSelected()">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="#1e1e1e" stroke-width="1.8"/><path d="M6 14H4a2 2 0 01-2-2V4a2 2 0 012-2h8a2 2 0 012 2v2" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="lbl">Duplicate</span>
+    </div>
+    <div class="el-action-btn" onclick="createGroup()">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2" stroke="#1e1e1e" stroke-width="1.5"/><rect x="12" y="2" width="8" height="8" rx="2" stroke="#1e1e1e" stroke-width="1.5"/><rect x="2" y="12" width="8" height="8" rx="2" stroke="#1e1e1e" stroke-width="1.5"/><rect x="12" y="12" width="8" height="8" rx="2" stroke="#1e1e1e" stroke-width="1.5"/></svg>
+      <span class="lbl">Group</span>
+    </div>
+    <div class="el-action-btn" style="opacity:0.35;pointer-events:none;">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M9 13L4.5 17.5M13 9l4.5-4.5M8 7H5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3" stroke="#1e1e1e" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="2" width="11" height="11" rx="2" stroke="#1e1e1e" stroke-width="1.8"/></svg>
+      <span class="lbl">Attach</span>
+    </div>`;
+  world.appendChild(actions);
+
+  const rotBtn = document.createElement('div');
+  rotBtn.id = '__multi_rotate'; rotBtn.className = 't-rotate-btn';
+  rotBtn.style.cssText = `left:${bbox.x+bbox.w/2-16}px;top:${bbox.y-32*inv-16}px;transform:scale(${inv});transform-origin:center center;z-index:75;`;
+  rotBtn.innerHTML = `<svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M4.31734 5.74716H0.625V1.42755" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.30579 4.92397C2.01099 3.39351 3.2159 2.1501 4.72133 1.39942C6.22676 0.648737 7.94257 0.435858 9.58515 0.795592C11.2277 1.15533 12.6987 2.06633 13.7549 3.37804C14.462 4.25607 14.9548 5.27841 15.2048 6.3641" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.2911 10.4785H15.3937V15.0038" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.7136 11.0941C14.0083 12.6245 12.8034 13.8679 11.298 14.6186C9.79258 15.3693 8.07677 15.5826 6.43419 15.2228C4.79162 14.8631 3.32063 13.9521 2.26439 12.6404C1.55742 11.7624 1.0646 10.74 0.814575 9.6543" stroke="#737373" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  rotBtn.addEventListener('pointerdown', e => { e.stopPropagation(); _startMultiRotate(e); });
+  world.appendChild(rotBtn);
+
+  _renderMultiEditBar();
+}
+
+function _updateMultiTransformUI() {
+  const bbox = _multiSelBBox(); if (!bbox) return;
+  const s = _getWorldScale(); const inv = 1 / s; const pad = 2;
+  const ui = document.getElementById('__multi_ui');
+  if (ui) {
+    ui.style.left=`${bbox.x-pad}px`; ui.style.top=`${bbox.y-pad}px`;
+    ui.style.width=`${bbox.w+pad*2}px`; ui.style.height=`${bbox.h+pad*2}px`;
+    const lbl = ui.querySelector('.t-size-label');
+    if (lbl) { lbl.textContent=`${(bbox.w/72).toFixed(2)} in × ${(bbox.h/72).toFixed(2)} in`; lbl.style.top=`${-(22+16*inv)}px`; }
+  }
+  const actions = document.getElementById('__multi_actions');
+  if (actions) { actions.style.top=`${bbox.y+bbox.h+16*inv}px`; actions.style.left=`${bbox.x+bbox.w/2}px`; }
+  const rotBtn = document.getElementById('__multi_rotate');
+  if (rotBtn) { rotBtn.style.left=`${bbox.x+bbox.w/2-16}px`; rotBtn.style.top=`${bbox.y-32*inv-16}px`; }
+}
+
+function _startMultiDrag(e) {
+  e.preventDefault();
+  const s = _getWorldScale(); const sx=e.clientX, sy=e.clientY;
+  const origPos = _multiSelectedIds.map(id=>{const el=elements.find(e=>e.id===id);return el?{id,x:el.x,y:el.y}:null;}).filter(Boolean);
+  const onMove = ev => {
+    const dx=(ev.clientX-sx)/s, dy=(ev.clientY-sy)/s;
+    origPos.forEach(({id,x,y})=>{const el=elements.find(e=>e.id===id);if(!el)return;el.x=x+dx;el.y=y+dy;const div=document.getElementById(id);if(div){div.style.left=el.x+'px';div.style.top=el.y+'px';}_updateOobClass(el);});
+    _updateMultiTransformUI();
+  };
+  const onEnd=()=>{_pushUndoState();window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onEnd);};
+  window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onEnd);
+}
+
+function _startMultiResize(e, corner) {
+  e.preventDefault();
+  const s = _getWorldScale(); const sx=e.clientX, sy=e.clientY;
+  const origBBox = _multiSelBBox(); if (!origBBox) return;
+  const origEls = _multiSelectedIds.map(id=>{const el=elements.find(e=>e.id===id);return el?{id,x:el.x,y:el.y,w:el.w,h:el.h}:null;}).filter(Boolean);
+  const onMove = ev => {
+    const dx=(ev.clientX-sx)/s, dy=(ev.clientY-sy)/s;
+    let bx=origBBox.x,by=origBBox.y,bw=origBBox.w,bh=origBBox.h;
+    if(corner==='br'){bw=Math.max(40,origBBox.w+dx);bh=Math.max(40,origBBox.h+dy);}
+    else if(corner==='bl'){bx=origBBox.x+dx;bw=Math.max(40,origBBox.w-dx);bh=Math.max(40,origBBox.h+dy);}
+    else if(corner==='tr'){by=origBBox.y+dy;bw=Math.max(40,origBBox.w+dx);bh=Math.max(40,origBBox.h-dy);}
+    else if(corner==='tl'){bx=origBBox.x+dx;by=origBBox.y+dy;bw=Math.max(40,origBBox.w-dx);bh=Math.max(40,origBBox.h-dy);}
+    else if(corner==='t'){by=origBBox.y+dy;bh=Math.max(40,origBBox.h-dy);}
+    else if(corner==='b'){bh=Math.max(40,origBBox.h+dy);}
+    else if(corner==='l'){bx=origBBox.x+dx;bw=Math.max(40,origBBox.w-dx);}
+    else if(corner==='r'){bw=Math.max(40,origBBox.w+dx);}
+    const sx2=bw/origBBox.w, sy2=bh/origBBox.h;
+    origEls.forEach(({id,x,y,w,h})=>{const el=elements.find(e=>e.id===id);if(!el)return;el.x=bx+(x-origBBox.x)*sx2;el.y=by+(y-origBBox.y)*sy2;el.w=Math.max(20,w*sx2);el.h=Math.max(20,h*sy2);const div=document.getElementById(id);if(div){div.style.left=el.x+'px';div.style.top=el.y+'px';div.style.width=el.w+'px';div.style.height=el.h+'px';}_updateOobClass(el);});
+    _updateMultiTransformUI();
+  };
+  const onEnd=()=>{_pushUndoState();window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onEnd);};
+  window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onEnd);
+}
+
+function _startMultiRotate(e) {
+  e.preventDefault();
+  const scroll=document.getElementById('canvas-scroll'); const s=_getWorldScale();
+  const rect=scroll.getBoundingClientRect(); const bbox=_multiSelBBox(); if(!bbox)return;
+  const screenCX=(bbox.x+bbox.w/2)*s-scroll.scrollLeft+rect.left;
+  const screenCY=(bbox.y+bbox.h/2)*s-scroll.scrollTop+rect.top;
+  const ang=(ex,ey)=>Math.atan2(ey-screenCY,ex-screenCX)*180/Math.PI;
+  const sa=ang(e.clientX,e.clientY);
+  const cx=bbox.x+bbox.w/2, cy=bbox.y+bbox.h/2;
+  const origEls=_multiSelectedIds.map(id=>{const el=elements.find(e=>e.id===id);return el?{id,x:el.x,y:el.y,w:el.w,h:el.h,rot:el.rot}:null;}).filter(Boolean);
+  const onMove=ev=>{
+    const da=(ang(ev.clientX,ev.clientY)-sa)*Math.PI/180;
+    const cosDa=Math.cos(da),sinDa=Math.sin(da);
+    origEls.forEach(({id,x,y,w,h,rot})=>{const el=elements.find(e=>e.id===id);if(!el)return;const ecx=x+w/2,ecy=y+h/2,dx=ecx-cx,dy=ecy-cy;el.x=cx+dx*cosDa-dy*sinDa-w/2;el.y=cy+dx*sinDa+dy*cosDa-h/2;el.rot=rot+da*180/Math.PI;const div=document.getElementById(id);if(div){div.style.left=el.x+'px';div.style.top=el.y+'px';div.style.transform=`rotate(${el.rot}deg) scaleX(${el.flipH?-1:1})`;}_updateOobClass(el);});
+    _updateMultiTransformUI();
+  };
+  const onEnd=()=>{_pushUndoState();window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onEnd);};
+  window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onEnd);
+}
+
+function _deleteMultiSelected() {
+  _pushUndoState();
+  const ids=[..._multiSelectedIds];
+  _clearMultiSelect();
+  ids.forEach(id=>{document.getElementById(id+'__g')?.remove();document.getElementById(id)?.remove();elements=elements.filter(e=>e.id!==id);});
+  document.getElementById('make-btn')?.classList.toggle('active',elements.length>0);
+}
+
+function _duplicateMultiSelected() {
+  const newEls=_multiSelectedIds.map(id=>{const el=elements.find(e=>e.id===id);if(!el)return null;elId++;const ne={...el,id:`el${elId}`,x:el.x+20,y:el.y+20,groupId:undefined};elements.push(ne);document.getElementById('canvas-world').appendChild(makeElDiv(ne));_updateOobClass(ne);return ne;}).filter(Boolean);
+  _pushUndoState();
+  _setMultiSelect(newEls.map(e=>e.id));
+}
+
+function _renderMultiEditBar() {
+  const bar=document.getElementById('edit-tools-row'); if(!bar) return;
+  const firstEl=elements.find(e=>e.id===_multiSelectedIds[0])||{color:'#000',isText:false,isImage:false,shapeKey:null};
+  bar.innerHTML=[
+    {label:'Operation',icon:`<div style="font-size:10px;font-weight:700;color:#595959;line-height:1;text-align:center;padding-top:2px;">Mixed</div>`},
+    {label:'Size',icon:_toolIcon('size',firstEl)},
+    {label:'Arrange',icon:_toolIcon('arrange',firstEl)},
+    {label:'Flip',icon:_toolIcon('flip',firstEl)},
+    {label:'Effects',icon:_toolIcon('effects',firstEl)},
+    {label:'Rotate',icon:_toolIcon('rotate',firstEl)},
+    {label:'Position',icon:_toolIcon('position',firstEl)},
+  ].map(t=>`<div class="edit-tool"><div class="edit-tool-icon">${t.icon}</div><div class="edit-tool-label">${t.label}</div></div>`).join('');
   document.getElementById('bottom-edit-bar').classList.add('visible');
 }
 
@@ -3661,6 +3849,30 @@ function _scaleUI() {
     }
     actions.style.transformOrigin = 'center top';
     actions.style.transform = `translateX(-50%) scale(${inv})`;
+  }
+
+  // Scale multi-select UI elements
+  const multiUi = document.getElementById('__multi_ui');
+  if (multiUi) {
+    const mbbox = _multiSelBBox();
+    if (mbbox) {
+      multiUi.querySelectorAll('.t-corner,.t-side-h,.t-side-v').forEach(h => {
+        const base = h.style.transform.replace(/\s*scale\([^)]*\)/g, '');
+        h.style.transform = `${base} scale(${inv})`;
+      });
+      const mlbl = multiUi.querySelector('.t-size-label');
+      if (mlbl) { mlbl.style.top=`${-(22+16*inv)}px`; mlbl.style.transform=`translateX(-50%) scale(${inv})`; }
+    }
+  }
+  const multiActions = document.getElementById('__multi_actions');
+  if (multiActions) {
+    const mbbox = _multiSelBBox();
+    if (mbbox) { multiActions.style.top=`${mbbox.y+mbbox.h+16*inv}px`; multiActions.style.transform=`translateX(-50%) scale(${inv})`; }
+  }
+  const multiRotate = document.getElementById('__multi_rotate');
+  if (multiRotate) {
+    const mbbox = _multiSelBBox();
+    if (mbbox) { multiRotate.style.left=`${mbbox.x+mbbox.w/2-16}px`; multiRotate.style.top=`${mbbox.y-32*inv-16}px`; multiRotate.style.transform=`scale(${inv})`; }
   }
 }
 
